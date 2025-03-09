@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { store } from './Storage/Redux';
+import App from './Container/App';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -14,6 +15,7 @@ root.render(
     <React.StrictMode>
       <BrowserRouter>
         <ToastContainer />
+        <App />
       </BrowserRouter>
     </React.StrictMode>
   </Provider>

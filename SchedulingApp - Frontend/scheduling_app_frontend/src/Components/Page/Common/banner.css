@@ -1,0 +1,5 @@
+.custom-banner {
+    background: linear-gradient(to right, #51285f, #203a4399, #51285f),
+      url("/src/Assets/Images/background.jpg") center;
+    overflow: hidden;
+  }
