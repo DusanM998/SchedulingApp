@@ -1,0 +1,32 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: white; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar .nav-link {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+.navbar .nav-link:hover {
+    color: #4da172;
+}
+
+.navbar .btn-outlined {
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar .btn-outlined:hover {
+    background-color: #3b805a;
+}
+
+body {
+    padding-top: 60px;
+}

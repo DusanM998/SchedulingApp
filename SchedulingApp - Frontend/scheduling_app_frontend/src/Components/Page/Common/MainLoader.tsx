@@ -19,7 +19,7 @@ function MainLoader() {
         style={{
             width:"4rem",
             height: "4rem",
-            color:"#8d3d5b"
+            color:"#4da172"
         }}>
         
       </div>

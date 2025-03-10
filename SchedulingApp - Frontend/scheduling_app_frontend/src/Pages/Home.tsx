@@ -1,5 +1,6 @@
 import React from 'react'
 import { Banner } from '../Components/Page/Common'
+import { Footer } from '../Components/Layout'
 
 function Home() {
   return (
@@ -7,7 +8,8 @@ function Home() {
       <Banner />
         <div className='container p-2'>
             
-        </div>
+      </div>
+      <Footer />
     </div>
   )
 }

@@ -85,6 +85,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("*")); //CORS omogucava stranici da zahteva resurse sa drugih domena od servera izvan njihovog sopstvenog domena
+
 app.UseAuthentication();
 
 app.UseAuthorization();

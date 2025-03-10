@@ -1,5 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import logo from "../../Assets/Images/logo.png"
 
 function Footer() {
   return (
@@ -8,7 +9,7 @@ function Footer() {
         <div className="row justify-content-between">
           <div className="col-md-4 mb-4">
             <div className="d-flex align-items-center mb-3">
-              <img src="/logo.png" alt="SchedulingApp Logo" className="me-2" style={{ width: '40px', height: '40px' }} />
+              <img src={logo} alt="SchedulingApp Logo" className="me-2" style={{ width: '40px', height: '40px' }} />
               <span className="fs-5 fw-bold">SchedulingApp</span>
             </div>
             <p className="text-secondary">
@@ -23,7 +24,7 @@ function Footer() {
               <ul className="list-unstyled text-secondary">
                 <li><a href="#" className="text-decoration-none text-secondary">Objekti</a></li>
                 <li><a href="#" className="text-decoration-none text-secondary">Aplikacija</a></li>
-                <li><a href="#" className="text-decoration-none text-secondary">Poslovni korisnici</a></li>
+                <li><a href="#" className="text-decoration-none text-secondary">Nesto</a></li>
               </ul>
             </div>
             <div>

@@ -13,7 +13,7 @@ using System.Text;
 
 namespace SchedulingApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -148,7 +148,7 @@ namespace SchedulingApp.Controllers
             return Ok(_response);
         }
 
-        [HttpGet("id", Name = "GetUserDetails")]
+        [HttpGet("{id}", Name = "GetUserDetails")]
         public async Task<IActionResult> GetUserDetails(string id)
         {
             if(id == null)
@@ -164,7 +164,7 @@ namespace SchedulingApp.Controllers
             {
                 _response.StatusCode = HttpStatusCode.NotFound; 
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Korisnik ne postoji!");
+                //_response.ErrorMessages.Add("Korisnik ne postoji!");
                 return NotFound(_response);
             }
             _response.Result = userFromDb;
@@ -173,7 +173,7 @@ namespace SchedulingApp.Controllers
             return Ok(_response);
         }
 
-        [HttpPut("{id}", Name = "UpdateUserDetails")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse>> UpdateUserDetails(string id, [FromForm] UserDetailsUpdateDTO userDetailsUpdateDTO)
         {
             try
@@ -206,7 +206,7 @@ namespace SchedulingApp.Controllers
                     user.PasswordHash = passwordHasher.HashPassword(user, userDetailsUpdateDTO.Password);
 
                     _db.ApplicationUsers.Update(user);
-                    _db.SaveChangesAsync();
+                    _db.SaveChanges();
                     _response.StatusCode = HttpStatusCode.NoContent;
                     _response.IsSuccess = true;
                     return Ok(_response);

@@ -5,7 +5,9 @@ import { userModel } from '../../Interfaces';
 import { RootState } from '../../Storage/Redux/store';
 import { emptyUserState, setLoggedInUser } from '../../Storage/Redux/userAuthSlice';
 import { SD_Roles } from '../../Utility/SD';
+import "./header.css";
 let logo = require("../../Assets/Images/logo.png");
+
 
 const Header = () => {
 
@@ -23,7 +25,7 @@ const Header = () => {
 
   return (
     <div>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      <nav className="navbar navbar-expand-lg bg-body-tertiary fixed-top">
         <div className='container-fluid'>
             <NavLink className="nav-link" aria-current="page" to="/">
                 <img src={logo} style={{ height: "40px" }} className='m-1'></img>
@@ -48,7 +50,7 @@ const Header = () => {
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Admin Panel
                             </a>
-                            <ul>
+                            <ul className="dropdown-menu">
                                 <li
                                     className='dropdown-item' 
                                     onClick={() => navigate("/")}

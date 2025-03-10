@@ -6,7 +6,7 @@ import { setLoggedInUser } from "../Storage/Redux/userAuthSlice";
 import { Route, Routes } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import { Footer, Header } from "../Components/Layout";
-import { Home, NotFound, Register } from "../Pages";
+import { Home, Login, NotFound, Register, UserDetails, UserPage } from "../Pages";
 
 function App() {
     const dispatch = useDispatch();
@@ -34,9 +34,11 @@ function App() {
                     <Route path="/" element={<Home />}></Route>
                     <Route path="*" element={<NotFound />}></Route>
                     <Route path="/register" element={<Register />}></Route>
+                    <Route path="/login" element={<Login />}></Route>
+                    <Route path="/userPage/:id" element={<UserPage />}></Route>
+                    <Route path="/userDetails/userDetailsUpdate/:id" element={<UserDetails />}></Route>
                 </Routes>
             </div>
-            <Footer />
         </div>
     )
 }

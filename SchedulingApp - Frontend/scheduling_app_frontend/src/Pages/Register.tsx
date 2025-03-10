@@ -131,7 +131,7 @@ function Register() {
             <div className="mt-5">
                 <button type="submit"
                     className="btn btn-outlined rounded-pill text-white mx-2"
-                    style={{ width: "200px", backgroundColor:"#8d3d5b" }}
+                    style={{ width: "200px", backgroundColor:"#4da172" }}
                     disabled={loading}>
                     Registruj se
                     </button>
