@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SchedulingApp.DbContexts;
 using SchedulingApp.Models;
 using SchedulingApp.Models.Dto;
+using SchedulingApp.Services;
 using System.Net;
 
 namespace SchedulingApp.Controllers
@@ -50,12 +51,23 @@ namespace SchedulingApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> CreateSportskiObjekat([FromForm] SportskiObjekatCreateDTO sportskiObjekatCreateDTO)
+        public async Task<ActionResult<ApiResponse>> CreateSportskiObjekat(
+            [FromForm] SportskiObjekatCreateDTO sportskiObjekatCreateDTO,
+            [FromServices] CloudinaryService cloudinaryService)
         {
             try
             {
                 if(ModelState.IsValid)
                 {
+                    if(sportskiObjekatCreateDTO.File == null || sportskiObjekatCreateDTO.File.Length == 0)
+                    {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
+                        return BadRequest();
+                    }
+
+                    string imageUrl = await cloudinaryService.UploadImageAsync(sportskiObjekatCreateDTO.File);
+
                     SportskiObjekat sportskiObjekat = new()
                     {
                         Naziv = sportskiObjekatCreateDTO.Naziv,
@@ -64,7 +76,8 @@ namespace SchedulingApp.Controllers
                         Opis = sportskiObjekatCreateDTO.Opis,
                         RadnoVreme = sportskiObjekatCreateDTO.RadnoVreme,
                         CenaPoSatu = sportskiObjekatCreateDTO.CenaPoSatu,
-                        Kapacitet = sportskiObjekatCreateDTO.Kapacitet
+                        Kapacitet = sportskiObjekatCreateDTO.Kapacitet,
+                        Image = imageUrl
                     };
                     _db.SportskiObjekti.Add(sportskiObjekat);
                     _db.SaveChanges();

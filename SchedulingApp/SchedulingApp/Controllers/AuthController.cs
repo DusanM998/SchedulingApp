@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using SchedulingApp.DbContexts;
 using SchedulingApp.Models;
 using SchedulingApp.Models.Dto;
+using SchedulingApp.Services;
 using SchedulingApp.Utility;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
@@ -34,8 +35,17 @@ namespace SchedulingApp.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequestDTO register)
+        public async Task<IActionResult> Register([FromForm] RegisterRequestDTO register, [FromServices] CloudinaryService cloudinaryService)
         {
+            if (register.File == null || register.File.Length == 0)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                return BadRequest();
+            }
+
+            string imageUrl = await cloudinaryService.UploadImageAsync(register.File);
+
             ApplicationUser userFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == register.UserName.ToLower());
 
             if(userFromDb != null)
@@ -51,7 +61,8 @@ namespace SchedulingApp.Controllers
                 UserName = register.UserName,
                 Email = register.UserName,
                 NormalizedEmail = register.UserName.ToUpper(),
-                Name = register.Name
+                Name = register.Name,
+                Image = imageUrl
             };
 
             try
@@ -75,7 +86,7 @@ namespace SchedulingApp.Controllers
                         await _userManager.AddToRoleAsync(newUser, SD.Role_Customer);
                     }
 
-                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.StatusCode = HttpStatusCode.OK;
                     _response.IsSuccess = true;
                     return Ok(_response);
                 }

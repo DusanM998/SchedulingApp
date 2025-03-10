@@ -5,7 +5,8 @@ export const emptyUserState: userModel = {
     fullName: "",
     id: "",
     email: "",
-    role: ""
+    role: "",
+    image: ""
 };
 
 export const userAuthSlice = createSlice({
@@ -17,6 +18,7 @@ export const userAuthSlice = createSlice({
             state.id = action.payload.id;
             state.email = action.payload.email;
             state.role = action.payload.role;
+            state.image = action.payload.image;
         },
     },
 });

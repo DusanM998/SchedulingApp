@@ -12,5 +12,6 @@ namespace SchedulingApp.Models.Dto
         public string RadnoVreme { get; set; }
         public double CenaPoSatu { get; set; }
         public int Kapacitet { get; set; }
+        public IFormFile File { get; set; }
     }
 }

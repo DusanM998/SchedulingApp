@@ -18,6 +18,6 @@ namespace SchedulingApp.Models
         [Range(1, double.MaxValue)]
         public double CenaPoSatu { get; set; }
         public int Kapacitet { get; set; }
-        //public string Image { get; set; }
+        public string Image { get; set; }
     }
 }

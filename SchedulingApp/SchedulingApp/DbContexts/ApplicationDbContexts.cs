@@ -34,6 +34,7 @@ namespace SchedulingApp.DbContexts
                     RadnoVreme = "09:00 - 21:00",
                     CenaPoSatu = 200.50,
                     Kapacitet = 20,
+                    Image = ""
                 });
         }
     }

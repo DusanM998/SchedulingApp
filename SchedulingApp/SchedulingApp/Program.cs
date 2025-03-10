@@ -5,11 +5,15 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SchedulingApp.DbContexts;
 using SchedulingApp.Models;
+using SchedulingApp.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+
+builder.Services.AddSingleton<CloudinaryService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultDbConnection");
 builder.Services.AddDbContext<ApplicationDbContexts>(options =>
