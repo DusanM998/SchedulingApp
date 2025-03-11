@@ -17,8 +17,8 @@ function App() {
         const localToken = localStorage.getItem("token");
 
         if (localToken) {
-            const { fullName, id, email, role }: userModel = jwtDecode(localToken);
-            dispatch(setLoggedInUser({ fullName, id, email, role }));
+            const { name, id, email, role }: userModel = jwtDecode(localToken);
+            dispatch(setLoggedInUser({ name, id, email, role }));
         }
     });
 

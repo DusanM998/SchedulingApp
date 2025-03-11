@@ -42,10 +42,10 @@ function Login() {
         if (response.data) {
             console.log(response.data);
             const { token } = response.data.result;
-            const { fullName, id, email, role }: userModel = jwtDecode(token);
+            const { name, id, email, role }: userModel = jwtDecode(token);
             localStorage.setItem("token", token);
 
-            dispatch(setLoggedInUser({ fullName, id, email, role }));
+            dispatch(setLoggedInUser({ name, id, email, role }));
 
             toastNotify("Uspešna prijava!");
 

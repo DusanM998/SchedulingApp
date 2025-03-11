@@ -8,7 +8,7 @@ import { IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { SD_Roles } from '../Utility/SD';
 
-const userInputTemplate = {
+const userInputData = {
     userName: "",
     password: "",
     role: "",
@@ -19,9 +19,11 @@ function Register() {
 
     const [registerUser] = useRegisterUserMutation();
     const [loading, setLoading] = useState(false);
+    const [userInputs, setUserInputs] = useState(userInputData);
     const [showPassword, setShowPassword] = useState(false);
     const [imageToBeStore, setImageToBeStore] = useState<any>();
-    const [userInputs, setUserInputs] = useState(userInputTemplate);
+    const [imageToBeDisplayed, setImageToBeDisplayed] = useState<string>();
+    
     const navigate = useNavigate();
 
     const handleInputChange = (
@@ -49,11 +51,12 @@ function Register() {
         }
 
         const formData = new FormData();
-        formData.append("UserName", userInputs.userName ?? "");
-        formData.append("Password", userInputs.password ?? "") ;
-        formData.append("Role", userInputs.role ?? "");
-        formData.append("Name", userInputs.name?? "");
-        formData.append("File", imageToBeStore);
+
+        if(userInputs.userName) formData.append("UserName", userInputs.userName ?? "");
+        if(userInputs.password) formData.append("Password", userInputs.password ?? "") ;
+        if(userInputs.role) formData.append("Role", userInputs.role ?? "");
+        if(userInputs.name) formData.append("Name", userInputs.name?? "");
+        if(imageToBeDisplayed) formData.append("File", imageToBeStore);
     
         //registerUser mutacija sluzi za slanje POST zahteva na server
         /*const response: apiResponse = await registerUser({
@@ -64,9 +67,9 @@ function Register() {
           image: userInput.image
         });*/
         
-        const response : apiResponse = await registerUser(formData);
+        let response : apiResponse = await registerUser(formData);
         
-        console.log(response.data);
+        console.log(response);
 
         if (response.data) {
             toastNotify("Uspešna registracija!");
@@ -107,11 +110,9 @@ function Register() {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             setImageToBeStore(file);
-            reader.onload = () => {
-                setUserInputs((prev) => ({
-                    ...prev,
-                    image: reader.result as string, // Base64 za slanje na backend
-                }));
+            reader.onload = (e) => {
+                const imageUrl = e.target?.result as string;
+                setImageToBeDisplayed(imageUrl);
             };
         }
     };
@@ -120,7 +121,7 @@ function Register() {
   return (
     <div className="container text-center">
       {loading && <MainLoader />}
-      <form method='post' onSubmit={handleSubmit}>
+      <form method='post' encType="multipart/form-data" onSubmit={handleSubmit}>
         <h1 className='mt-5'>Registruj se</h1>
         <div className='mt-5'>
             <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
@@ -189,6 +190,13 @@ function Register() {
                     accept="image/*"
                     name="image"
                     onChange={handleFileChange}
+                />
+            </div>
+            <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+                <img 
+                    src={imageToBeDisplayed}
+                    style={{width: "100%", borderRadius:"30px"}}
+                    alt=''
                 />
             </div>
             <div className="mt-5">

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetUserByUserIdQuery } from '../../apis/authApi';
+import { useGetUserByUserIdQuery, useVerifyPasswordMutation } from '../../apis/authApi';
 import { userModel } from '../../Interfaces';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Storage/Redux/store';
 import { inputHelper } from '../../Helper';
 import { MainLoader } from '../../Components/Page/Common';
-import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const userDetailsData = {
@@ -21,8 +21,13 @@ function UserPage() {
   const navigate = useNavigate();
   const [userDetailsInput, setUserDetailsInput] = useState(userDetailsData);
   const [showPassword, setShowPassword] = useState(false);
+  const [imageToBeDisplayed, setImageToBeDisplayed] = useState<string>();
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false);
   const { id } = useParams<{ id: string }>();
   const { data } = useGetUserByUserIdQuery(id);
+  const [verifyPassword] = useVerifyPasswordMutation();
 
   console.log(id);
 
@@ -30,12 +35,14 @@ function UserPage() {
 
   useEffect(() => {
     if (data && data.result) {
+      //console.log(data.result.password)
       const tempData = {
         userName: data.result.userName,
         name: data.result.name,
         password: data.result.password
       };
       setUserDetailsInput(tempData);
+      setImageToBeDisplayed(data.result.image);
     }
   }, [data]);
 
@@ -52,11 +59,37 @@ function UserPage() {
     setShowPassword(!showPassword);
   };
 
+  const handlePasswordVerification = async () => {
+    console.log({ userId: id, password: passwordInput });
+    try {
+      let response = await verifyPassword({ Id: id, password: passwordInput }).unwrap();
+      console.log(response);
+      if (response.isSuccess) {
+        setUserDetailsInput((prev) => ({ ...prev, Password: passwordInput }));
+        setShowPassword(true);
+        setPasswordDialogOpen(false);
+      } else {
+        alert("Neispravna lozinka!");
+      }
+    } catch (error) {
+      alert("Greška pri autentifikaciji.");
+    }
+  };
+
   return (
     <div className='border rounded pb-5 pt-3'>
       {loading && <MainLoader />}
       <h1 style={{ fontWeight: "300", color: "#305985" }} className='text-center'>Podaci o Korisniku</h1>
       <hr />
+      <div className='mt-4 d-flex justify-content-center position-relative'>
+        {imageToBeDisplayed && (
+          <img
+            src={imageToBeDisplayed}
+            alt=""
+            className='img-fluid rounded-circle'
+            style={{ width: '150px', height: '150px', objectFit: 'cover' }} />
+        )}
+      </div>
       <form className="col-10 mx-auto">
         <div className="form-group mt-3">
           Korisničko ime/E-mail
@@ -97,7 +130,14 @@ function UserPage() {
                 <InputAdornment position="end">
                   <IconButton
                     aria-label="toggle password visibility"
-                    onClick={toggleShowPassword}
+                    onClick={() => {
+                      if (!isPasswordVerified) {
+                        setPasswordDialogOpen(true);
+                      }
+                      else {
+                        setShowPassword(!showPassword);
+                      }
+                    }}
                     edge="end"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -127,6 +167,24 @@ function UserPage() {
           </button>
         </div>
       </form>
+
+      <Dialog open={passwordDialogOpen} onClose={() => setPasswordDialogOpen(false)}>
+        <DialogTitle>Unesite svoju lozinku</DialogTitle>
+        <DialogContent>
+          <TextField
+            type="password"
+            className="form-control"
+            required
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPasswordDialogOpen(false)} color="secondary">Otkaži</Button>
+          <Button onClick={handlePasswordVerification} color="primary">Potvrdi</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

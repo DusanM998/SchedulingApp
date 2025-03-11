@@ -88,6 +88,7 @@ namespace SchedulingApp.Controllers
 
                     _response.StatusCode = HttpStatusCode.OK;
                     _response.IsSuccess = true;
+                    _response.Result = newUser;
                     return Ok(_response);
                 }
             }
@@ -127,7 +128,7 @@ namespace SchedulingApp.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("fullName", userFromDb.Name),
+                    new Claim("name", userFromDb.Name),
                     new Claim("id", userFromDb.Id.ToString()),
                     new Claim(ClaimTypes.Email, userFromDb.UserName.ToString()),
                     new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
@@ -234,6 +235,35 @@ namespace SchedulingApp.Controllers
             }
 
             return _response;
+        }
+
+        [HttpPost("verify-password")]
+        public async Task<IActionResult> VerifyPassword([FromBody] VerifyPasswordDTO verifyPasswordDTO)
+        {
+            ApplicationUser userFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == verifyPasswordDTO.Id);
+            if(userFromDb == null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Korisnik nije pronadjen!");
+                return BadRequest(_response);
+            }
+
+            var passwordHasher = new PasswordHasher<ApplicationUser>();
+            var result = passwordHasher.VerifyHashedPassword(userFromDb, userFromDb.PasswordHash, verifyPasswordDTO.Password);
+
+            if(result == PasswordVerificationResult.Failed)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Neispravna lozinka!");
+                return BadRequest(_response);
+            }
+
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = userFromDb;
+            return Ok(_response);
         }
     }
 }

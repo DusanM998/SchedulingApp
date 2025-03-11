@@ -90,7 +90,7 @@ const Header = () => {
                                     }}
                                     onClick={() => navigate("/userPage/" + userData.id)}
                                     >
-                                    Dobrodošli, {userData.fullName}
+                                    Dobrodošli, {userData.name}
                                 </button>
                             </li>
                             <li className='nav-item'>

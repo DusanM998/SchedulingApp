@@ -4,7 +4,7 @@ import { useGetUserByUserIdQuery, useUpdateUserDetailsMutation } from '../../api
 import { inputHelper, toastNotify } from '../../Helper';
 import { MainLoader } from '../../Components/Page/Common';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Edit, Visibility, VisibilityOff } from '@mui/icons-material';
 
 const userDetailsData = {
   userName: "",
@@ -19,6 +19,8 @@ function UserDetails() {
   const [updateUserDetails] = useUpdateUserDetailsMutation();
   const [userDetailsInput, setUserDetailsInput] = useState(userDetailsData);
   const [showPassword, setShowPassword] = useState(false);
+  const [imageToBeStore, setImageToBeStore] = useState<any>();
+  const [imageToBeDisplayed, setImageToBeDisplayed] = useState<string>();
   const { id } = useParams<{ id: string }>();
   const { data } = useGetUserByUserIdQuery(id);
   
@@ -30,10 +32,11 @@ function UserDetails() {
         password: data.result.password
       };
       setUserDetailsInput(tempData);
+      setImageToBeDisplayed(data.result.image);
     }
   }, [data]);
 
-  console.log(data);
+  //console.log(data);
 
   const handleUserInput = (
     e: React.ChangeEvent<
@@ -44,15 +47,49 @@ function UserDetails() {
     setUserDetailsInput(tempData);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      const imgType = file.type.split("/")[1];
+      const validImgTypes = ["jpeg", "jpg", "png"];
+
+      const isImgTypeValid = validImgTypes.filter((e) => {
+        return e === imgType;
+      });
+
+      if (file.size > 5000 * 1024) {
+        setImageToBeStore("");
+        toastNotify("Veličina fajla mora biti manja od 5MB!", "error");
+        return;
+      }
+      else if (isImgTypeValid.length === 0) {
+        setImageToBeStore("");
+        toastNotify("Fajl mora biti u jpeg, jpg ili png formatu!", "error");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      setImageToBeStore(file);
+      reader.onload = (e) => {
+        const imgUrl = e.target?.result as string;
+        setImageToBeDisplayed(imgUrl);
+      }
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     const formData = new FormData();
 
+    console.log(formData);
+
     formData.append("UserName", userDetailsInput.userName ?? "");
     formData.append("Name", userDetailsInput.name ?? "");
     formData.append("Password", userDetailsInput.password ?? "");
+    if(imageToBeDisplayed) formData.append("File", imageToBeStore);
 
     let response;
 
@@ -80,6 +117,45 @@ function UserDetails() {
       {loading && <MainLoader />}
       <form method="post" onSubmit={handleSubmit}>
         <h1 className="mt-5">Izmeni Informacije o Korisniku</h1>
+        <div className='mt-4 d-flex justify-content-center position-relative'>
+        {imageToBeDisplayed && (
+          <img
+            src={imageToBeDisplayed}
+            alt=""
+            className='img-fluid rounded-circle'
+              style={{ width: '150px', height: '150px', objectFit: 'cover' }} />
+          )}
+          <input 
+            type='file' 
+            id='imageUpload' 
+            style={{ display: 'none' }} 
+            accept='image/jpeg, image/png, image/jpg' 
+            onChange={handleFileChange} 
+          />
+          <IconButton 
+            component='label' 
+            htmlFor='imageUpload' 
+            className='position-absolute' 
+            style={{ bottom: 0, right: -10 }}
+          >
+            <Edit />
+          </IconButton>
+        </div>
+        <input 
+            type='file' 
+            id='imageUpload' 
+            style={{ display: 'none' }} 
+            accept='image/jpeg, image/png, image/jpg' 
+            onChange={handleFileChange} 
+          />
+          <IconButton 
+            component='label' 
+            htmlFor='imageUpload' 
+            className='position-absolute' 
+            style={{ bottom: 0, right: -10 }}
+          >
+            <Edit />
+          </IconButton>
         <div className='mt-5'>
           <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
             <label>Unesite Novo Korisničko Ime</label>

@@ -41,6 +41,16 @@ const authApi = createApi({
             }),
             invalidatesTags: ["AuthApi"],
         }),
+        verifyPassword: builder.mutation({
+            query: (userCredentials) => ({
+                url: "auth/verify-password",
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: userCredentials,
+            }),
+        })
     })
 });
 
@@ -48,6 +58,7 @@ export const {
     useRegisterUserMutation,
     useLoginUserMutation,
     useUpdateUserDetailsMutation,
-    useGetUserByUserIdQuery
+    useGetUserByUserIdQuery,
+    useVerifyPasswordMutation
 } = authApi;
 export default authApi;
