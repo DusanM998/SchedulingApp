@@ -73,8 +73,8 @@ const Header = () => {
                         </li>
                     )}
                     <li className='nav-item'>
-                        <NavLink className="nav-link" aria-current="page" to="/shoppingCart">
-                            <i className='bi bi-cart4'></i>{" "}
+                        <NavLink className="nav-link" aria-current="page" to="/rezervacija">
+                            <i className='bi bi-cart4'>&nbsp;Korpa sa rezervacijama</i>{" "}
                         </NavLink>
                     </li>
                     <div className='d-flex' style={{marginLeft: "auto"}}>

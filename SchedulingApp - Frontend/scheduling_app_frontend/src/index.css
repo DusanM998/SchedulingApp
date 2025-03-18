@@ -11,3 +11,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.custom-buttons {
+  border: 0;
+  background: transparent;
+  color: #212529 !important;
+  margin: 12px 24px;
+
+  /* border-radius: 20px; */
+}
+
+.custom-buttons.active {
+  border-bottom: 3px solid #51285f;
+  color: #51285f !important;
+}

@@ -123,6 +123,7 @@ function UserPage() {
             required
             name="password"
             value={userDetailsInput.password}
+            disabled= {true}
             onChange={handleUserInput}
             fullWidth
             InputProps={{
@@ -157,7 +158,7 @@ function UserPage() {
             Izmeni Informacije
           </button>
           <button
-            type='submit'
+            type='button'
             className='btn btn-lg form-control mt-3'
             style={{ backgroundColor: "#999393" }}
             disabled={loading}
@@ -169,6 +170,7 @@ function UserPage() {
       </form>
 
       <Dialog open={passwordDialogOpen} onClose={() => setPasswordDialogOpen(false)}>
+        <DialogTitle>Potvrdite Identitet: </DialogTitle>
         <DialogTitle>Unesite svoju lozinku</DialogTitle>
         <DialogContent>
           <TextField

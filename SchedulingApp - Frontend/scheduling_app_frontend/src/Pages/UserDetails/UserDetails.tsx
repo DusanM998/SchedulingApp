@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetUserByUserIdQuery, useUpdateUserDetailsMutation } from '../../apis/authApi';
+import { useGetUserByUserIdQuery, useUpdateUserDetailsMutation, useVerifyPasswordMutation } from '../../apis/authApi';
 import { inputHelper, toastNotify } from '../../Helper';
 import { MainLoader } from '../../Components/Page/Common';
-import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Edit, Visibility, VisibilityOff } from '@mui/icons-material';
 
 const userDetailsData = {
@@ -19,10 +19,13 @@ function UserDetails() {
   const [updateUserDetails] = useUpdateUserDetailsMutation();
   const [userDetailsInput, setUserDetailsInput] = useState(userDetailsData);
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [imageToBeStore, setImageToBeStore] = useState<any>();
   const [imageToBeDisplayed, setImageToBeDisplayed] = useState<string>();
   const { id } = useParams<{ id: string }>();
   const { data } = useGetUserByUserIdQuery(id);
+  const [verifyPassword] = useVerifyPasswordMutation();
   
   useEffect(() => {
     if (data && data.result) {
@@ -107,6 +110,23 @@ function UserDetails() {
 
     setLoading(false);
   }
+
+  const handlePasswordVerification = async () => {
+    console.log({ userId: id, password: passwordInput });
+    try {
+      let response = await verifyPassword({ Id: id, password: passwordInput }).unwrap();
+      console.log(response);
+      if (response.isSuccess) {
+        setUserDetailsInput((prev) => ({ ...prev, Password: passwordInput }));
+        setShowPassword(true);
+        setPasswordDialogOpen(false);
+      } else {
+        alert("Neispravna lozinka!");
+      }
+    } catch (error) {
+      alert("Greška pri autentifikaciji.");
+    }
+  };
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -229,6 +249,25 @@ function UserDetails() {
           </div>
         </div>
       </form>
+
+      <Dialog open={passwordDialogOpen} onClose={() => setPasswordDialogOpen(false)}>
+        <DialogTitle>Potvrdite Identitet: </DialogTitle>
+          <DialogTitle>Unesite svoju lozinku</DialogTitle>
+          <DialogContent>
+          <TextField
+            type="password"
+            className="form-control"
+            required
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+            fullWidth
+          />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setPasswordDialogOpen(false)} color="secondary">Otkaži</Button>
+              <Button onClick={handlePasswordVerification} color="primary">Potvrdi</Button>
+          </DialogActions>
+      </Dialog>
     </div>
   )
 }

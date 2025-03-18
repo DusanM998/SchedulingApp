@@ -52,11 +52,13 @@ function Register() {
 
         const formData = new FormData();
 
-        if(userInputs.userName) formData.append("UserName", userInputs.userName ?? "");
-        if(userInputs.password) formData.append("Password", userInputs.password ?? "") ;
-        if(userInputs.role) formData.append("Role", userInputs.role ?? "");
-        if(userInputs.name) formData.append("Name", userInputs.name?? "");
+        formData.append("UserName", userInputs.userName);
+        formData.append("Password", userInputs.password) ;
+        formData.append("Role", userInputs.role);
+        formData.append("Name", userInputs.name);
         if(imageToBeDisplayed) formData.append("File", imageToBeStore);
+
+        console.log(Array.from(formData.entries()));
     
         //registerUser mutacija sluzi za slanje POST zahteva na server
         /*const response: apiResponse = await registerUser({
@@ -67,7 +69,7 @@ function Register() {
           image: userInput.image
         });*/
         
-        let response : apiResponse = await registerUser(formData);
+        let response: apiResponse = await registerUser(formData);
         
         console.log(response);
 

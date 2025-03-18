@@ -58,5 +58,110 @@ namespace SchedulingApp.Controllers
             }
             return _response;
         }
+        [HttpGet("{id:int}", Name = "GetTermin")]
+        public async Task<IActionResult> GetTermin(int id)
+        {
+            if (id == 0)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                return BadRequest(_response);
+            }
+            Termin termin = _db.Termini.FirstOrDefault(u => u.TerminId == id);
+            if (termin == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                return NotFound(_response);
+            }
+            _response.Result = termin;
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<ApiResponse>> UpdateTermin(int id, [FromForm] TerminUpdateDTO terminUpdateDTO)
+        {
+            try
+            {
+                if(ModelState.IsValid)
+                {
+                    if(terminUpdateDTO == null || id!=terminUpdateDTO.TerminId)
+                    {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
+                        return BadRequest();
+                    }
+
+                    Termin terminFromDb = await _db.Termini.FindAsync(id);
+                    if(terminFromDb == null)
+                    {
+                        _response.IsSuccess = false;
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        return BadRequest();
+                    }
+
+                    terminFromDb.DatumTermina = terminUpdateDTO.DatumTermina;
+                    terminFromDb.VremePocetka = terminUpdateDTO.VremePocetka;
+                    terminFromDb.VremeZavrsetka = terminUpdateDTO.VremeZavrsetka;
+                    terminFromDb.Status = terminUpdateDTO.Status;
+
+                    _db.Termini.Update(terminFromDb);
+                    _db.SaveChanges();
+                    _response.StatusCode = HttpStatusCode.NoContent;
+                    return Ok(_response);
+                }
+                else
+                {
+                    _response.IsSuccess = false;
+                }
+            }
+            catch(Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.Message };
+            }
+            return _response;
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<ApiResponse>> DeleteTermin(int id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (id == 0)
+                    {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
+                        return BadRequest();
+                    }
+
+                    Termin terminFromDb = await _db.Termini.FindAsync(id);
+                    if (terminFromDb == null)
+                    {
+                        _response.IsSuccess = false;
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        return BadRequest();
+                    }
+
+                    _db.Termini.Remove(terminFromDb);
+                    _db.SaveChanges();
+                    _response.StatusCode = HttpStatusCode.NoContent;
+                    return Ok(_response);
+                }
+                else
+                {
+                    _response.IsSuccess = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.Message };
+            }
+            return _response;
+        }
     }
 }

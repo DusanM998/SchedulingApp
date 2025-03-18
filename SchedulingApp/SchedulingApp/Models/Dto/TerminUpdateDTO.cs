@@ -6,13 +6,13 @@ namespace SchedulingApp.Models.Dto
     public class TerminUpdateDTO
     {
         [Key]
-        public int Id { get; set; }
+        public int TerminId { get; set; }
         [Required]
         public DateTime DatumTermina { get; set; }
         [Required]
-        public TimeSpan VremePocetka { get; set; }
+        public string VremePocetka { get; set; }
         [Required]
-        public TimeSpan VremeZavrsetka { get; set; }
+        public string VremeZavrsetka { get; set; }
         public string Status { get; set; }
     }
 }

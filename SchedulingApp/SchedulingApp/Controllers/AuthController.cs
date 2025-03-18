@@ -22,20 +22,22 @@ namespace SchedulingApp.Controllers
         private ApiResponse _response;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly CloudinaryService _cloudinaryService;
         private string secretKey;
 
         public AuthController(ApplicationDbContexts db, IConfiguration configuration,
-            UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+            UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, CloudinaryService cloudinaryService)
         {
             _db = db;
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
             _response = new ApiResponse();
             _userManager = userManager;
             _roleManager = roleManager;
+            _cloudinaryService = cloudinaryService;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromForm] RegisterRequestDTO register, [FromServices] CloudinaryService cloudinaryService)
+        public async Task<IActionResult> Register([FromForm] RegisterRequestDTO register)
         {
             if (register.File == null || register.File.Length == 0)
             {
@@ -44,7 +46,7 @@ namespace SchedulingApp.Controllers
                 return BadRequest();
             }
 
-            string imageUrl = await cloudinaryService.UploadImageAsync(register.File);
+            string imageUrl = await _cloudinaryService.UploadImageAsync(register.File);
 
             ApplicationUser userFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == register.UserName.ToLower());
 
@@ -216,6 +218,39 @@ namespace SchedulingApp.Controllers
                     user.NormalizedUserName = userDetailsUpdateDTO.UserName.ToUpper();
                     var passwordHasher = new PasswordHasher<ApplicationUser>();
                     user.PasswordHash = passwordHasher.HashPassword(user, userDetailsUpdateDTO.Password);
+
+                    if (!string.IsNullOrEmpty(user.Image))
+                    {
+                        try
+                        {
+                            await _cloudinaryService.DeleteImageAsync(user.Image);
+                        }
+                        catch (Exception ex)
+                        {
+                            _response.StatusCode = HttpStatusCode.InternalServerError;
+                            _response.IsSuccess = false;
+                            _response.ErrorMessages.Add($"Greška prilikom brisanja stare slike: {ex.Message}");
+                            return StatusCode(500, _response);
+                        }
+                    }
+
+                    //Upload nove slike ako postoji
+                    if (userDetailsUpdateDTO.File != null && userDetailsUpdateDTO.File.Length > 0)
+                    {
+                        try
+                        {
+                            string imageUrl = await _cloudinaryService.UploadImageAsync(userDetailsUpdateDTO.File);
+                            user.Image = imageUrl;
+                        }
+                        catch (Exception ex)
+                        {
+                            _response.StatusCode = HttpStatusCode.InternalServerError;
+                            _response.IsSuccess = false;
+                            _response.ErrorMessages.Add($"Greška prilikom upload-a slike: {ex.Message}");
+                            return StatusCode(500, _response);
+                        }
+                    }
+
 
                     _db.ApplicationUsers.Update(user);
                     _db.SaveChanges();

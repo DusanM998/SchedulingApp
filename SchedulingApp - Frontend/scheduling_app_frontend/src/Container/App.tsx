@@ -7,6 +7,8 @@ import { Route, Routes } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import { Footer, Header } from "../Components/Layout";
 import { Home, Login, NotFound, Register, UserDetails, UserPage } from "../Pages";
+import { SportskiObjekatDetails, SportskiObjekatList } from "../Pages/SportskiObjekat";
+import { Rezervacija } from "../Pages/Rezervacija";
 
 function App() {
     const dispatch = useDispatch();
@@ -37,6 +39,9 @@ function App() {
                     <Route path="/login" element={<Login />}></Route>
                     <Route path="/userPage/:id" element={<UserPage />}></Route>
                     <Route path="/userDetails/userDetailsUpdate/:id" element={<UserDetails />}></Route>
+                    <Route path="/sportskiObjekat/sportskiObjekatList" element={<SportskiObjekatList />}></Route>
+                    <Route path='/sportskiObjekatDetails/:sportskiObjekatId' element={<SportskiObjekatDetails />}></Route>
+                    <Route path="/rezervacija" element={<Rezervacija />}></Route>
                 </Routes>
             </div>
         </div>

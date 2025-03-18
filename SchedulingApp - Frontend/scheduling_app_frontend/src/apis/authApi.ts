@@ -11,11 +11,9 @@ const authApi = createApi({
             query: (userData) => ({
                 url: "auth/register",
                 method: "POST",
-                headers: {
-                    "Content-type": "application/json",
-                },
                 body: userData
             }),
+            invalidatesTags: ["AuthApi"]
         }),
         loginUser: builder.mutation({
             query: (userCredentials) => ({

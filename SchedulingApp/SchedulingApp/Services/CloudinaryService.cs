@@ -41,5 +41,22 @@ namespace SchedulingApp.Services
             var uploadResult = await(_cloudinary.UploadAsync(uploadParams));
             return uploadResult.SecureUrl.ToString();
         }
+
+        public async Task<bool> DeleteImageAsync(string imageUrl)
+        {
+            try
+            {
+                var publicId = imageUrl.Split("/").Last().Split(".").First();
+
+                var deleteParams = new DeletionParams(publicId);
+                var deleteResult = await _cloudinary.DestroyAsync(deleteParams);
+
+                return deleteResult.Result == "Ok";
+            }
+            catch(Exception ex)
+            {
+                throw new Exception($"Greska prilikom brisanja slike!: {ex.Message}");
+            }
+        }
     }
 }
