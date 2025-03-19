@@ -5,7 +5,7 @@ const shoppingCartApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "https://localhost:7210/api/"
     }),
-    tagTypes: ["Korpe"],
+    tagTypes: ["ShoppingCart"],
     endpoints: (builder) => ({
         getShoppingCartById: builder.query({
             query: (userId) => ({
@@ -14,7 +14,7 @@ const shoppingCartApi = createApi({
                     userId: userId
                 }
             }),
-            providesTags: ["Korpe"],
+            providesTags: ["ShoppingCart"],
         }),
         updateShoppingCart: builder.mutation({
             query: ({ sportskiObjekatId, kolicina, userId }) => ({
@@ -26,7 +26,7 @@ const shoppingCartApi = createApi({
                     userId,
                 },
             }),
-            invalidatesTags: ["Korpe"],
+            invalidatesTags: ["ShoppingCart"],
         }),
     }),
 });

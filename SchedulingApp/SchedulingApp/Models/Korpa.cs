@@ -9,6 +9,7 @@ namespace SchedulingApp.Models
         public ICollection<StavkaKorpe> StavkaKorpe { get; set; }
         [NotMapped]
         public double UkupnoStavki { get; set; }
+        [NotMapped]
         public string StripePaymentIntentId { get; set; }
         [NotMapped]
         public string ClientSecret { get; set; }

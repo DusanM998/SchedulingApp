@@ -3,4 +3,5 @@ export default interface terminModel {
     datumTermina?: Date;
     vremePocetka?: string;
     vremeZavrsetka?: string;
+    status?: string;
 }

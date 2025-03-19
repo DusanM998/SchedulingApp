@@ -6,6 +6,7 @@ import { RootState } from '../../Storage/Redux/store';
 import { apiResponse, userModel } from '../../Interfaces';
 import { useUpdateShoppingCartMutation } from '../../apis/shoppingCartApi';
 import { toastNotify } from '../../Helper';
+import { MiniLoader } from '../../Components/Page/Common';
 
 interface Props {
   sportskiObjekat: sportskiObjekatModel;
@@ -16,7 +17,7 @@ function SportskiObjekatCard(props: Props) {
   const navigate = useNavigate();
   const userData: userModel = useSelector((state: RootState) => state.userAuthStore);
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
-  const updateKorpa = useUpdateShoppingCartMutation();
+  const [updateKorpa] = useUpdateShoppingCartMutation();
 
   const handleAddToCart = async (sportskiObjekatId: number) => {
     if (!userData.id) {
@@ -32,11 +33,13 @@ function SportskiObjekatCard(props: Props) {
       userId: userData.id
     });
 
+    console.log(response.data);
+
     if (response.data && response.data.isSuccess) {
       toastNotify("Odabrali ste sportski objekat: " + props.sportskiObjekat.naziv)
     }
 
-    setIsAddingToCart(true);
+    setIsAddingToCart(false);
   }
 
   return (
@@ -71,7 +74,15 @@ function SportskiObjekatCard(props: Props) {
               {props.sportskiObjekat.lokacija}
             </p>
             <div className="d-flex justify-content-center mt-3">
-              <button className="btn w-75" style={{ backgroundColor: "#51285f", color:"white" }}>Izaberi objekat</button>
+              {isAddingToCart ? (
+                <MiniLoader />
+              ): (
+                <button className="btn w-75" style={{ backgroundColor: "#51285f", color:"white" }}
+                  onClick={() => handleAddToCart(props.sportskiObjekat.sportskiObjekatId)}
+                  >Izaberi objekat</button>
+              )
+              }
+              
           </div>
           </div>
         </div>

@@ -9,11 +9,16 @@ import { Footer, Header } from "../Components/Layout";
 import { Home, Login, NotFound, Register, UserDetails, UserPage } from "../Pages";
 import { SportskiObjekatDetails, SportskiObjekatList } from "../Pages/SportskiObjekat";
 import { Rezervacija } from "../Pages/Rezervacija";
+import { setShoppingCart } from "../Storage/Redux/shoppingCartSlice";
+import { useGetShoppingCartByIdQuery } from "../apis/shoppingCartApi";
 
 function App() {
     const dispatch = useDispatch();
     const [skip, setSkip] = useState(true);
     const userData: userModel = useSelector((state: RootState) => state.userAuthStore);
+    const { data, isLoading } = useGetShoppingCartByIdQuery(userData.id, {
+        skip: skip,
+    });
     
     useEffect(() => {
         const localToken = localStorage.getItem("token");
@@ -23,6 +28,12 @@ function App() {
             dispatch(setLoggedInUser({ name, id, email, role }));
         }
     });
+
+    useEffect(() => {
+        if (!isLoading && data) {
+            dispatch(setShoppingCart(data.result?.stavkaKorpe));
+        }
+    }, [data])
 
     useEffect(() => {
         if (userData.id) setSkip(false);

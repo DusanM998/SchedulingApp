@@ -8,9 +8,9 @@ namespace SchedulingApp.Models
         public int SportskiObjekatId { get; set; }
         [ForeignKey("SportskiObjekatId")]
         public SportskiObjekat SportskiObjekat { get; set; }
-        public int TerminId { get; set; }
+        /*public int TerminId { get; set; }
         [ForeignKey("TerminId")]
-        public Termin Termin { get; set; }
+        public Termin Termin { get; set; }*/
         public int Kolicina { get; set; }
         public int KorpaId { get; set; }
     }

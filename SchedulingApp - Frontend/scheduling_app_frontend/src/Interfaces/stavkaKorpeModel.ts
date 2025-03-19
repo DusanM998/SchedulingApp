@@ -5,7 +5,5 @@ export default interface stavkaKorpeModel {
     id?: number;
     sportskiObjekatId?: number;
     sportskiObjekat?: sportskiObjekatModel;
-    terminId?: number;
-    termin?: terminModel;
     kolicina?: number;
 }
