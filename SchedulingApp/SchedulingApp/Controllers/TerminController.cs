@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SchedulingApp.DbContexts;
 using SchedulingApp.Models;
 using SchedulingApp.Models.Dto;
@@ -30,12 +31,21 @@ namespace SchedulingApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> CreateTermin([FromBody] TerminCreateDTO terminCreateDTO)
+        public async Task<ActionResult<ApiResponse>> CreateTermin([FromForm] TerminCreateDTO terminCreateDTO)
         {
             try
             {
+                var sportskiObjekat = await _db.SportskiObjekti.FindAsync(terminCreateDTO.SportskiObjekatId);
+                if (sportskiObjekat == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.ErrorMessages = new List<string> { "Sportski Objekat nije pronadjen!" };
+                    return NotFound(_response);
+                }
                 Termin termin = new()
                 {
+                    SportskiObjekatId = terminCreateDTO.SportskiObjekatId,
                     DatumTermina = terminCreateDTO.DatumTermina,
                     VremePocetka = terminCreateDTO.VremePocetka,
                     VremeZavrsetka = terminCreateDTO.VremeZavrsetka,
@@ -49,6 +59,10 @@ namespace SchedulingApp.Controllers
                     _response.Result = termin;
                     _response.StatusCode = HttpStatusCode.Created;
                     return Ok(_response);
+                }
+                else
+                {
+                    return BadRequest(ModelState);
                 }
             }
             catch(Exception ex)
@@ -67,16 +81,17 @@ namespace SchedulingApp.Controllers
                 _response.IsSuccess = false;
                 return BadRequest(_response);
             }
-            Termin termin = _db.Termini.FirstOrDefault(u => u.TerminId == id);
-            if (termin == null)
+            var sportskiObjekat = _db.SportskiObjekti.Include(u => u.Termini)
+                .FirstOrDefault(u => u.SportskiObjekatId == id);
+            if (sportskiObjekat == null)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
                 _response.IsSuccess = false;
                 return NotFound(_response);
             }
-            _response.Result = termin;
+            _response.Result = sportskiObjekat.Termini;
             _response.StatusCode = HttpStatusCode.OK;
-            return Ok(_response);
+            return Ok(sportskiObjekat.Termini);
         }
 
         [HttpPut("{id:int}")]

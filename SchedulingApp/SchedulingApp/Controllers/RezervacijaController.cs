@@ -30,7 +30,7 @@ namespace SchedulingApp.Controllers
             {
                 IEnumerable<RezervacijaHeader> rezervacijaHeader = _db.RezervacijaHeader
                     .Include(u => u.RezervacijaDetalji)
-                        .ThenInclude(u => u.SportskiObjekat)
+                        //.ThenInclude(u => u.SportskiObjekat)
                     .Include(u => u.RezervacijaDetalji)
                         .ThenInclude(u => u.Termin)
                     .OrderByDescending(u => u.RezervacijaHeaderId);
@@ -119,10 +119,21 @@ namespace SchedulingApp.Controllers
                     _db.SaveChanges();
                     foreach(var rezervacijaDetaljiDTO in rezervacijaHeaderCreateDTO.RezervacijaDetalji)
                     {
+
+                        var termin = await _db.Termini.FindAsync(rezervacijaDetaljiDTO.TerminId);
+                        if(termin == null)
+                        {
+                            _response.IsSuccess = false;
+                            _response.ErrorMessages = new List<string> { "Nevazeci termin!" };
+                            return BadRequest(_response);
+                        }
+
+                        //Provera da li termin pripada izabranom sportskom objektu
+                        //if(termin.SportskiObjekatId != rezervacijaDetaljiDTO.)
                         RezervacijaDetalji rezervacijaDetalji = new()
                         {
                             RezervacijaHeaderId = rezervacija.RezervacijaHeaderId,
-                            SportskiObjekatId = rezervacijaDetaljiDTO.SportskiObjekatId,
+                            //SportskiObjekatId = rezervacijaDetaljiDTO.SportskiObjekatId,
                             TerminId = rezervacijaDetaljiDTO.TerminId,
                             Cena = rezervacijaDetaljiDTO.Cena,
                             Kvantitet = rezervacijaDetaljiDTO.Kvantitet

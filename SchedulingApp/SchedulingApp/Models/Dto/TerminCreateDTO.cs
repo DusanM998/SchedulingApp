@@ -7,6 +7,8 @@ namespace SchedulingApp.Models.Dto
         [Required]
         public DateTime DatumTermina { get; set; }
         [Required]
+        public int SportskiObjekatId { get; set; }
+        [Required]
         public string VremePocetka { get; set; }
         [Required]
         public string VremeZavrsetka { get; set; }

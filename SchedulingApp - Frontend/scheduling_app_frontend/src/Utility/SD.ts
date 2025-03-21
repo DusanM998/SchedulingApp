@@ -12,3 +12,21 @@ export enum SD_Status {
     Cekanje = "Čekanje",
     Potvrdjena = "Potvrđena"
 }
+
+export enum SD_Status_Termina {
+    Slobodan = "Slobodan",
+    Zauzet = "Zauzet"
+}
+
+export enum SD_VrstaSporta {
+    Ostalo = "Ostalo",
+    Fudbal = "Fudbal",
+    Kosarka = "Košarka",
+    Tenis = "Tenis",
+    Plivanje = "Plivanje",
+    Padel = "Padel",
+    Odbojka = "Odbojka",
+    Rukomet = "Rukomet",
+    Vaterpolo = "Vaterpolo",
+    Bilijar = "Bilijar",
+}

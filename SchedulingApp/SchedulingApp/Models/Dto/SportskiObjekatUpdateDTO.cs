@@ -5,7 +5,7 @@ namespace SchedulingApp.Models.Dto
     public class SportskiObjekatUpdateDTO
     {
         [Key]
-        public int Id { get; set; }
+        public int SportskiObjekatId { get; set; }
         //[Required]
         public string Naziv { get; set; }
         public string Lokacija { get; set; }

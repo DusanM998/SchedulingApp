@@ -11,10 +11,10 @@ namespace SchedulingApp.Models
         public int RezervacijaHeaderId { get; set; }
         /*[ForeignKey("RezervacijaHeaderId")]
         public RezervacijaHeader RezervacijaHeader { get; set; }   */ 
-        [Required]
+        /*[Required]
         public int SportskiObjekatId { get; set; }
         [ForeignKey("SportskiObjekatId")]
-        public SportskiObjekat SportskiObjekat { get; set; }
+        public SportskiObjekat SportskiObjekat { get; set; }*/
         [Required]
         public int TerminId { get; set; }
         [ForeignKey("TerminId")]

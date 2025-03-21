@@ -60,6 +60,27 @@ const Header = () => {
                                 <li 
                                     className='dropdown-item' 
                                     style={{ cursor: "pointer" }}
+                                    onClick={() => navigate("/sportskiObjekat/sportskiObjektiTabela")}
+                                >
+                                Upravljanje Sportskim Objektima
+                                </li>
+                                <li 
+                                    className='dropdown-item' 
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => navigate("/termin/terminList")}
+                                >
+                                Upravljanje Terminima
+                                </li>
+                                <li 
+                                    className='dropdown-item' 
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => navigate("*")}
+                                >
+                                Upravljanje Rezervacijama
+                                </li>
+                                <li 
+                                    className='dropdown-item' 
+                                    style={{ cursor: "pointer" }}
                                     onClick={() => navigate("*")}
                                 >
                                 Not Found
@@ -74,7 +95,7 @@ const Header = () => {
                     )}
                     <li className='nav-item'>
                         <NavLink className="nav-link" aria-current="page" to="/rezervacija">
-                            <i className='bi bi-cart4'>&nbsp;Korpa sa rezervacijama</i>{" "}
+                            <i className='bi bi-cart4'>&nbsp;Rezervacije</i>{" "}
                         </NavLink>
                     </li>
                     <div className='d-flex' style={{marginLeft: "auto"}}>

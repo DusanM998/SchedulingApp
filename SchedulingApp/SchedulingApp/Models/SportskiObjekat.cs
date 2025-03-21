@@ -19,5 +19,6 @@ namespace SchedulingApp.Models
         public double CenaPoSatu { get; set; }
         public int Kapacitet { get; set; }
         public string Image { get; set; }
+        public List<Termin> Termini { get; set; }
     }
 }

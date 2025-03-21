@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace SchedulingApp.Models
 {
@@ -7,10 +8,11 @@ namespace SchedulingApp.Models
     {
         [Key]
         public int TerminId { get; set; }
-        /*[Required]
+        [Required]
         public int SportskiObjekatId { get; set; }
         [ForeignKey("SportskiObjekatId")]
-        public SportskiObjekat SportskiObjekat { get; set; }*/
+        [JsonIgnore]
+        public SportskiObjekat SportskiObjekat { get; set; }
         [Required]
         public DateTime DatumTermina { get; set; }
         [Required]

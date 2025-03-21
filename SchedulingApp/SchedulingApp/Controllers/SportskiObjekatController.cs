@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SchedulingApp.DbContexts;
 using SchedulingApp.Models;
 using SchedulingApp.Models.Dto;
@@ -26,7 +27,8 @@ namespace SchedulingApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSportskiObjekti()
         {
-            _response.Result = _db.SportskiObjekti;
+            var objekti = _db.SportskiObjekti.Include(u => u.Termini).ToList();
+            _response.Result = objekti;
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_db.SportskiObjekti);
         }
@@ -40,7 +42,9 @@ namespace SchedulingApp.Controllers
                 _response.IsSuccess = false;
                 return BadRequest(_response);
             }
-            SportskiObjekat sportskiObjekat = _db.SportskiObjekti.FirstOrDefault(u => u.SportskiObjekatId == id);
+            SportskiObjekat sportskiObjekat = _db.SportskiObjekti
+                .Include(u => u.Termini)
+                .FirstOrDefault(u => u.SportskiObjekatId == id);
             if(sportskiObjekat == null)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
@@ -77,7 +81,8 @@ namespace SchedulingApp.Controllers
                         RadnoVreme = sportskiObjekatCreateDTO.RadnoVreme,
                         CenaPoSatu = sportskiObjekatCreateDTO.CenaPoSatu,
                         Kapacitet = sportskiObjekatCreateDTO.Kapacitet,
-                        Image = imageUrl
+                        Image = imageUrl,
+                        Termini = new List<Termin>()
                     };
                     _db.SportskiObjekti.Add(sportskiObjekat);
                     _db.SaveChanges();
@@ -146,14 +151,14 @@ namespace SchedulingApp.Controllers
             return _response;
         }
 
-        [HttpPut]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult<ApiResponse>> UpdateSportskiObjekat(int id, [FromForm] SportskiObjekatUpdateDTO sportskiObjekatUpdateDTO)
         {
             try
             {
                 if(ModelState.IsValid)
                 {
-                    if(sportskiObjekatUpdateDTO == null || id != sportskiObjekatUpdateDTO.Id)
+                    if(sportskiObjekatUpdateDTO == null || id != sportskiObjekatUpdateDTO.SportskiObjekatId)
                     {
                         _response.StatusCode = HttpStatusCode.BadRequest;
                         _response.IsSuccess = false;
@@ -176,36 +181,42 @@ namespace SchedulingApp.Controllers
                     sportskiObjekatFromDb.CenaPoSatu = sportskiObjekatUpdateDTO.CenaPoSatu;
                     sportskiObjekatFromDb.Kapacitet = sportskiObjekatUpdateDTO.Kapacitet;
 
-                    if (!string.IsNullOrEmpty(sportskiObjekatFromDb.Image))
+                    //Ako korinik nije poslao novu sliku, cuvamo staru
+                    if (sportskiObjekatUpdateDTO.File == null || sportskiObjekatUpdateDTO.File.Length == 0)
+                    {
+                        _db.SportskiObjekti.Update(sportskiObjekatFromDb);
+                        await _db.SaveChangesAsync();
+                        _response.StatusCode = HttpStatusCode.NoContent;
+                        return Ok(_response);
+                    }
+
+                    //Ako je korisnik poslao novu sliku, brisemo staru i dodajemo novu
+                    if(!string.IsNullOrEmpty(sportskiObjekatFromDb.Image))
                     {
                         try
                         {
                             await _cloudinaryService.DeleteImageAsync(sportskiObjekatFromDb.Image);
                         }
-                        catch (Exception ex)
+                        catch(Exception ex)
                         {
                             _response.StatusCode = HttpStatusCode.InternalServerError;
                             _response.IsSuccess = false;
-                            _response.ErrorMessages.Add($"Greška prilikom brisanja stare slike: {ex.Message}");
+                            _response.ErrorMessages.Add($"Greska prilikom brisanja stare slike:  {ex.Message}");
                             return StatusCode(500, _response);
                         }
                     }
 
-                    //Upload nove slike ako postoji
-                    if (sportskiObjekatUpdateDTO.File != null && sportskiObjekatUpdateDTO.File.Length > 0)
+                    try
                     {
-                        try
-                        {
-                            string imageUrl = await _cloudinaryService.UploadImageAsync(sportskiObjekatUpdateDTO.File);
-                            sportskiObjekatFromDb.Image = imageUrl;
-                        }
-                        catch (Exception ex)
-                        {
-                            _response.StatusCode = HttpStatusCode.InternalServerError;
-                            _response.IsSuccess = false;
-                            _response.ErrorMessages.Add($"Greška prilikom upload-a slike: {ex.Message}");
-                            return StatusCode(500, _response);
-                        }
+                        string imageUrl = await _cloudinaryService.UploadImageAsync(sportskiObjekatUpdateDTO.File);
+                        sportskiObjekatFromDb.Image = imageUrl;
+                    }
+                    catch(Exception ex)
+                    {
+                        _response.StatusCode = HttpStatusCode.InternalServerError;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages.Add($"Greska prilikom upload-a slike:  {ex.Message}");
+                        return StatusCode(500, _response);
                     }
 
                     _db.SportskiObjekti.Update(sportskiObjekatFromDb);

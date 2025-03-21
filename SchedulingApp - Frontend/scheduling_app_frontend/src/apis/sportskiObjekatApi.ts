@@ -19,14 +19,14 @@ const sportskiObjekatApi = createApi({
             providesTags: ["SportskiObjekti"]
         }),
         getSportskiObjekatById: builder.query({
-            query: (id) => ({
-                url:`sportskiObjektiApi/${id}`,
+            query: (sportskiObjekatId) => ({
+                url:`sportskiObjektiApi/${sportskiObjekatId}`,
             }),
             providesTags: ["SportskiObjekti"],
         }),
         updateSportskiObjekat: builder.mutation({
-            query: ({data, id}) => ({
-                url: "sportskiObjektiApi/" + id,
+            query: ({data, sportskiObjekatId}) => ({
+                url: "sportskiObjektiApi/" + sportskiObjekatId,
                 method: "PUT",
                 body: data,
             }),

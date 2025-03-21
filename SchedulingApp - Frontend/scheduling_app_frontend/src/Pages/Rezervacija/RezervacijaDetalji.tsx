@@ -3,10 +3,16 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Storage/Redux/store';
 import { useNavigate } from 'react-router-dom';
 import { inputHelper } from '../../Helper';
+import { MiniLoader } from '../../Components/Page/Common';
+import {apiResponse, stavkaKorpeModel} from '../../Interfaces';
 
 function RezervacijaDetalji() {
 
   const [loading, setLoading] = useState(false);
+
+  const shoppingCartStore: stavkaKorpeModel[] = useSelector(
+    (state: RootState) => state.shoppingCartFromStore.stavkaKorpe ?? []
+  );
 
   const userData = useSelector((state: RootState) => state.userAuthStore);
 
@@ -15,6 +21,15 @@ function RezervacijaDetalji() {
     email: userData.email,
     brojTelefona: "",
   };
+
+  let ukupnoCena = 0;
+  let ukuponoStavki = 0;
+
+  shoppingCartStore?.map((stavkaKorpe: stavkaKorpeModel) => {
+    ukuponoStavki += stavkaKorpe.kolicina ?? 0;
+    ukupnoCena += (stavkaKorpe.sportskiObjekat?.cenaPoSatu ?? 0) * (stavkaKorpe.kolicina ?? 0);
+    return null;
+  })
 
   const navigate = useNavigate();
   
@@ -42,42 +57,42 @@ function RezervacijaDetalji() {
           Ime
           <input
             type='text'
-            value=""
+            value={userInput.name}
             className='form-control'
             placeholder='Ime...'
             name='name'
             required
-            
+            onChange={handleUserInput}
           />
         </div>
         <div className='form-group mt-3'>
           E-mail
           <input
             type='email'
-            value=""
+            value={userInput.email}
             className='form-control'
             placeholder='E-mail'
             name='email'
             required
-
+            onChange={handleUserInput}
           />
         </div>
         <div className='form-group mt-3'>
           Broj Telefona
           <input
             type='text'
-            value=""
+            value={userInput.brojTelefona}
             className='form-control'
             placeholder='Broj Telefona'
             name='brojTelefona'
             required
-
+            onChange={handleUserInput}
           />
         </div>
         <div className='form-group mt-3'>
           <div className='card p-3' style={{background:"ghostwhite"}}>
-            <h5>Ukupno za plaćanje :  RSD</h5>
-            <h5>Količina : </h5>
+            <h5>Ukupno za plaćanje : {ukupnoCena.toFixed(2)}  RSD</h5>
+            <h5>Broj rezervacija : {ukuponoStavki}</h5>
           </div>
         </div>
         <button
@@ -85,7 +100,14 @@ function RezervacijaDetalji() {
           className='btn btn-lg form-control mt-3'
           style={{backgroundColor:"#51285f", color: "white"}}
         >
-          Nastavi na placanje
+          {loading ? <MiniLoader /> : "Nastavi na plaćanje"}
+        </button>
+        <button
+          type='button'
+          className='btn btn-secondary form-control mt-3'
+          onClick={() => navigate("/")}
+        >
+          Nazad
         </button>
       </form>
     </div>

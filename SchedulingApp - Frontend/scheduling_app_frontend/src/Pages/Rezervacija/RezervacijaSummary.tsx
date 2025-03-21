@@ -4,7 +4,7 @@ import { stavkaKorpeModel, terminModel, userModel } from '../../Interfaces';
 import { RootState } from '../../Storage/Redux/store';
 import Calendar from 'react-calendar';
 import './calendar.css';
-import { useGetTerminiQuery } from '../../apis/terminApi';
+import { useGetTerminByIdQuery, useGetTerminiQuery } from '../../apis/terminApi';
 import { useUpdateShoppingCartMutation } from '../../apis/shoppingCartApi';
 import { removeFromCart } from '../../Storage/Redux/shoppingCartSlice';
 
@@ -15,15 +15,18 @@ function RezervacijaSummary() {
   const [date, setDate] = useState(new Date());
   const [selectedTermin, setSelectedTermin] = useState<number | null>(null);
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [selectedSportskiObjekatId, setSelectedSportskiObjekatId] = useState<number | null>(null);
   const shoppingCartStore: stavkaKorpeModel[] = useSelector(
     (state: RootState) => state.shoppingCartFromStore.stavkaKorpe ?? []
   );
   const [azurirajKorpu] = useUpdateShoppingCartMutation();
 
   //console.log("Stavke u korpi", shoppingCartStore);
+  //const sportskiObjekatIds = shoppingCartStore.map(item => item.sportskiObjekat?.sportskiObjekatId);
+  //console.log("Id stavki: ", sportskiObjekatIds);
 
-  const { data: termini, isLoading, isError } = useGetTerminiQuery(null);
-  console.log("Termini: ", termini);
+  const { data: termini, isLoading, isError } = useGetTerminByIdQuery(selectedSportskiObjekatId);
+  //console.log("Termini: ", termini);
 
   const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
@@ -37,6 +40,7 @@ function RezervacijaSummary() {
     const termin = termini?.find((t: terminModel) => t.terminId === terminId);
     if (termin && termin.status === "Slobodan") {
       setSelectedTermin(terminId);
+      console.log("Kliknuto na termin: ", terminId);
     }
   }
 
@@ -62,8 +66,9 @@ function RezervacijaSummary() {
   }
 
   const handleExpandCard = (sportskiObjekatId: number) => {
-    console.log("Kliknuto na sportskiObjekatId:", sportskiObjekatId);
+    //console.log("Kliknuto na sportskiObjekatId:", sportskiObjekatId);
     setExpandedCard(expandedCard === sportskiObjekatId ? null : sportskiObjekatId);
+    setSelectedSportskiObjekatId(sportskiObjekatId);
   };
 
   if (!shoppingCartStore) {
@@ -91,8 +96,8 @@ function RezervacijaSummary() {
           </div>
           <div className='p-2 mx-3' style={{ width: "100%" }}>
             <div className='d-flex justify-content-between align-items-center'>
-              <h4 style={{ fontWeight: 300, marginRight: "3px"}}>{stavkaKorpe.sportskiObjekat?.naziv}</h4>
-              <h4 style={{ marginLeft: "3px"}}>Ukupna cena: {(stavkaKorpe.kolicina! * stavkaKorpe.sportskiObjekat!.cenaPoSatu)} RSD</h4>
+              <h4 style={{ fontWeight: 300, marginRight: "5px"}}>{stavkaKorpe.sportskiObjekat?.naziv}</h4>
+              <h4 style={{ marginLeft: "8px"}}>Ukupna cena: {(stavkaKorpe.kolicina! * stavkaKorpe.sportskiObjekat!.cenaPoSatu)} RSD</h4>
             </div>
               <div className='flex-fill'>
                 <h4 className='text-danger'>Cena po Satu: {stavkaKorpe.sportskiObjekat!.cenaPoSatu} RSD</h4>
@@ -120,7 +125,10 @@ function RezervacijaSummary() {
                 </button>
               </div>
               <div className='d-flex align-items-center justify-content-center mt-2'>
-                <button className='btn btn-success' onClick={() => handleExpandCard(stavkaKorpe.sportskiObjekat!.sportskiObjekatId)}>
+                <button
+                  className='btn'
+                  style={{backgroundColor:"#51285f", color: "white"}}
+                  onClick={() => handleExpandCard(stavkaKorpe.sportskiObjekat!.sportskiObjekatId)}>
                   {expandedCard === stavkaKorpe.sportskiObjekat?.sportskiObjekatId ? "Sakrij termine" : "Odaberi termin"}
                 </button>
               </div>
@@ -134,27 +142,28 @@ function RezervacijaSummary() {
                 <p>Učitavanje termina...</p>
               ) : isError ? (
                 <p>Greška prilikom učitavanja termina.</p>
-              ) : (
+              ) : termini && termini.length > 0 ? (
                 <div className="d-flex flex-wrap justify-content-center">
-                  {termini
-                    ?.filter((t: terminModel) => formatDate(new Date(t.datumTermina!)) === formatDate(date))
-                    .map((termin: terminModel) => (
+                  {termini.map((termin: terminModel) => (
                       <div
                         key={termin.terminId}
                         className={`termin-card m-2 p-3 rounded ${termin.status === "Zauzet" ? "bg-danger" : "bg-success"} 
                           ${selectedTermin === termin.terminId ? "border border-dark" : ""}`}
                         onClick={() => handleTerminSelection(termin.terminId!)}
                         style={{
-                          width: "150px",
+                          width: "250px",
                           cursor: termin.status === "Slobodan" ? "pointer" : "not-allowed",
                           color: "#fff"
                         }}
                       >
-                        <h6>{termin.vremePocetka} - {termin.vremeZavrsetka}</h6>
-                        <p>{termin.status === "Zauzet" ? "Zauzet" : "Slobodan"}</p>
+                        <h6>Datum: {termin.datumTermina ? new Date(termin.datumTermina).toLocaleDateString("sr-RS") : "Nepoznat datum"}</h6>
+                        <h6>Vreme: {termin.vremePocetka} - {termin.vremeZavrsetka}</h6>
+                        <p>Status: {termin.status === "Zauzet" ? "Zauzet" : "Slobodan"}</p>
                       </div>
                     ))}
                 </div>
+              ) : (
+                <p>Jos uvek nema termina</p>
               )}
             </div>
           )}

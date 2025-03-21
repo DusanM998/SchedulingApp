@@ -30,7 +30,7 @@ function Footer() {
             <div>
               <h5 className="text-white">Informacije</h5>
               <ul className="list-unstyled text-secondary">
-                <li><a href="#" className="text-decoration-none text-secondary">Kontakt</a></li>
+                <li><a href="/kontakt" className="text-decoration-none text-secondary">Kontakt</a></li>
               </ul>
             </div>
           </div>

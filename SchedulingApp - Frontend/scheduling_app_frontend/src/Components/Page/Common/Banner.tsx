@@ -30,7 +30,7 @@ function Banner() {
     <div className="container-fluid min-vh-100 d-flex flex-column flex-md-row align-items-center justify-content-between bg-light p-5"
       style={{borderBottom: "5px solid #4da172"}}>
       <div className="col-md-6 text-start">
-        <h1 className="text-primary fw-bold">Rezerviši sportske termine online.</h1>
+        <h1 style={{ color: "#51285f", fontSize:"3rem" }} className="fw-bold">Rezerviši sportske termine online.</h1>
         <h2 className="text-success fw-bold mt-2">Besplatno!</h2>
         <p className="mt-4 text-secondary fs-5">
           Proveri dostupnost i rezerviši salu za fudbal, teren za tenis ili salu za košarku.
