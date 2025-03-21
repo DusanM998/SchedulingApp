@@ -129,11 +129,17 @@ namespace SchedulingApp.Controllers
                         }
 
                         //Provera da li termin pripada izabranom sportskom objektu
-                        //if(termin.SportskiObjekatId != rezervacijaDetaljiDTO.)
+                        if(termin.SportskiObjekatId != rezervacijaDetaljiDTO.SportskiObjekatId)
+                        {
+                            _response.IsSuccess = false;
+                            _response.ErrorMessages = new List<string> { "Termin ne pripada odgovarajucem sportkom objektu!" };
+                            return BadRequest(_response);
+                        }
+
                         RezervacijaDetalji rezervacijaDetalji = new()
                         {
                             RezervacijaHeaderId = rezervacija.RezervacijaHeaderId,
-                            //SportskiObjekatId = rezervacijaDetaljiDTO.SportskiObjekatId,
+                            SportskiObjekatId = rezervacijaDetaljiDTO.SportskiObjekatId,
                             TerminId = rezervacijaDetaljiDTO.TerminId,
                             Cena = rezervacijaDetaljiDTO.Cena,
                             Kvantitet = rezervacijaDetaljiDTO.Kvantitet
@@ -150,6 +156,7 @@ namespace SchedulingApp.Controllers
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { ex.ToString() };
+                return StatusCode(StatusCodes.Status500InternalServerError, _response);
             }
             return _response;
         }

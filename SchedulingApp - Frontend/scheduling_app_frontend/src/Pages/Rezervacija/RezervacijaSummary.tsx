@@ -27,14 +27,6 @@ function RezervacijaSummary() {
 
   const { data: termini, isLoading, isError } = useGetTerminByIdQuery(selectedSportskiObjekatId);
   //console.log("Termini: ", termini);
-
-  const formatDate = (date: Date) => date.toISOString().split("T")[0];
-
-  const handleDateChange = (newDate: Date | Date[] | null) => {
-    if (newDate && newDate instanceof Date && newDate.getMonth() === date.getMonth()) {
-      setDate(newDate);
-    }
-  };
   
   const handleTerminSelection = (terminId: number) => {
     const termin = termini?.find((t: terminModel) => t.terminId === terminId);
@@ -71,6 +63,28 @@ function RezervacijaSummary() {
     setSelectedSportskiObjekatId(sportskiObjekatId);
   };
 
+  const racunajUkupnuCenu = (stavkaKorpe: stavkaKorpeModel, termin?: terminModel) => {
+    if (!stavkaKorpe.sportskiObjekat || !termin) {
+      return 0;
+    }
+  
+    if (!termin.datumTermina || !termin.vremePocetka || !termin.vremeZavrsetka) {
+      return 0;
+    }
+  
+    const startTime = new Date(`${termin.datumTermina} ${termin.vremePocetka}`);
+    const endTime = new Date(`${termin.datumTermina} ${termin.vremeZavrsetka}`);
+  
+    if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+      return 0;
+    }
+  
+    const durationInHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+    const cenaPoSatu = stavkaKorpe.sportskiObjekat.cenaPoSatu ?? 0;
+  
+    return stavkaKorpe.kolicina! * cenaPoSatu * durationInHours;
+  };
+
   if (!shoppingCartStore) {
     return <div>Prazna Korpa!</div>
   }
@@ -97,7 +111,9 @@ function RezervacijaSummary() {
           <div className='p-2 mx-3' style={{ width: "100%" }}>
             <div className='d-flex justify-content-between align-items-center'>
               <h4 style={{ fontWeight: 300, marginRight: "5px"}}>{stavkaKorpe.sportskiObjekat?.naziv}</h4>
-              <h4 style={{ marginLeft: "8px"}}>Ukupna cena: {(stavkaKorpe.kolicina! * stavkaKorpe.sportskiObjekat!.cenaPoSatu)} RSD</h4>
+              <h4 style={{ marginLeft: "8px"}}>
+                Ukupna cena: {racunajUkupnuCenu(stavkaKorpe, termini?.find((t:terminModel) => t.sportskiObjekatId === stavkaKorpe.sportskiObjekat?.sportskiObjekatId)!)?.toFixed(2)} RSD
+              </h4>
             </div>
               <div className='flex-fill'>
                 <h4 className='text-danger'>Cena po Satu: {stavkaKorpe.sportskiObjekat!.cenaPoSatu} RSD</h4>
@@ -153,7 +169,9 @@ function RezervacijaSummary() {
                         style={{
                           width: "250px",
                           cursor: termin.status === "Slobodan" ? "pointer" : "not-allowed",
-                          color: "#fff"
+                          color: "#fff",
+                          transition: "all 0.3s ease-in-out",
+                          transform: selectedTermin === termin.terminId ? "scale(1.05)" : "scale(1)",
                         }}
                       >
                         <h6>Datum: {termin.datumTermina ? new Date(termin.datumTermina).toLocaleDateString("sr-RS") : "Nepoznat datum"}</h6>
