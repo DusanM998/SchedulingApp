@@ -8,12 +8,14 @@ using SchedulingApp.Models;
 using SchedulingApp.Services;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args); //Kreira se WebApplicationBuilder koji omogucava konfiguraciju aplikacije
+//args su argumenti komandne linije koji se mogu proslediti aplikaciji tokom pokretanja
 
 // Add services to the container.
+//Registruju se servisi koje aplikacija koristi
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
-builder.Services.AddSingleton<CloudinaryService>();
+builder.Services.AddSingleton<CloudinaryService>(); //Omogucava da CloudinaryService ima jednu instancu za celu aplikaciju (Singleton)
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultDbConnection");
 builder.Services.AddDbContext<ApplicationDbContexts>(options =>
@@ -42,7 +44,18 @@ builder.Services.AddAuthentication(u =>
     };
 });
 
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            // Dozvoljava samo http://localhost:3000
+            policy.WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -89,7 +102,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("*")); //CORS omogucava stranici da zahteva resurse sa drugih domena od servera izvan njihovog sopstvenog domena
+app.UseCors("AllowFrontend"); //CORS omogucava stranici da zahteva resurse sa drugih domena od servera izvan njihovog sopstvenog domena
 
 app.UseAuthentication();
 

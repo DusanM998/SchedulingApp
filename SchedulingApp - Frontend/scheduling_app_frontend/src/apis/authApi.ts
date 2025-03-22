@@ -3,7 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const authApi = createApi({
     reducerPath: "authApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://localhost:7210/api/"
+        baseUrl: "https://localhost:7210/api/",
+        credentials: "include"
     }),
     tagTypes: ["AuthApi"],
     endpoints: (builder) => ({
@@ -23,6 +24,12 @@ const authApi = createApi({
                     "Content-type": "application/json",
                 },
                 body: userCredentials
+            }),
+        }),
+        logoutUser: builder.mutation({
+            query: () => ({
+                url: 'auth/logout',
+                method: "POST"
             }),
         }),
         getUserByUserId: builder.query({ //query su operacije koje se koriste za preuzimanje podataka sa servera
@@ -55,6 +62,7 @@ const authApi = createApi({
 export const {
     useRegisterUserMutation,
     useLoginUserMutation,
+    useLogoutUserMutation,
     useUpdateUserDetailsMutation,
     useGetUserByUserIdQuery,
     useVerifyPasswordMutation

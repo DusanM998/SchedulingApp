@@ -27,9 +27,20 @@ export const shoppingCartSlice = createSlice({
                 }
                 return item;
             })
+        },
+        setTerminForObjekat: (state, action) => { // Cuva stanje izabranog termina za odredjeni sportski objekat
+            state.stavkaKorpe = state.stavkaKorpe?.map((item) => {
+                if (item.sportskiObjekat?.sportskiObjekatId === action.payload.sportskiObjekatId) {
+                    if (item.sportskiObjekat) {
+                        item.sportskiObjekat.selectedTerminId = action.payload.terminId;
+                        item.sportskiObjekat.selectedTermin = action.payload.termin; // Cuvamo ceo termin
+                    }
+                }
+                return item;
+            });
         }
     }
 });
 
-export const { setShoppingCart, azurirajKolicinu, removeFromCart } = shoppingCartSlice.actions;
+export const { setShoppingCart, azurirajKolicinu, removeFromCart, setTerminForObjekat } = shoppingCartSlice.actions;
 export const shoppingCartReducer = shoppingCartSlice.reducer;

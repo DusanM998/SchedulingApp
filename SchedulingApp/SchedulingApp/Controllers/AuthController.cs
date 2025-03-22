@@ -141,6 +141,17 @@ namespace SchedulingApp.Controllers
             };
 
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+            string jwtToken = tokenHandler.WriteToken(token);
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddHours(1)
+            };
+
+            Response.Cookies.Append("jwt", jwtToken, cookieOptions);
 
             LoginResponseDTO loginResponse = new()
             {
@@ -160,6 +171,13 @@ namespace SchedulingApp.Controllers
             _response.IsSuccess = true;
             _response.Result = loginResponse;
             return Ok(_response);
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("jwt");
+            return Ok(new { message = "Logout successful!" });
         }
 
         [HttpGet("{id}", Name = "GetUserDetails")]

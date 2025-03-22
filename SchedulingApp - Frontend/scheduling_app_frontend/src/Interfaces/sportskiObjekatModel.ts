@@ -1,3 +1,5 @@
+import terminModel from "./terminModel"
+
 export default interface sportskiObjekatModel {
     sportskiObjekatId: number
     naziv: string
@@ -8,4 +10,6 @@ export default interface sportskiObjekatModel {
     cenaPoSatu: number
     kapacitet: number
     image: string
+    selectedTerminId?: number;
+    selectedTermin?: terminModel;
 }

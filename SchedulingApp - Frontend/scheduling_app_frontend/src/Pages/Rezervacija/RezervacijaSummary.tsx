@@ -2,18 +2,16 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { stavkaKorpeModel, terminModel, userModel } from '../../Interfaces';
 import { RootState } from '../../Storage/Redux/store';
-import Calendar from 'react-calendar';
-import './calendar.css';
 import { useGetTerminByIdQuery, useGetTerminiQuery } from '../../apis/terminApi';
 import { useUpdateShoppingCartMutation } from '../../apis/shoppingCartApi';
-import { removeFromCart } from '../../Storage/Redux/shoppingCartSlice';
+import { removeFromCart, setTerminForObjekat } from '../../Storage/Redux/shoppingCartSlice';
 
 function RezervacijaSummary() {
 
   const dispatch = useDispatch();
   const userData: userModel = useSelector((state: RootState) => state.userAuthStore);
   const [date, setDate] = useState(new Date());
-  const [selectedTermin, setSelectedTermin] = useState<number | null>(null);
+  const [selectedTermini, setSelectedTermini] = useState<Record<number, number | null>>({});
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [selectedSportskiObjekatId, setSelectedSportskiObjekatId] = useState<number | null>(null);
   const shoppingCartStore: stavkaKorpeModel[] = useSelector(
@@ -28,13 +26,15 @@ function RezervacijaSummary() {
   const { data: termini, isLoading, isError } = useGetTerminByIdQuery(selectedSportskiObjekatId);
   //console.log("Termini: ", termini);
   
-  const handleTerminSelection = (terminId: number) => {
-    const termin = termini?.find((t: terminModel) => t.terminId === terminId);
-    if (termin && termin.status === "Slobodan") {
-      setSelectedTermin(terminId);
-      console.log("Kliknuto na termin: ", terminId);
-    }
-  }
+  const handleTerminSelection = (sportskiObjekatId: number, termin: terminModel) => {
+    setSelectedTermini(prev => ({
+      ...prev,
+      [sportskiObjekatId]: termin.terminId, // Postavlja termin samo za dati sportski objekat
+    }));
+
+    dispatch(setTerminForObjekat({sportskiObjekatId, terminId: termin.terminId, termin}))
+    console.log(`Odabran termin ${termin.terminId} za objekat ${sportskiObjekatId}`);
+  };
 
   const handleKolicina = (kolicina: number, stavkaKorpe: stavkaKorpeModel) => {
     if ((kolicina == -1 && stavkaKorpe.kolicina == 1) || kolicina == 0) {
@@ -63,22 +63,36 @@ function RezervacijaSummary() {
     setSelectedSportskiObjekatId(sportskiObjekatId);
   };
 
-  const racunajUkupnuCenu = (stavkaKorpe: stavkaKorpeModel, termin?: terminModel) => {
-    if (!stavkaKorpe.sportskiObjekat || !termin) {
+  const racunajUkupnuCenu = (stavkaKorpe: stavkaKorpeModel) => {
+    if (!stavkaKorpe.sportskiObjekat) {
+      return 0;
+    }
+
+    const sportskiObjekatId = stavkaKorpe.sportskiObjekat.sportskiObjekatId;
+    const selectedTerminId = selectedTermini[sportskiObjekatId]; // Pravi termin samo za dati objekat
+  
+    const termin = termini?.find((t: terminModel) => t.terminId === selectedTerminId);
+    if (!termin || !termin.datumTermina || !termin.vremePocetka || !termin.vremeZavrsetka) {
       return 0;
     }
   
-    if (!termin.datumTermina || !termin.vremePocetka || !termin.vremeZavrsetka) {
-      return 0;
-    }
+    // Parsiranje vremena (08:00 -> 8h 0m)
+    const [startHours, startMinutes] = termin.vremePocetka.split(":").map(Number);
+    const [endHours, endMinutes] = termin.vremeZavrsetka.split(":").map(Number);
   
-    const startTime = new Date(`${termin.datumTermina} ${termin.vremePocetka}`);
-    const endTime = new Date(`${termin.datumTermina} ${termin.vremeZavrsetka}`);
+    // Kreiranje novih Date objekata
+    const datum = new Date(termin.datumTermina);
+    const startTime = new Date(datum);
+    startTime.setHours(startHours, startMinutes, 0); // Postavljamo sate i minute
+  
+    const endTime = new Date(datum);
+    endTime.setHours(endHours, endMinutes, 0);
   
     if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
       return 0;
     }
   
+    // Izračunavanje trajanja u satima
     const durationInHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
     const cenaPoSatu = stavkaKorpe.sportskiObjekat.cenaPoSatu ?? 0;
   
@@ -112,7 +126,7 @@ function RezervacijaSummary() {
             <div className='d-flex justify-content-between align-items-center'>
               <h4 style={{ fontWeight: 300, marginRight: "5px"}}>{stavkaKorpe.sportskiObjekat?.naziv}</h4>
               <h4 style={{ marginLeft: "8px"}}>
-                Ukupna cena: {racunajUkupnuCenu(stavkaKorpe, termini?.find((t:terminModel) => t.sportskiObjekatId === stavkaKorpe.sportskiObjekat?.sportskiObjekatId)!)?.toFixed(2)} RSD
+                Ukupna cena: {racunajUkupnuCenu(stavkaKorpe)?.toFixed(2)} RSD
               </h4>
             </div>
               <div className='flex-fill'>
@@ -160,25 +174,28 @@ function RezervacijaSummary() {
                 <p>Greška prilikom učitavanja termina.</p>
               ) : termini && termini.length > 0 ? (
                 <div className="d-flex flex-wrap justify-content-center">
-                  {termini.map((termin: terminModel) => (
+                  {termini.map((termin: terminModel) => {
+                    const isSelected = selectedTermini[stavkaKorpe.sportskiObjekat!.sportskiObjekatId] === termin.terminId;
+                    return (
                       <div
                         key={termin.terminId}
                         className={`termin-card m-2 p-3 rounded ${termin.status === "Zauzet" ? "bg-danger" : "bg-success"} 
-                          ${selectedTermin === termin.terminId ? "border border-dark" : ""}`}
-                        onClick={() => handleTerminSelection(termin.terminId!)}
+                          ${isSelected ? "border border-dark" : ""}`}
+                        onClick={() => handleTerminSelection(stavkaKorpe.sportskiObjekat!.sportskiObjekatId, termin)}
                         style={{
                           width: "250px",
                           cursor: termin.status === "Slobodan" ? "pointer" : "not-allowed",
                           color: "#fff",
                           transition: "all 0.3s ease-in-out",
-                          transform: selectedTermin === termin.terminId ? "scale(1.05)" : "scale(1)",
+                          transform: isSelected ? "scale(1.05)" : "scale(1)",
                         }}
                       >
                         <h6>Datum: {termin.datumTermina ? new Date(termin.datumTermina).toLocaleDateString("sr-RS") : "Nepoznat datum"}</h6>
                         <h6>Vreme: {termin.vremePocetka} - {termin.vremeZavrsetka}</h6>
                         <p>Status: {termin.status === "Zauzet" ? "Zauzet" : "Slobodan"}</p>
                       </div>
-                    ))}
+                    );
+                    })}
                 </div>
               ) : (
                 <p>Jos uvek nema termina</p>

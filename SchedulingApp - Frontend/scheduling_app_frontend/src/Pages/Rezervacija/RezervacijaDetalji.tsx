@@ -26,9 +26,27 @@ function RezervacijaDetalji() {
   let ukuponoStavki = 0;
 
   shoppingCartStore?.map((stavkaKorpe: stavkaKorpeModel) => {
-    ukuponoStavki += stavkaKorpe.kolicina ?? 0;
-    ukupnoCena += (stavkaKorpe.sportskiObjekat?.cenaPoSatu ?? 0) * (stavkaKorpe.kolicina ?? 0);
-    return null;
+    if (!stavkaKorpe.sportskiObjekat) return;
+
+    const termin = stavkaKorpe.sportskiObjekat.selectedTermin;
+    const cenaPoSatu = stavkaKorpe.sportskiObjekat.cenaPoSatu ?? 0;
+
+    let trajanjeUSatima = 1; // Defaultno ako nema termina
+
+    if (termin && termin.vremePocetka && termin.vremeZavrsetka) {
+        const [startHours, startMinutes] = termin.vremePocetka.split(":").map(Number);
+        const [endHours, endMinutes] = termin.vremeZavrsetka.split(":").map(Number);
+
+        const startTime = new Date();
+        startTime.setHours(startHours, startMinutes, 0);
+
+        const endTime = new Date();
+        endTime.setHours(endHours, endMinutes, 0);
+
+        trajanjeUSatima = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+    }
+
+    ukupnoCena += (cenaPoSatu * trajanjeUSatima) * (stavkaKorpe.kolicina ?? 1);
   })
 
   const navigate = useNavigate();

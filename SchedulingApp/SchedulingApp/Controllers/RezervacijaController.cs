@@ -136,6 +136,16 @@ namespace SchedulingApp.Controllers
                             return BadRequest(_response);
                         }
 
+                        if(termin.Status == "Zauzet")
+                        {
+                            _response.IsSuccess = false;
+                            _response.ErrorMessages = new List<string> { "Termin je vec zauzet!" };
+                            return BadRequest(_response);
+                        }
+
+                        termin.Status = "Zauzet";
+                        _db.Termini.Update(termin); //Azurira status termina
+
                         RezervacijaDetalji rezervacijaDetalji = new()
                         {
                             RezervacijaHeaderId = rezervacija.RezervacijaHeaderId,
