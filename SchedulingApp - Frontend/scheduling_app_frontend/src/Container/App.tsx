@@ -12,27 +12,34 @@ import { Rezervacija } from "../Pages/Rezervacija";
 import { setShoppingCart } from "../Storage/Redux/shoppingCartSlice";
 import { useGetShoppingCartByIdQuery } from "../apis/shoppingCartApi";
 import { TerminiList, TerminKreirajAzuriraj } from "../Pages/Termin";
+import { useGetCurrentUserQuery } from "../apis/authApi";
+import { Placanje } from "../Pages/Placanje";
 
 function App() {
     const dispatch = useDispatch();
     const [skip, setSkip] = useState(true);
     const userData: userModel = useSelector((state: RootState) => state.userAuthStore);
+    const { data: currentUserData, isLoading: userLoading } = useGetCurrentUserQuery();
     const { data, isLoading } = useGetShoppingCartByIdQuery(userData.id, {
         skip: skip,
     });
     
-    useEffect(() => {
+    useEffect(() => { //Koristi se kako bi se token automatski cuvao u localStorage kada se promeni
         const localToken = localStorage.getItem("token");
 
         if (localToken) {
             const { name, id, email, role }: userModel = jwtDecode(localToken);
-            dispatch(setLoggedInUser({ name, id, email, role }));
+            dispatch(setLoggedInUser({ name, id, email, role })); //Akcija setLoggedInUser azurira stanje u store-u o prijavljenom korisniku
+
+            /*if (currentUserData) {
+                dispatch(setLoggedInUser(currentUserData));
+            }*/
         }
     });
 
     useEffect(() => {
         if (!isLoading && data) {
-            dispatch(setShoppingCart(data.result?.stavkaKorpe));
+            dispatch(setShoppingCart(data.result?.stavkaKorpe)); //Koristim dispatch da bih poslao akcije koje azuriraju stanje u Redux store
         }
     }, [data])
 
@@ -61,6 +68,7 @@ function App() {
                     <Route path="termin/terminKreirajAzuriraj/:sportskiObjekatId" element={<TerminKreirajAzuriraj />}></Route>
                     <Route path="/termin/terminKreirajAzuriraj" element={<TerminKreirajAzuriraj />}></Route>
                     <Route path="/kontakt" element={<Kontakt />}></Route>
+                    <Route path="/placanje" element={<Placanje />}></Route>
                 </Routes>
             </div>
         </div>

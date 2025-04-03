@@ -20,8 +20,11 @@ export const userAuthSlice = createSlice({
             state.role = action.payload.role;
             state.image = action.payload.image;
         },
+        logoutUser: (state) => {
+            return emptyUserState;
+        }
     },
 });
 
-export const { setLoggedInUser } = userAuthSlice.actions;
+export const { setLoggedInUser, logoutUser } = userAuthSlice.actions;
 export const userAuthReducer = userAuthSlice.reducer;

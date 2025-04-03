@@ -10,20 +10,20 @@ namespace SchedulingApp.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "StripePaymentIntentId",
-                table: "Korpe");
+            migrationBuilder.AddColumn<double>(
+                name: "CenaZaObjekat",
+                table: "StavkeKorpe",
+                type: "float",
+                nullable: false,
+                defaultValue: 0.0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "StripePaymentIntentId",
-                table: "Korpe",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+            migrationBuilder.DropColumn(
+                name: "CenaZaObjekat",
+                table: "StavkeKorpe");
         }
     }
 }

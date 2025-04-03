@@ -12,5 +12,6 @@
 
         public const string StatusTermina_Slobodan = "Slobodan";
         public const string StatusTermina_Zauzet = "Zauzet";
+        public const string StatusTermina = "Otkazan";
     }
 }

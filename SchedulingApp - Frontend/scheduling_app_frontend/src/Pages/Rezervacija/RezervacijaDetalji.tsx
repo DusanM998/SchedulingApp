@@ -4,11 +4,13 @@ import { RootState } from '../../Storage/Redux/store';
 import { useNavigate } from 'react-router-dom';
 import { inputHelper } from '../../Helper';
 import { MiniLoader } from '../../Components/Page/Common';
-import {apiResponse, stavkaKorpeModel} from '../../Interfaces';
+import {apiResponse, stavkaKorpeModel, terminModel} from '../../Interfaces';
+import { useInicirajPlacanjeMutation } from '../../apis/placanjeApi';
 
 function RezervacijaDetalji() {
 
   const [loading, setLoading] = useState(false);
+  const [inicirajPlacanje] = useInicirajPlacanjeMutation();
 
   const shoppingCartStore: stavkaKorpeModel[] = useSelector(
     (state: RootState) => state.shoppingCartFromStore.stavkaKorpe ?? []
@@ -16,24 +18,35 @@ function RezervacijaDetalji() {
 
   const userData = useSelector((state: RootState) => state.userAuthStore);
 
+  const navigate = useNavigate();
+
   const initialUserData = {
     name: userData.name,
     email: userData.email,
     brojTelefona: "",
   };
 
-  let ukupnoCena = 0;
-  let ukuponoStavki = 0;
+  const [userInput, setUserInput] = useState(initialUserData);
 
-  shoppingCartStore?.map((stavkaKorpe: stavkaKorpeModel) => {
-    if (!stavkaKorpe.sportskiObjekat) return;
+  const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const tempData = inputHelper(e, userInput);
+    setUserInput(tempData);
+  }
 
-    const termin = stavkaKorpe.sportskiObjekat.selectedTermin;
-    const cenaPoSatu = stavkaKorpe.sportskiObjekat.cenaPoSatu ?? 0;
+  const [selectedTermini, setSelectedTermini] = useState<Record<number, terminModel[]>>({});
 
-    let trajanjeUSatima = 1; // Defaultno ako nema termina
+  
 
-    if (termin && termin.vremePocetka && termin.vremeZavrsetka) {
+  const racunajUkupnuCenu = () => {
+    return shoppingCartStore.reduce((acc, stavka) => {
+      if (!stavka.sportskiObjekat) return acc;
+
+      const termini = selectedTermini[stavka.sportskiObjekat.sportskiObjekatId] || [];
+      const cenaPoSatu = stavka.sportskiObjekat.cenaPoSatu ?? 0;
+
+      const ukupnaCenaZaObjekat = termini.reduce((sum, termin) => {
+        if (!termin.vremePocetka || !termin.vremeZavrsetka) return sum;
+
         const [startHours, startMinutes] = termin.vremePocetka.split(":").map(Number);
         const [endHours, endMinutes] = termin.vremeZavrsetka.split(":").map(Number);
 
@@ -43,20 +56,20 @@ function RezervacijaDetalji() {
         const endTime = new Date();
         endTime.setHours(endHours, endMinutes, 0);
 
-        trajanjeUSatima = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
-    }
+        const trajanjeUSatima = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
 
-    ukupnoCena += (cenaPoSatu * trajanjeUSatima) * (stavkaKorpe.kolicina ?? 1);
-  })
+        return sum +  (cenaPoSatu * trajanjeUSatima);
+      }, 0);
 
-  const navigate = useNavigate();
+      return acc + ukupnaCenaZaObjekat;
+    }, 0);
+  };
   
-  const [userInput, setUserInput] = useState(initialUserData);
 
-  const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const tempData = inputHelper(e, userInput);
-    setUserInput(tempData);
-  }
+  const ukupnoCena = racunajUkupnuCenu();
+  let ukuponoStavki = shoppingCartStore.reduce((sum, stavka) => sum + (stavka.kolicina ?? 0), 0);
+
+  
 
   useEffect(() => {
     setUserInput({
@@ -66,11 +79,23 @@ function RezervacijaDetalji() {
     });
   }, [userData]);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const { data }: apiResponse = await inicirajPlacanje(userData.id);
+    
+
+    navigate("/placanje", {
+      state: { apiResult: data?.result, userInput, ukupnoCena },
+    });
+  };
+
   return (
     <div className='border rounded pb-5 pt-3'>
       <h1 style={{ fontWeight: "300", color: "#4da172" }} className="text-center">Podaci o korisniku</h1>
       <hr />
-      <form className='col-10 mx-auto'>
+      <form onSubmit={handleSubmit} className='col-10 mx-auto'>
         <div className='form-group mt-3'>
           Ime
           <input

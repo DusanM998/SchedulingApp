@@ -17,19 +17,39 @@ const shoppingCartApi = createApi({
             providesTags: ["ShoppingCart"],
         }),
         updateShoppingCart: builder.mutation({
-            query: ({ sportskiObjekatId, kolicina, userId }) => ({
+            query: ({ sportskiObjekatId, brojUcesnika, userId }) => ({
                 url: "korpa",
                 method: "POST",
                 params: {
                     sportskiObjekatId,
-                    kolicina,
+                    brojUcesnika,
                     userId,
                 },
+            }),
+            invalidatesTags: ["ShoppingCart"],
+        }),
+        removeShoppingCartItem: builder.mutation({
+            query: ({ sportskiObjekatId, userId }) => ({
+                url: "korpa/ukloniStavku",
+                method: "POST",
+                params: { sportskiObjekatId, userId },
+              }),
+              invalidatesTags: ["ShoppingCart"],
+        }),
+        updateShoppingCartWithTermini: builder.mutation({
+            query: ({ userId, sportskiObjekatId, kolicina, terminIds }) => ({
+                url: `korpa/dodajIliAzurirajKorpuSaTerminima?userId=${userId}&sportskiObjekatId=${sportskiObjekatId}&brojUcesnika=${kolicina}`,
+                method: "POST",
+                body: terminIds,
             }),
             invalidatesTags: ["ShoppingCart"],
         }),
     }),
 });
 
-export const { useGetShoppingCartByIdQuery, useUpdateShoppingCartMutation } = shoppingCartApi;
+export const { useGetShoppingCartByIdQuery,
+    useUpdateShoppingCartMutation,
+    useUpdateShoppingCartWithTerminiMutation,
+    useRemoveShoppingCartItemMutation
+} = shoppingCartApi;
 export default shoppingCartApi;

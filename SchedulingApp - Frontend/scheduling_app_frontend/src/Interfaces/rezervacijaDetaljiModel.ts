@@ -9,5 +9,5 @@ export default interface rezervacijaDetaljiModel {
     terminId?: number;
     termin: terminModel;
     cena?: number;
-    kvantitet?: number;
+    brojUcesnika?: number;
 }

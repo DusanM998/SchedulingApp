@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { userAuthReducer } from "./userAuthSlice";
-import { authApi, shoppingCartApi, sportskiObjekatApi, terminApi } from "../../apis";
+import { authApi, placanjeApi, shoppingCartApi, sportskiObjekatApi, terminApi } from "../../apis";
 import { sportskiObjekatReducer } from "./sportskiObjekatSlice";
 import { shoppingCartReducer } from "./shoppingCartSlice";
 import { terminReducer } from "./terminSlice";
@@ -14,7 +14,8 @@ const store = configureStore({
         [authApi.reducerPath]: authApi.reducer,
         [sportskiObjekatApi.reducerPath]: sportskiObjekatApi.reducer,
         [terminApi.reducerPath]: terminApi.reducer,
-        [shoppingCartApi.reducerPath]: shoppingCartApi.reducer
+        [shoppingCartApi.reducerPath]: shoppingCartApi.reducer,
+        [placanjeApi.reducerPath]: placanjeApi.reducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
@@ -22,6 +23,7 @@ const store = configureStore({
             .concat(sportskiObjekatApi.middleware)
             .concat(shoppingCartApi.middleware)
             .concat(terminApi.middleware)
+            .concat(placanjeApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;

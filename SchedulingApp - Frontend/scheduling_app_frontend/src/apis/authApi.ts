@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { userModel } from "../Interfaces";
 
 const authApi = createApi({
     reducerPath: "authApi",
@@ -38,6 +39,15 @@ const authApi = createApi({
             }),
             providesTags: ["AuthApi"],
         }),
+        getCurrentUser: builder.query<userModel, void>({
+            query: () => ({
+                url: "auth/currentUser",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                }
+            }), 
+            providesTags: ["AuthApi"],
+        }),
         updateUserDetails: builder.mutation({
             query: ({data, id}) => ({
                 url: "auth/" + id,
@@ -65,6 +75,7 @@ export const {
     useLogoutUserMutation,
     useUpdateUserDetailsMutation,
     useGetUserByUserIdQuery,
+    useGetCurrentUserQuery,
     useVerifyPasswordMutation
 } = authApi;
 export default authApi;

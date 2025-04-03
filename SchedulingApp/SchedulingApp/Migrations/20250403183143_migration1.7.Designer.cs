@@ -12,8 +12,8 @@ using SchedulingApp.DbContexts;
 namespace SchedulingApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContexts))]
-    [Migration("20250319183910_migration1.8")]
-    partial class migration18
+    [Migration("20250403183143_migration1.7")]
+    partial class migration17
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -256,11 +256,11 @@ namespace SchedulingApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RezervacijaDetaljiId"));
 
+                    b.Property<int>("BrojUcesnika")
+                        .HasColumnType("int");
+
                     b.Property<double>("Cena")
                         .HasColumnType("float");
-
-                    b.Property<int>("Kvantitet")
-                        .HasColumnType("int");
 
                     b.Property<int>("RezervacijaHeaderId")
                         .HasColumnType("int");
@@ -363,20 +363,6 @@ namespace SchedulingApp.Migrations
                     b.HasKey("SportskiObjekatId");
 
                     b.ToTable("SportskiObjekti");
-
-                    b.HasData(
-                        new
-                        {
-                            SportskiObjekatId = 1,
-                            CenaPoSatu = 200.5,
-                            Image = "",
-                            Kapacitet = 20,
-                            Lokacija = "Nis",
-                            Naziv = "Hala Cair",
-                            Opis = "Primer opisa",
-                            RadnoVreme = "09:00 - 21:00",
-                            VrstaSporta = "Sve"
-                        });
                 });
 
             modelBuilder.Entity("SchedulingApp.Models.StavkaKorpe", b =>
@@ -386,6 +372,9 @@ namespace SchedulingApp.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("CenaZaObjekat")
+                        .HasColumnType("float");
 
                     b.Property<int>("Kolicina")
                         .HasColumnType("int");
@@ -423,6 +412,9 @@ namespace SchedulingApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("StavkaKorpeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("VremePocetka")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -434,6 +426,8 @@ namespace SchedulingApp.Migrations
                     b.HasKey("TerminId");
 
                     b.HasIndex("SportskiObjekatId");
+
+                    b.HasIndex("StavkaKorpeId");
 
                     b.ToTable("Termini");
                 });
@@ -542,6 +536,10 @@ namespace SchedulingApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SchedulingApp.Models.StavkaKorpe", null)
+                        .WithMany("OdabraniTermini")
+                        .HasForeignKey("StavkaKorpeId");
+
                     b.Navigation("SportskiObjekat");
                 });
 
@@ -558,6 +556,11 @@ namespace SchedulingApp.Migrations
             modelBuilder.Entity("SchedulingApp.Models.SportskiObjekat", b =>
                 {
                     b.Navigation("Termini");
+                });
+
+            modelBuilder.Entity("SchedulingApp.Models.StavkaKorpe", b =>
+                {
+                    b.Navigation("OdabraniTermini");
                 });
 #pragma warning restore 612, 618
         }

@@ -12,5 +12,5 @@ export default interface rezervacijaHeaderModel {
     datumRezervacije?: Date;
     ukupnoRezervacija?: number;
     stripePaymentIntentId?: string;
-    rezervacijaDetalji: rezervacijaDetaljiModel;
+    rezervacijaDetalji: rezervacijaDetaljiModel[];
 }

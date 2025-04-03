@@ -205,6 +205,18 @@ namespace SchedulingApp.Controllers
             return Ok(_response);
         }
 
+        [HttpGet("currentUser")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            string userId = User.FindFirst("Id")?.Value;
+            if(string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "Korisnik nije prijavljen!" });
+            }
+
+            return await GetUserDetails(userId);
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse>> UpdateUserDetails(string id, [FromForm] UserDetailsUpdateDTO userDetailsUpdateDTO)
         {

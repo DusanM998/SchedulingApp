@@ -38,9 +38,26 @@ export const shoppingCartSlice = createSlice({
                 }
                 return item;
             });
+        },
+        azurirajCenu: (state, action) => {
+            state.stavkaKorpe = state.stavkaKorpe?.map((stavka) => 
+                stavka.sportskiObjekat?.sportskiObjekatId === action.payload.sportskiObjekatId 
+                ? { ...stavka, cenaZaSportskiObjekat: action.payload.cenaZaSportskiObjekat }
+                : stavka
+            );
+        },
+        azurirajStatusTermina: (state, action) => {
+            state.stavkaKorpe = state.stavkaKorpe?.map((item) => {
+                if (item.sportskiObjekat?.sportskiObjekatId === action.payload.sportskiObjekatId) {
+                    if (item.sportskiObjekat?.selectedTermin) {
+                        item.sportskiObjekat.selectedTermin.status = "Zauzet";
+                    }
+                }
+                return item;
+            });
         }
     }
 });
 
-export const { setShoppingCart, azurirajKolicinu, removeFromCart, setTerminForObjekat } = shoppingCartSlice.actions;
+export const { setShoppingCart, azurirajKolicinu, removeFromCart, setTerminForObjekat, azurirajCenu, azurirajStatusTermina } = shoppingCartSlice.actions;
 export const shoppingCartReducer = shoppingCartSlice.reducer;

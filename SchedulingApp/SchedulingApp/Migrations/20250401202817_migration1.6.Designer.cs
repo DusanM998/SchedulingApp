@@ -12,8 +12,8 @@ using SchedulingApp.DbContexts;
 namespace SchedulingApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContexts))]
-    [Migration("20250310154423_Migration1.4")]
-    partial class Migration14
+    [Migration("20250401202817_migration1.6")]
+    partial class migration16
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -177,6 +177,10 @@ namespace SchedulingApp.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -235,12 +239,9 @@ namespace SchedulingApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("StripePaymentIntentId")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -255,16 +256,13 @@ namespace SchedulingApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RezervacijaDetaljiId"));
 
+                    b.Property<int>("BrojUcesnika")
+                        .HasColumnType("int");
+
                     b.Property<double>("Cena")
                         .HasColumnType("float");
 
-                    b.Property<int>("Kvantitet")
-                        .HasColumnType("int");
-
                     b.Property<int>("RezervacijaHeaderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SportskiObjekatId")
                         .HasColumnType("int");
 
                     b.Property<int>("TerminId")
@@ -273,8 +271,6 @@ namespace SchedulingApp.Migrations
                     b.HasKey("RezervacijaDetaljiId");
 
                     b.HasIndex("RezervacijaHeaderId");
-
-                    b.HasIndex("SportskiObjekatId");
 
                     b.HasIndex("TerminId");
 
@@ -367,20 +363,6 @@ namespace SchedulingApp.Migrations
                     b.HasKey("SportskiObjekatId");
 
                     b.ToTable("SportskiObjekti");
-
-                    b.HasData(
-                        new
-                        {
-                            SportskiObjekatId = 1,
-                            CenaPoSatu = 200.5,
-                            Image = "",
-                            Kapacitet = 20,
-                            Lokacija = "Nis",
-                            Naziv = "Hala Cair",
-                            Opis = "Primer opisa",
-                            RadnoVreme = "09:00 - 21:00",
-                            VrstaSporta = "Sve"
-                        });
                 });
 
             modelBuilder.Entity("SchedulingApp.Models.StavkaKorpe", b =>
@@ -420,9 +402,15 @@ namespace SchedulingApp.Migrations
                     b.Property<DateTime>("DatumTermina")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("SportskiObjekatId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StavkaKorpeId")
+                        .HasColumnType("int");
 
                     b.Property<string>("VremePocetka")
                         .IsRequired()
@@ -433,6 +421,10 @@ namespace SchedulingApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TerminId");
+
+                    b.HasIndex("SportskiObjekatId");
+
+                    b.HasIndex("StavkaKorpeId");
 
                     b.ToTable("Termini");
                 });
@@ -496,19 +488,11 @@ namespace SchedulingApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchedulingApp.Models.SportskiObjekat", "SportskiObjekat")
-                        .WithMany()
-                        .HasForeignKey("SportskiObjekatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SchedulingApp.Models.Termin", "Termin")
                         .WithMany()
                         .HasForeignKey("TerminId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("SportskiObjekat");
 
                     b.Navigation("Termin");
                 });
@@ -541,6 +525,21 @@ namespace SchedulingApp.Migrations
                     b.Navigation("SportskiObjekat");
                 });
 
+            modelBuilder.Entity("SchedulingApp.Models.Termin", b =>
+                {
+                    b.HasOne("SchedulingApp.Models.SportskiObjekat", "SportskiObjekat")
+                        .WithMany("Termini")
+                        .HasForeignKey("SportskiObjekatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchedulingApp.Models.StavkaKorpe", null)
+                        .WithMany("OdabraniTermini")
+                        .HasForeignKey("StavkaKorpeId");
+
+                    b.Navigation("SportskiObjekat");
+                });
+
             modelBuilder.Entity("SchedulingApp.Models.Korpa", b =>
                 {
                     b.Navigation("StavkaKorpe");
@@ -549,6 +548,16 @@ namespace SchedulingApp.Migrations
             modelBuilder.Entity("SchedulingApp.Models.RezervacijaHeader", b =>
                 {
                     b.Navigation("RezervacijaDetalji");
+                });
+
+            modelBuilder.Entity("SchedulingApp.Models.SportskiObjekat", b =>
+                {
+                    b.Navigation("Termini");
+                });
+
+            modelBuilder.Entity("SchedulingApp.Models.StavkaKorpe", b =>
+                {
+                    b.Navigation("OdabraniTermini");
                 });
 #pragma warning restore 612, 618
         }

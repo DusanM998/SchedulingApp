@@ -29,7 +29,7 @@ function SportskiObjekatCard(props: Props) {
 
     const response: apiResponse = await updateKorpa({
       sportskiObjekatId: sportskiObjekatId,
-      kolicina: 1,
+      brojUcesnika: 1,
       userId: userData.id
     });
 
@@ -40,6 +40,11 @@ function SportskiObjekatCard(props: Props) {
     }
 
     setIsAddingToCart(false);
+  }
+
+  const openGoogleMaps = (lokacija: string) => {
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lokacija)}`;
+    window.open(googleMapsUrl, "_blank");
   }
 
   return (
@@ -69,7 +74,9 @@ function SportskiObjekatCard(props: Props) {
               </Link>
             </p>
             <hr />
-            <p className='badge bg-secondary' >
+            <p className='badge bg-secondary' style={{ cursor: "pointer" }}
+              onClick={() => openGoogleMaps(props.sportskiObjekat.lokacija)}
+            >
               <i className="bi bi-geo-alt-fill">&nbsp;</i>
               {props.sportskiObjekat.lokacija}
             </p>
