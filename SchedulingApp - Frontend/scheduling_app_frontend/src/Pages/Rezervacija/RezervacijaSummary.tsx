@@ -151,7 +151,17 @@ function RezervacijaSummary() {
     }).then((response) => {
       console.log('Odgovor servera:', response);
         if ("data" in response) {
-          dispatch(setTerminForObjekat({ sportskiObjekatId, terminId: terminiIds, termin: selectedTermini[sportskiObjekatId] }));
+          const azuriraniTermini = selectedTermini[sportskiObjekatId].map(t => ({
+            ...t,
+            status: "Zauzet"
+          }));
+        
+          // Update Redux store sa azuriranim terminima
+          dispatch(setTerminForObjekat({
+            sportskiObjekatId,
+            terminId: terminiIds,
+            termin: azuriraniTermini,
+          }));
 
           const novaCena = racunajCenuZaObjekat(stavkaKorpe, selectedTermini[sportskiObjekatId]);
           dispatch(azurirajCenu({ sportskiObjekatId, cenaZaSportskiObjekat: novaCena }));
