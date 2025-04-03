@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { stavkaKorpeModel, terminModel, userModel } from '../../Interfaces';
 import { RootState } from '../../Storage/Redux/store';
@@ -29,6 +29,34 @@ function RezervacijaSummary() {
 
   const { data: termini, isLoading, isError } = useGetTerminByIdQuery(selectedSportskiObjekatId);
   //console.log("Termini: ", termini);
+
+  const racunajCenuZaObjekat = (stavkaKorpe: stavkaKorpeModel, termini?: terminModel[]) => {
+    if (!stavkaKorpe.sportskiObjekat) return 0;
+  
+    const sportskiObjekatId = stavkaKorpe.sportskiObjekat.sportskiObjekatId;
+    const terminiZaObjekat = selectedTermini[sportskiObjekatId] || [];
+    const cenaPoSatu = stavkaKorpe.sportskiObjekat.cenaPoSatu ?? 0;
+
+    if (terminiZaObjekat.length === 0) {
+      return cenaPoSatu;
+    }
+  
+    return terminiZaObjekat.reduce((ukupno, termin) => {
+      if (!termin.vremePocetka || !termin.vremeZavrsetka) return ukupno;
+  
+      const [startHours, startMinutes] = termin.vremePocetka.split(":").map(Number);
+      const [endHours, endMinutes] = termin.vremeZavrsetka.split(":").map(Number);
+  
+      const startTime = new Date();
+      startTime.setHours(startHours, startMinutes, 0);
+  
+      const endTime = new Date();
+      endTime.setHours(endHours, endMinutes, 0);
+  
+      const trajanjeUSatima = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+      return ukupno + (cenaPoSatu * trajanjeUSatima);
+    }, 0);
+  };
   
   const handleTerminSelection = (sportskiObjekatId: number, termin: terminModel) => {
     setSelectedTermini((prev) => {
@@ -40,19 +68,18 @@ function RezervacijaSummary() {
         ? trenutniTermini.filter(t => t.terminId !== termin.terminId) // Uklanja ako već postoji
         : [...trenutniTermini, termin]; // Dodaje ako ne postoji
 
-      //Azuriranje cene odmah nakon promene termina
-      const novaCena = racunajCenuZaObjekat({
+      /*const novaCena = racunajCenuZaObjekat({
         ...shoppingCartStore.find(s => s.sportskiObjekat?.sportskiObjekatId === sportskiObjekatId)!,
         kolicina: shoppingCartStore.find(s => s.sportskiObjekat?.sportskiObjekatId === sportskiObjekatId)?.kolicina || 0,
-      });
-    
-      dispatch(azurirajCenu({ sportskiObjekatId, cenaZaSportskiObjekat: novaCena }));
+      }, noviTermini);*/
+      
+      //Azuriranje cene odmah nakon promene termina
+      //dispatch(setTerminForObjekat({sportskiObjekatId, terminId: termin.terminId, termin}))
+      console.log(`Odabran termin ${termin.terminId} za objekat ${sportskiObjekatId}`);
+      //dispatch(azurirajCenu({ sportskiObjekatId, cenaZaSportskiObjekat: novaCena }));
 
       return { ...prev, [sportskiObjekatId]: noviTermini };
     });
-
-    dispatch(setTerminForObjekat({sportskiObjekatId, terminId: termin.terminId, termin}))
-    console.log(`Odabran termin ${termin.terminId} za objekat ${sportskiObjekatId}`);
   };
 
   const handleBrojUcesnika = (brojUcesnika: number, stavkaKorpe: stavkaKorpeModel, ukloni?: boolean) => {
@@ -126,7 +153,7 @@ function RezervacijaSummary() {
         if ("data" in response) {
           dispatch(setTerminForObjekat({ sportskiObjekatId, terminId: terminiIds, termin: selectedTermini[sportskiObjekatId] }));
 
-          const novaCena = racunajCenuZaObjekat({ ...stavkaKorpe, kolicina: stavkaKorpe.kolicina });
+          const novaCena = racunajCenuZaObjekat(stavkaKorpe, selectedTermini[sportskiObjekatId]);
           dispatch(azurirajCenu({ sportskiObjekatId, cenaZaSportskiObjekat: novaCena }));
 
           dispatch(azurirajStatusTermina({ sportskiObjekatId }));
@@ -145,29 +172,32 @@ function RezervacijaSummary() {
     console.log("Azuriranje termina u korpi", { sportskiObjekatId, terminiIds });
   }
 
-  const racunajCenuZaObjekat = (stavkaKorpe: stavkaKorpeModel) => {
-    if (!stavkaKorpe.sportskiObjekat) return 0;
+  useEffect(() => {
+    if (selectedSportskiObjekatId !== null) {
+      const stavkaKorpe = shoppingCartStore.find(
+        (s) => s.sportskiObjekat?.sportskiObjekatId === selectedSportskiObjekatId
+      );
   
-    const sportskiObjekatId = stavkaKorpe.sportskiObjekat.sportskiObjekatId;
-    const terminiZaObjekat = selectedTermini[sportskiObjekatId] || [];
-    const cenaPoSatu = stavkaKorpe.sportskiObjekat.cenaPoSatu ?? 0;
+      if (stavkaKorpe) {
+        const novaCena = racunajCenuZaObjekat(stavkaKorpe, selectedTermini[selectedSportskiObjekatId] || []);
+        
+        // Proveravamo da li se cena zaista promenila pre dispatch-a
+        if (novaCena !== stavkaKorpe.cenaZaSportskiObjekat) {
+          dispatch(azurirajCenu({ sportskiObjekatId: selectedSportskiObjekatId, cenaZaSportskiObjekat: novaCena }));
+        }
+      }
+    }
+  }, [selectedTermini, selectedSportskiObjekatId, shoppingCartStore]);
   
-    return terminiZaObjekat.reduce((ukupno, termin) => {
-      if (!termin.vremePocetka || !termin.vremeZavrsetka) return ukupno;
-  
-      const [startHours, startMinutes] = termin.vremePocetka.split(":").map(Number);
-      const [endHours, endMinutes] = termin.vremeZavrsetka.split(":").map(Number);
-  
-      const startTime = new Date();
-      startTime.setHours(startHours, startMinutes, 0);
-  
-      const endTime = new Date();
-      endTime.setHours(endHours, endMinutes, 0);
-  
-      const trajanjeUSatima = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
-      return ukupno + (cenaPoSatu * trajanjeUSatima);
-    }, 0);
-  };
+  useEffect(() => {
+    if (selectedSportskiObjekatId !== null && selectedTermini[selectedSportskiObjekatId]) {
+      dispatch(setTerminForObjekat({
+        sportskiObjekatId: selectedSportskiObjekatId,
+        terminId: selectedTermini[selectedSportskiObjekatId].map(t => t.terminId),
+        termin: selectedTermini[selectedSportskiObjekatId]
+      }));
+    }
+  }, [selectedTermini, selectedSportskiObjekatId]);
 
   if (!shoppingCartStore) {
     return <div>Prazna Korpa!</div>
@@ -196,7 +226,9 @@ function RezervacijaSummary() {
             <div className='d-flex justify-content-between align-items-center'>
               <h4 style={{ fontWeight: 300, marginRight: "5px"}}>{stavkaKorpe.sportskiObjekat?.naziv}</h4>
               <h4 style={{ marginLeft: "8px"}}>
-              Ukupna cena: {stavkaKorpe.cenaZaSportskiObjekat !== undefined ? stavkaKorpe.cenaZaSportskiObjekat.toFixed(2) : "Računa se..."} RSD
+                Ukupna cena: {stavkaKorpe.cenaZaSportskiObjekat !== undefined 
+                  ? stavkaKorpe.cenaZaSportskiObjekat.toFixed(2) 
+                  : stavkaKorpe.sportskiObjekat?.cenaPoSatu.toFixed(2) } RSD
               </h4>
             </div>
               <div className='flex-fill'>
