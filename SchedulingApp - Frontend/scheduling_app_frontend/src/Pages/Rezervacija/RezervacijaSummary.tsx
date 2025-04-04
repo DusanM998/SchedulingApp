@@ -27,14 +27,16 @@ function RezervacijaSummary() {
   //const sportskiObjekatIds = shoppingCartStore.map(item => item.sportskiObjekat?.sportskiObjekatId);
   //console.log("Id stavki: ", sportskiObjekatIds);
 
-  const { data: termini, isLoading, isError } = useGetTerminByIdQuery(selectedSportskiObjekatId);
+  const { data: termini, isLoading, isError, refetch } = useGetTerminByIdQuery(selectedSportskiObjekatId);
   //console.log("Termini: ", termini);
 
   const racunajCenuZaObjekat = (stavkaKorpe: stavkaKorpeModel, termini?: terminModel[]) => {
     if (!stavkaKorpe.sportskiObjekat) return 0;
   
     const sportskiObjekatId = stavkaKorpe.sportskiObjekat.sportskiObjekatId;
-    const terminiZaObjekat = selectedTermini[sportskiObjekatId] || [];
+    const terminiZaObjekat = selectedTermini[sportskiObjekatId]?.length
+      ? selectedTermini[sportskiObjekatId]
+      : stavkaKorpe.termini || [];
     const cenaPoSatu = stavkaKorpe.sportskiObjekat.cenaPoSatu ?? 0;
 
     if (terminiZaObjekat.length === 0) {
@@ -74,7 +76,11 @@ function RezervacijaSummary() {
       }, noviTermini);*/
       
       //Azuriranje cene odmah nakon promene termina
-      //dispatch(setTerminForObjekat({sportskiObjekatId, terminId: termin.terminId, termin}))
+      dispatch(setTerminForObjekat({
+        sportskiObjekatId,
+        terminId: noviTermini.map(t => t.terminId),
+        termin: noviTermini
+      }))
       console.log(`Odabran termin ${termin.terminId} za objekat ${sportskiObjekatId}`);
       //dispatch(azurirajCenu({ sportskiObjekatId, cenaZaSportskiObjekat: novaCena }));
 
@@ -167,6 +173,8 @@ function RezervacijaSummary() {
           dispatch(azurirajCenu({ sportskiObjekatId, cenaZaSportskiObjekat: novaCena }));
 
           dispatch(azurirajStatusTermina({ sportskiObjekatId }));
+
+          refetch(); //Osvezava termine
 
           toast.success("Termini uspešno ažurirani!", { position: "top-center", autoClose: 3000 });
         } else {

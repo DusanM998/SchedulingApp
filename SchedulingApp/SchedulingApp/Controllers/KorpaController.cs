@@ -173,6 +173,13 @@ namespace SchedulingApp.Controllers
                     return BadRequest(_response);
                 }
 
+                //Menja se status termina kada korisnik ukloni termin iz korpe
+                foreach(var termin in stavkaKorpe.OdabraniTermini)
+                {
+                    termin.Status = "Slobodan";
+                    _db.Termini.Update(termin);
+                }
+
                 stavkaKorpe.OdabraniTermini.Clear(); //Prekida se veza izmedju stavke i termina(ali se ne brise termin)
 
                 _db.StavkeKorpe.Remove(stavkaKorpe);
@@ -228,24 +235,54 @@ namespace SchedulingApp.Controllers
             }
 
             double ukupnaCena = 0;
+            DateTime? poslednjiZavrsniTermin = null;
+            List<DateTime> zauzetiTermini = new List<DateTime>(); //Lista zauzetih termina koju vec obracunavamo
 
-            foreach (var termin in odabraniTermini)
+            foreach (var termin in odabraniTermini.OrderBy(t => DateTime.Parse(t.VremePocetka)))
             {
+                DateTime vremePocetka = DateTime.Parse(termin.VremePocetka);
+                DateTime vremeZavrsetka = DateTime.Parse(termin.VremeZavrsetka);
+
                 if (termin.Status == "Slobodan")
                 {
                     termin.Status = "Zauzet";
                     _db.Termini.Update(termin);
                 }
 
-                DateTime vremePocetka = DateTime.Parse(termin.VremePocetka);
-                DateTime vremeZavrsetka = DateTime.Parse(termin.VremeZavrsetka);
+                //Provera da li se terminni preklapaju
+                bool terminPreklapa = false;
+                foreach(var zauzetTermin in zauzetiTermini)
+                {
+                    if(vremePocetka < zauzetTermin)
+                    {
+                        terminPreklapa = true;
+                        break;
+                    }
+                }
 
-                //double cenaPoSatu = sportskiObjekat.CenaPoSatu;
+                if(!terminPreklapa)
+                {
+                    //Ako se termin ne preklapa sa prethodnim, racunamo njegovu cenu
+                    double trajanjeTermina = (vremeZavrsetka - vremePocetka).TotalMinutes / 60.0;
+                    ukupnaCena += sportskiObjekat.CenaPoSatu * trajanjeTermina;
+                    zauzetiTermini.Add(vremeZavrsetka); //Dodajem zavrsni termin u listu zauzetih
+                }
+                else
+                {
+                    //Ako se preklapa racunamo samo dodato trajanje
+                    if(vremeZavrsetka > (DateTime)poslednjiZavrsniTermin)
+                    {
+                        double trajanjeTermina = (vremeZavrsetka - vremePocetka).TotalMinutes / 60.0;
+                        ukupnaCena += sportskiObjekat.CenaPoSatu * trajanjeTermina;
+                    }
+                }
 
-                double trajanjeTermina = (vremeZavrsetka - vremePocetka).TotalMinutes / 60.0;
-
-                ukupnaCena += sportskiObjekat.CenaPoSatu * trajanjeTermina;
+                //Azurira poslednji zavrsni termin
+                poslednjiZavrsniTermin = poslednjiZavrsniTermin == null ? vremeZavrsetka :
+                    (vremeZavrsetka > (DateTime)poslednjiZavrsniTermin ? vremeZavrsetka : (DateTime)poslednjiZavrsniTermin);
             }
+            //Racuna ukupnu cenu na osnovu ukupnog trajanja termina
+            //ukupnaCena = sportskiObjekat.CenaPoSatu * ukupnoTrajanje;
             _db.SaveChanges();
 
             //ako korisnik nema korpu, kreira se nova
@@ -294,10 +331,30 @@ namespace SchedulingApp.Controllers
                     {
                         stavkaKorpe.Kolicina += brojUcesnika;
                     }
-                    
-                    stavkaKorpe.OdabraniTermini = _db.Termini.Where(t => terminIds.Contains(t.TerminId)).ToList(); //Azurira termine
+
+                    //Preuzima postojece termine
+                    var postojeciTermini = stavkaKorpe.OdabraniTermini.Select(t => t.TerminId).ToList();
+
+                    //Pronalazi nove termine koje korisnik rezervise
+                    var noviTermini = odabraniTermini.Where(t => !postojeciTermini.Contains(t.TerminId)).ToList();
+
+                    //dodaje nove termine na postojece
+                    stavkaKorpe.OdabraniTermini.AddRange(noviTermini);
+
+                    //Azurira cenu samo za nove termine
+                    double dodatnaCena = 0;
+                    foreach(var termin in noviTermini)
+                    {
+                        DateTime vremePocetka = DateTime.Parse(termin.VremePocetka);
+                        DateTime vremeZavrsetka = DateTime.Parse(termin.VremeZavrsetka);
+                        double trajanjeTermina = (vremeZavrsetka - vremePocetka).TotalMinutes / 60.0;
+                        dodatnaCena += sportskiObjekat.CenaPoSatu * trajanjeTermina;
+                    }
+
+                    //stavkaKorpe.OdabraniTermini = _db.Termini.Where(t => terminIds.Contains(t.TerminId)).ToList(); //Azurira termine
+                    //stavkaKorpe.SportskiObjekat = sportskiObjekat;
+                    stavkaKorpe.CenaZaObjekat += dodatnaCena;
                     stavkaKorpe.SportskiObjekat = sportskiObjekat;
-                    stavkaKorpe.CenaZaObjekat = ukupnaCena;
                     _db.SaveChanges();
                 }
             }
