@@ -173,7 +173,7 @@ function RezervacijaSummary() {
           }));
 
           const novaCena = racunajCenuZaObjekat(stavkaKorpe, selectedTermini[sportskiObjekatId]);
-          dispatch(azurirajCenu({ sportskiObjekatId, cenaZaSportskiObjekat: novaCena }));
+          dispatch(azurirajCenu({ sportskiObjekatId, cenaZaObjekat: novaCena }));
 
           dispatch(azurirajStatusTermina({ sportskiObjekatId }));
 
@@ -203,8 +203,8 @@ function RezervacijaSummary() {
         const novaCena = racunajCenuZaObjekat(stavkaKorpe, selectedTermini[selectedSportskiObjekatId] || []);
         
         // Proveravamo da li se cena zaista promenila pre dispatch-a
-        if (novaCena !== stavkaKorpe.cenaZaSportskiObjekat) {
-          dispatch(azurirajCenu({ sportskiObjekatId: selectedSportskiObjekatId, cenaZaSportskiObjekat: novaCena }));
+        if (novaCena !== stavkaKorpe.cenaZaObjekat) {
+          dispatch(azurirajCenu({ sportskiObjekatId: selectedSportskiObjekatId, cenaZaObjekat: novaCena }));
         }
       }
     }
@@ -262,8 +262,8 @@ function RezervacijaSummary() {
             <div className='d-flex justify-content-between align-items-center'>
               <h4 style={{ fontWeight: 300, marginRight: "5px"}}>{stavkaKorpe.sportskiObjekat?.naziv}</h4>
               <h4 style={{ marginLeft: "8px"}}>
-                Ukupna cena: {stavkaKorpe.cenaZaSportskiObjekat !== undefined 
-                  ? stavkaKorpe.cenaZaSportskiObjekat.toFixed(2) 
+                Ukupna cena: {stavkaKorpe.cenaZaObjekat !== undefined 
+                  ? stavkaKorpe.cenaZaObjekat.toFixed(2) 
                   : stavkaKorpe.sportskiObjekat?.cenaPoSatu.toFixed(2) } RSD
               </h4>
             </div>

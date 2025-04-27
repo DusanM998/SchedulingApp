@@ -42,7 +42,7 @@ export const shoppingCartSlice = createSlice({
         azurirajCenu: (state, action) => {
             state.stavkaKorpe = state.stavkaKorpe?.map((stavka) => 
                 stavka.sportskiObjekat?.sportskiObjekatId === action.payload.sportskiObjekatId 
-                ? { ...stavka, cenaZaSportskiObjekat: action.payload.cenaZaSportskiObjekat }
+                ? { ...stavka, cenaZaObjekat: action.payload.cenaZaObjekat }
                 : stavka
             );
         },
