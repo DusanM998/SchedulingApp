@@ -149,6 +149,9 @@ function RezervacijaSummary() {
     const terminiIds = selectedTermini[sportskiObjekatId].map(t => Number(t.terminId));
     console.log("Tip podataka terminIds:", Array.isArray(terminiIds), typeof terminiIds[0]);
 
+    const izracunataCena = racunajCenuZaObjekat(stavkaKorpe, selectedTermini[sportskiObjekatId]);
+    console.log("Izračunata cena za objekat:", izracunataCena);
+
     azurirajKorpuSaTerminima({
       sportskiObjekatId,
       userId: userData.id,
@@ -220,6 +223,21 @@ function RezervacijaSummary() {
   if (!shoppingCartStore) {
     return <div>Prazna Korpa!</div>
   }
+
+  function isTerminExpired(termin: terminModel): boolean {
+    if (!termin.datumTermina || !termin.vremeZavrsetka) return false;
+
+    const [hours, minutes] = termin.vremeZavrsetka.split(':').map(Number);
+
+    const datumZavrsetka = new Date(termin.datumTermina);
+    datumZavrsetka.setHours(hours);
+    datumZavrsetka.setMinutes(minutes);
+    datumZavrsetka.setSeconds(0);
+    datumZavrsetka.setMilliseconds(0);
+
+    return datumZavrsetka < new Date();
+  }
+
 
   return (
     <div className='container p-4 m-2'>
@@ -298,23 +316,42 @@ function RezervacijaSummary() {
                   <div className="d-flex flex-wrap justify-content-center">
                     {termini.map((termin: terminModel) => {
                       const isSelected = selectedTermini[stavkaKorpe.sportskiObjekat!.sportskiObjekatId]?.some(t => t.terminId === termin.terminId);
+
+                      let isExpired = isTerminExpired(termin);
+
+
+                      let cardColor = "bg-success";
+                      let statusText = "Slobodan";
+                      let isClickable = true;
+
+                      if (termin.status === "Zauzet") {
+                        cardColor = "bg-danger";
+                        statusText = "Zauzet";
+                        isClickable = false;
+                      } else if (isExpired) {
+                        cardColor = "bg-warning";
+                        statusText = "Termin je istekao!";
+                        isClickable = false;
+                      }
+
                       return (
                         <div
                           key={termin.terminId}
-                          className={`termin-card m-2 p-3 rounded ${termin.status === "Zauzet" ? "bg-danger" : "bg-success"} 
+                          className={`termin-card m-2 p-3 rounded ${cardColor} 
                             ${isSelected ? "border border-dark" : ""}`}
-                          onClick={() => handleTerminSelection(stavkaKorpe.sportskiObjekat!.sportskiObjekatId, termin)}
+                          onClick={() => isClickable && handleTerminSelection(stavkaKorpe.sportskiObjekat!.sportskiObjekatId, termin)}
                           style={{
                             width: "250px",
-                            cursor: termin.status === "Slobodan" ? "pointer" : "not-allowed",
+                            cursor: isClickable ? "pointer" : "not-allowed",
                             color: "#fff",
                             transition: "all 0.3s ease-in-out",
                             transform: isSelected ? "scale(1.05)" : "scale(1)",
+                            opacity: isClickable ? 1 : 0.8
                           }}
                         >
                           <h6>Datum: {termin.datumTermina ? new Date(termin.datumTermina).toLocaleDateString("sr-RS") : "Nepoznat datum"}</h6>
                           <h6>Vreme: {termin.vremePocetka} - {termin.vremeZavrsetka}</h6>
-                          <p>Status: {termin.status === "Zauzet" ? "Zauzet" : "Slobodan"}</p>
+                          <p>Status: {statusText}</p>
                         </div>
                       );
                       })}

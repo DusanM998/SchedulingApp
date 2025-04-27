@@ -30,7 +30,7 @@ function SportskiObjekatDetails() {
 
       const response: apiResponse = await updateKorpa({
         sportskiObjekatId: sportskiObjekatId,
-        kolicina: 1,
+        brojUcesnika: 1,
         userId: userData.id
       });
 

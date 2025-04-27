@@ -67,9 +67,7 @@ function RezervacijaDetalji() {
   
 
   const ukupnoCena = racunajUkupnuCenu();
-  let ukuponoStavki = shoppingCartStore.reduce((sum, stavka) => sum + (stavka.kolicina ?? 0), 0);
-
-  
+  let ukuponoStavki = shoppingCartStore.length;
 
   useEffect(() => {
     setUserInput({

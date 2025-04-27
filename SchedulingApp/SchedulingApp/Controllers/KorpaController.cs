@@ -208,160 +208,126 @@ namespace SchedulingApp.Controllers
         [HttpPost("dodajIliAzurirajKorpuSaTerminima")]
         public async Task<ActionResult<ApiResponse>> DodajIliAzurirajKorpuSaTerminima(string userId, int sportskiObjekatId, int brojUcesnika, [FromBody] List<int> terminIds)
         {
-            Korpa korpa = _db.Korpe.Include(u => u.StavkaKorpe)
-                .ThenInclude(s => s.OdabraniTermini)
-                .FirstOrDefault(u => u.UserId == userId);
+            // Pronalazak postojeće korpe
+            var korpa = await _db.Korpe
+                                 .Include(k => k.StavkaKorpe)
+                                     .ThenInclude(sk => sk.OdabraniTermini)
+                                 .FirstOrDefaultAsync(k => k.UserId == userId);
 
-            SportskiObjekat sportskiObjekat = _db.SportskiObjekti.
-                FirstOrDefault(u => u.SportskiObjekatId == sportskiObjekatId);
-
+            // Provera postojanja objekta
+            var sportskiObjekat = await _db.SportskiObjekti.FirstOrDefaultAsync(o => o.SportskiObjekatId == sportskiObjekatId);
             if (sportskiObjekat == null)
             {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                return BadRequest(_response);
+                return BadRequest(new ApiResponse
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = new List<string> { "Sportski objekat ne postoji." }
+                });
             }
 
-            List<Termin> odabraniTermini = _db.Termini
+            // Pronalazak termina
+            var sviTermini = await _db.Termini
                 .Where(t => terminIds.Contains(t.TerminId) && t.SportskiObjekatId == sportskiObjekatId)
-                .ToList();
+                .ToListAsync();
 
-            if (odabraniTermini.Count != terminIds.Count)
+            if (sviTermini.Count != terminIds.Count)
             {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Neki odabrani termini ne postoje." };
-                return BadRequest(_response);
+                return BadRequest(new ApiResponse
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = new List<string> { "Neki termini ne postoje ili ne pripadaju ovom objektu." }
+                });
             }
 
-            double ukupnaCena = 0;
-            DateTime? poslednjiZavrsniTermin = null;
-            List<DateTime> zauzetiTermini = new List<DateTime>(); //Lista zauzetih termina koju vec obracunavamo
-
-            foreach (var termin in odabraniTermini.OrderBy(t => DateTime.Parse(t.VremePocetka)))
+            // Obeležavanje termina kao zauzeti
+            foreach (var termin in sviTermini)
             {
-                DateTime vremePocetka = DateTime.Parse(termin.VremePocetka);
-                DateTime vremeZavrsetka = DateTime.Parse(termin.VremeZavrsetka);
-
                 if (termin.Status == "Slobodan")
                 {
                     termin.Status = "Zauzet";
-                    _db.Termini.Update(termin);
                 }
-
-                //Provera da li se terminni preklapaju
-                bool terminPreklapa = false;
-                foreach(var zauzetTermin in zauzetiTermini)
-                {
-                    if(vremePocetka < zauzetTermin)
-                    {
-                        terminPreklapa = true;
-                        break;
-                    }
-                }
-
-                if(!terminPreklapa)
-                {
-                    //Ako se termin ne preklapa sa prethodnim, racunamo njegovu cenu
-                    double trajanjeTermina = (vremeZavrsetka - vremePocetka).TotalMinutes / 60.0;
-                    ukupnaCena += sportskiObjekat.CenaPoSatu * trajanjeTermina;
-                    zauzetiTermini.Add(vremeZavrsetka); //Dodajem zavrsni termin u listu zauzetih
-                }
-                else
-                {
-                    //Ako se preklapa racunamo samo dodato trajanje
-                    if(vremeZavrsetka > (DateTime)poslednjiZavrsniTermin)
-                    {
-                        double trajanjeTermina = (vremeZavrsetka - vremePocetka).TotalMinutes / 60.0;
-                        ukupnaCena += sportskiObjekat.CenaPoSatu * trajanjeTermina;
-                    }
-                }
-
-                //Azurira poslednji zavrsni termin
-                poslednjiZavrsniTermin = poslednjiZavrsniTermin == null ? vremeZavrsetka :
-                    (vremeZavrsetka > (DateTime)poslednjiZavrsniTermin ? vremeZavrsetka : (DateTime)poslednjiZavrsniTermin);
             }
-            //Racuna ukupnu cenu na osnovu ukupnog trajanja termina
-            //ukupnaCena = sportskiObjekat.CenaPoSatu * ukupnoTrajanje;
-            _db.SaveChanges();
+            _db.Termini.UpdateRange(sviTermini);
+            await _db.SaveChangesAsync();
 
-            //ako korisnik nema korpu, kreira se nova
-            if (korpa == null && brojUcesnika > 0)
+            // Ako korpa ne postoji - kreiramo novu
+            if (korpa == null)
             {
-                Korpa novaKorpa = new() { UserId = userId };
-                _db.Korpe.Add(novaKorpa);
-                _db.SaveChanges();
+                korpa = new Korpa { UserId = userId };
+                _db.Korpe.Add(korpa);
+                await _db.SaveChangesAsync();
+            }
 
-                //Dodaje se nova stavka u korpu
-                StavkaKorpe novaStavkaKorpe = new()
+            // Pronalazimo stavku za konkretan objekat
+            var stavka = korpa.StavkaKorpe.FirstOrDefault(s => s.SportskiObjekatId == sportskiObjekatId);
+
+            if (stavka == null)
+            {
+                // Ako stavka ne postoji, pravimo je celu sa sve cenom
+                double ukupnoSati = IzracunajUkupnoVremeBezPreklapanja(sviTermini);
+                double cena = sportskiObjekat.CenaPoSatu * ukupnoSati;
+
+                stavka = new StavkaKorpe
                 {
                     SportskiObjekatId = sportskiObjekatId,
+                    KorpaId = korpa.Id,
                     Kolicina = brojUcesnika,
-                    KorpaId = novaKorpa.Id,
+                    CenaZaObjekat = cena,
                     SportskiObjekat = sportskiObjekat,
-                    OdabraniTermini = odabraniTermini,
-                    CenaZaObjekat = ukupnaCena
+                    OdabraniTermini = sviTermini
                 };
-                _db.StavkeKorpe.Add(novaStavkaKorpe);
-                _db.SaveChanges();
+
+                _db.StavkeKorpe.Add(stavka);
             }
             else
             {
-                //Ako korpa vec postoji, proverava se da li je vec dodata stavka za dati sportski objekat
-                StavkaKorpe stavkaKorpe = korpa.StavkaKorpe.FirstOrDefault(u => u.SportskiObjekatId == sportskiObjekatId);
+                // Filtriramo samo nove termine koje još nema u stavci
+                var postojeciIds = stavka.OdabraniTermini.Select(t => t.TerminId).ToHashSet();
+                var noviTermini = sviTermini.Where(t => !postojeciIds.Contains(t.TerminId)).ToList();
 
-                if (stavkaKorpe == null)
+                if (noviTermini.Any())
                 {
-                    StavkaKorpe novaStavka = new()
-                    {
-                        SportskiObjekatId = sportskiObjekatId,
-                        Kolicina = brojUcesnika,
-                        KorpaId = korpa.Id,
-                        SportskiObjekat = sportskiObjekat,
-                        OdabraniTermini = _db.Termini.Where(t => terminIds.Contains(t.TerminId)).ToList(),
-                        CenaZaObjekat = ukupnaCena,
-                    };
-                    _db.StavkeKorpe.Add(novaStavka);
-                    _db.SaveChanges();
+                    stavka.OdabraniTermini.AddRange(noviTermini);
                 }
-                else
+
+                // Ovde **uvek** povlačimo sve termine ponovo iz baze da bi imali sigurne podatke
+                var sviTerminiZaStavku = await _db.Termini
+                    .Where(t => stavka.OdabraniTermini.Select(ot => ot.TerminId).Contains(t.TerminId))
+                    .ToListAsync();
+
+                double ukupnoSati = IzracunajUkupnoVremeBezPreklapanja(sviTerminiZaStavku);
+                stavka.CenaZaObjekat = sportskiObjekat.CenaPoSatu * ukupnoSati;
+
+                // Ažuriraj broj učesnika ako je veći
+                if (brojUcesnika > stavka.Kolicina)
                 {
-                    //Ako stavka postoji, azuriramo broj ucesnika, samo ako je novi broj veci
-                    if(brojUcesnika > stavkaKorpe.Kolicina)
-                    {
-                        stavkaKorpe.Kolicina += brojUcesnika;
-                    }
-
-                    //Preuzima postojece termine
-                    var postojeciTermini = stavkaKorpe.OdabraniTermini.Select(t => t.TerminId).ToList();
-
-                    //Pronalazi nove termine koje korisnik rezervise
-                    var noviTermini = odabraniTermini.Where(t => !postojeciTermini.Contains(t.TerminId)).ToList();
-
-                    //dodaje nove termine na postojece
-                    stavkaKorpe.OdabraniTermini.AddRange(noviTermini);
-
-                    //Azurira cenu samo za nove termine
-                    double dodatnaCena = 0;
-                    foreach(var termin in noviTermini)
-                    {
-                        DateTime vremePocetka = DateTime.Parse(termin.VremePocetka);
-                        DateTime vremeZavrsetka = DateTime.Parse(termin.VremeZavrsetka);
-                        double trajanjeTermina = (vremeZavrsetka - vremePocetka).TotalMinutes / 60.0;
-                        dodatnaCena += sportskiObjekat.CenaPoSatu * trajanjeTermina;
-                    }
-
-                    //stavkaKorpe.OdabraniTermini = _db.Termini.Where(t => terminIds.Contains(t.TerminId)).ToList(); //Azurira termine
-                    //stavkaKorpe.SportskiObjekat = sportskiObjekat;
-                    stavkaKorpe.CenaZaObjekat += dodatnaCena;
-                    stavkaKorpe.SportskiObjekat = sportskiObjekat;
-                    _db.SaveChanges();
+                    stavka.Kolicina = brojUcesnika;
                 }
+
+                _db.StavkeKorpe.Update(stavka);
             }
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.IsSuccess = true;
-            return Ok(_response);
+
+            await _db.SaveChangesAsync();
+
+            return Ok(new ApiResponse { StatusCode = HttpStatusCode.OK, IsSuccess = true });
         }
 
+        // Funkcija za računanje ukupnog vremena bez preklapanja, uz poštovanje različitih datuma
+        private double IzracunajUkupnoVremeBezPreklapanja(List<Termin> termini)
+        {
+            double ukupnoSati = 0;
+
+            foreach (var termin in termini)
+            {
+                var pocetak = DateTime.Parse(termin.VremePocetka);
+                var kraj = DateTime.Parse(termin.VremeZavrsetka);
+
+                ukupnoSati += (kraj - pocetak).TotalHours;
+            }
+
+            return ukupnoSati;
+        }
     }
 }

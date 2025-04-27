@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SchedulingApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+43d9169375096ed31ebd410a0bb5d4d71786c236")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b388c45a7067003f53bd21b2ccb3c83e982572fc")]
 [assembly: System.Reflection.AssemblyProductAttribute("SchedulingApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SchedulingApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
