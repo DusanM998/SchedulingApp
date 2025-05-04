@@ -4,7 +4,7 @@ import stavkaKorpeModel from "./stavkaKorpeModel";
 export interface rezervacijaRezimeProps {
     data: {
         rezervacijaHeaderId?: number;
-        stavkeKorpe?: stavkaKorpeModel[];
+        stavkaKorpe?: stavkaKorpeModel[];
         ukupnoCena?: number;
         userId?: string;
         stripePaymentIntentId?: string;

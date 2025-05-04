@@ -35,7 +35,7 @@ function RezervacijaSummary() {
   
     const sportskiObjekatId = stavkaKorpe.sportskiObjekat.sportskiObjekatId;
     const terminiZaObjekat = [
-      ...(stavkaKorpe.termini || []),
+      ...(stavkaKorpe.odabraniTermini || []),
       ...(selectedTermini[sportskiObjekatId] || [])
     ].filter((termin, index, self) => 
       index === self.findIndex(t => t.terminId === termin.terminId)
@@ -89,7 +89,7 @@ function RezervacijaSummary() {
       if (stavka) {
         const novaCena = racunajCenuZaObjekat({
           ...stavka,
-          termini: noviTermini
+          odabraniTermini: noviTermini
         });
 
         //Azuriranje cene odmah nakon promene termina
@@ -219,7 +219,7 @@ function RezervacijaSummary() {
   
       if (stavkaKorpe) {
         const sviTermini = [
-    ...(stavkaKorpe.termini || []),
+    ...(stavkaKorpe.odabraniTermini || []),
     ...(selectedTermini[selectedSportskiObjekatId] || [])
   ];
 
@@ -229,7 +229,7 @@ function RezervacijaSummary() {
   );
 
   const novaCena = racunajCenuZaObjekat(
-    { ...stavkaKorpe, termini: jedinstveniTermini }
+    { ...stavkaKorpe, odabraniTermini: jedinstveniTermini }
   );
 
   if (novaCena !== stavkaKorpe.cenaZaObjekat) {

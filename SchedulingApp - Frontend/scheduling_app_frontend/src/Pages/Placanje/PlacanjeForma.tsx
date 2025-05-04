@@ -15,11 +15,17 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
     const [isProcessing, setIsProcessing] = useState(false);
     const location = useLocation();
     const ukupnoCena = location.state?.ukupnoCena || 0;
+    const [paymentMethod, setPaymentMethod] = useState<'kartica' | 'gotovina'>('gotovina');
 
     const [kreirajRezervaciju] = useKreirajRezervacijuMutation();
 
     const potvrdiRezervaciju = async () => {
         setIsProcessing(true);
+
+        if (paymentMethod === 'gotovina') {
+            potvrdiRezervaciju();
+            return;
+        }
 
         let ukupnoCena = 0;
         let kolicina = 0;
@@ -113,22 +119,64 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
 
   return (
     <form onSubmit={handleSubmit}>
-        <PaymentElement />
-        <button 
-            className='btn mt-5 w-100' 
-            style={{backgroundColor:"#51285f", color:"white"}}
-            disabled={!stripe || isProcessing}
+        <hr />
+        <div className="mb-4">
+            <div className="d-flex flex-column gap-3">
+            <label
+                className={`border rounded p-3 d-flex align-items-center justify-content-between cursor-pointer 
+                ${paymentMethod === 'kartica' ? 'border-primary bg-light' : 'border-secondary'}`}
+                style={{ minHeight: '60px' }}
+            >
+                <div className="d-flex align-items-center">
+                <input
+                    type="radio"
+                    className="form-check-input me-3"
+                    checked={paymentMethod === 'kartica'}
+                    onChange={() => setPaymentMethod('kartica')}
+                    style={{ width: "20px", height: "20px" }}
+                />
+                <span className="fw-bold"><i className="bi bi-credit-card" />     Kartica - Platite Vaš termin online</span>
+                </div>
+            </label>
+
+            <label
+                className={`border rounded p-3 d-flex align-items-center justify-content-between cursor-pointer 
+                ${paymentMethod === 'gotovina' ? 'border-success bg-light' : 'border-secondary'}`}
+                style={{ minHeight: '60px' }}
+            >
+                <div className="d-flex align-items-center">
+                <input
+                    type="radio"
+                    className="form-check-input me-3"
+                    checked={paymentMethod === 'gotovina'}
+                    onChange={() => setPaymentMethod('gotovina')}
+                    style={{ width: "20px", height: "20px" }}
+                />
+                <span className="fw-bold"><i className="bi bi-cash-coin" />   Gotovina</span>
+                </div>
+            </label>
+            </div>
+        </div>
+
+        {paymentMethod === 'kartica' && (
+            <div className="mb-3">
+            <PaymentElement />
+            </div>
+        )}
+
+        <button
+            className="btn w-100"
+            style={{
+            backgroundColor: paymentMethod === 'gotovina' ? "#4da172" : "#51285f",
+            color: "white",
+            fontWeight: "bold",
+            fontSize: "18px",
+            padding: "12px",
+            }}
+            type="submit"
+            disabled={isProcessing || (paymentMethod === 'kartica' && (!stripe || !elements))}
         >
-            <span id='button-text'> {isProcessing ? "Obrada..." : "Potvrdi"}</span>
-        </button>
-        <button 
-            className='btn mt-5 w-100' 
-            style={{backgroundColor:"#ffeed3", color:"#51285f"}}
-            type="button"
-            onClick={potvrdiRezervaciju}
-            disabled={isProcessing}
-        >
-            <span id='button-text'> {isProcessing ? "Obrada..." : "Plaćanje pouzećem"}</span>
+            {isProcessing ? "Obrada..." : (paymentMethod === 'gotovina' ? "💵 Plaćanje Gotovinom" : "💳 Plaćanje Karticom")}
         </button>
     </form>
   )

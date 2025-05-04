@@ -44,6 +44,8 @@ function RezervacijaRezime({ data, userInput }: rezervacijaRezimeProps) {
     setIsLoading(false);
   }
 
+  console.log("userInput", userInput);
+
   return (
     <div>
       {loading && <MainLoader />}
@@ -61,15 +63,33 @@ function RezervacijaRezime({ data, userInput }: rezervacijaRezimeProps) {
           <div className='border py-3 px-2'>
             <h4 style={{ color: "#51285f" }}>Rezervacije Termina i Objekata</h4>
             <div className='p-3'>
-              {data.stavkeKorpe?.map((stavkeKorpe: stavkaKorpeModel, index: number) => {
-                return (
-                  <div className="d-flex" key={index}>
-                    <div className="d-flex w-100 justify-content-between"> 
-                      <p>{ stavkeKorpe.sportskiObjekat?.naziv}</p>
-                    </div>
-                  </div>
-                )
-              })}
+            {data.stavkaKorpe?.map((stavka: stavkaKorpeModel, index: number) => {
+    const objekat = stavka.sportskiObjekat;
+
+    return (
+      <div className="border rounded mb-4 p-3 shadow-sm" key={index}>
+        {objekat && (
+          <div className="mb-3">
+            <h5 style={{ color: "#51285f" }}>{index + 1}. {objekat.naziv}</h5>
+            <p className="mb-1"><strong>Lokacija:</strong> {objekat.lokacija}</p>
+            <p className="mb-1"><strong>Opis:</strong> {objekat.opis}</p>
+            <p className="mb-1"><strong>Vrsta sporta:</strong> {objekat.vrstaSporta}</p>
+            
+          </div>
+        )}
+
+        <div>
+          <h6 style={{ color: "#51285f" }}>Odabrani termini:</h6>
+          {stavka.odabraniTermini?.map((termin, idx) => (
+            <div key={idx} className="mb-2">
+              <p className='mb-0'><strong>Datum:</strong> {termin.datumTermina ? new Date(termin.datumTermina).toLocaleDateString("sr-RS") : "Nepoznat datum"}</p>
+              <p className="mb-0"><strong>Vreme:</strong> {termin.vremePocetka} - {termin.vremeZavrsetka}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  })}
             </div>
           </div>
          </div>

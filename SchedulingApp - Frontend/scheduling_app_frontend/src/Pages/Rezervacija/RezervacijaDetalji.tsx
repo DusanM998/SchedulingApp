@@ -25,7 +25,7 @@ function RezervacijaDetalji() {
   const initialUserData = {
     name: userData.name,
     email: userData.email,
-    brojTelefona: userData.phoneNumber,
+    phoneNumber: userData.phoneNumber,
   };
 
   const [userInput, setUserInput] = useState(initialUserData);
@@ -61,7 +61,7 @@ function RezervacijaDetalji() {
     setUserInput({
       name: userData.name,
       email: userData.email,
-      brojTelefona: userData.phoneNumber,
+      phoneNumber: userData.phoneNumber,
     });
   }, [userData]);
 
@@ -112,7 +112,7 @@ function RezervacijaDetalji() {
             inputProps={{
               name:"phoneNumber"
             }}
-            value={userInput.brojTelefona}
+            value={userInput.phoneNumber}
             onChange={handleUserInput}
           />
         </div>
