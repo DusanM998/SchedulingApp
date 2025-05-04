@@ -9,5 +9,6 @@ namespace SchedulingApp.Models.Dto
         public string Password { get; set; }
         public string Role { get; set; }
         public IFormFile File { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

@@ -3,5 +3,6 @@ export default interface userModel {
     id: string,
     email: string,
     role?: string,
-    image: string
+    image: string,
+    phoneNumber?: string
 }

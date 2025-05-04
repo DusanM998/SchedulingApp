@@ -8,11 +8,14 @@ import { inputHelper } from '../../Helper';
 import { MainLoader } from '../../Components/Page/Common';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const userDetailsData = {
   userName: "",
   name: "",
   password: "",
+  phoneNumber: ""
 };
 
 function UserPage() {
@@ -39,7 +42,8 @@ function UserPage() {
       const tempData = {
         userName: data.result.userName,
         name: data.result.name,
-        password: data.result.password
+        password: data.result.password,
+        phoneNumber: data.result.phoneNumber
       };
       setUserDetailsInput(tempData);
       setImageToBeDisplayed(data.result.image);
@@ -146,6 +150,13 @@ function UserPage() {
                 </InputAdornment>
               ),
             }}
+          />
+        </div>
+        <div className='form-group mt-3'>
+          Broj Telefona
+          <PhoneInput
+            value={userDetailsInput.phoneNumber}
+            disabled = {true}
           />
         </div>
         <div className='form-group mt-3'>

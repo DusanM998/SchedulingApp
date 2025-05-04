@@ -6,7 +6,8 @@ export const emptyUserState: userModel = {
     id: "",
     email: "",
     role: "",
-    image: ""
+    image: "",
+    phoneNumber: ""
 };
 
 export const userAuthSlice = createSlice({
@@ -19,6 +20,7 @@ export const userAuthSlice = createSlice({
             state.email = action.payload.email;
             state.role = action.payload.role;
             state.image = action.payload.image;
+            state.phoneNumber = action.payload.phoneNumber;
         },
         logoutUser: (state) => {
             return emptyUserState;

@@ -5,11 +5,14 @@ import { inputHelper, toastNotify } from '../../Helper';
 import { MainLoader } from '../../Components/Page/Common';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Edit, Visibility, VisibilityOff } from '@mui/icons-material';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css'
 
 const userDetailsData = {
   userName: "",
   name: "",
   password: "",
+  phoneNumber: ""
 }; 
 
 function UserDetails() {
@@ -32,7 +35,8 @@ function UserDetails() {
       const tempData = {
         userName: data.result.userName,
         name: data.result.name,
-        password: data.result.password
+        password: data.result.password,
+        phoneNumber: data.result.phoneNumber
       };
       setUserDetailsInput(tempData);
       setImageToBeDisplayed(data.result.image);
@@ -41,14 +45,21 @@ function UserDetails() {
 
   //console.log(data);
 
-  const handleUserInput = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
-    const tempData = inputHelper(e, userDetailsInput);
-    setUserDetailsInput(tempData);
-  };
+  const handleInputChange = (
+          e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string
+      ) => {
+          if (typeof e === "string") {
+              // Ako je string, znamo da je broj telefona
+              setUserDetailsInput(prev => ({
+                  ...prev,
+                  phoneNumber: e
+              }));
+          } else {
+              // Inače radi kao i do sada za obične inpute
+              const tempData = inputHelper(e, userDetailsInput);
+              setUserDetailsInput(tempData);
+          }
+      };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
@@ -92,7 +103,8 @@ function UserDetails() {
     formData.append("UserName", userDetailsInput.userName ?? "");
     formData.append("Name", userDetailsInput.name ?? "");
     formData.append("Password", userDetailsInput.password ?? "");
-    if(imageToBeDisplayed) formData.append("File", imageToBeStore);
+    formData.append("PhoneNumber", userDetailsInput.phoneNumber ?? "");
+    if(imageToBeStore) formData.append("File", imageToBeStore);
 
     let response;
 
@@ -161,21 +173,7 @@ function UserDetails() {
             <Edit />
           </IconButton>
         </div>
-        <input 
-            type='file' 
-            id='imageUpload' 
-            style={{ display: 'none' }} 
-            accept='image/jpeg, image/png, image/jpg' 
-            onChange={handleFileChange} 
-          />
-          <IconButton 
-            component='label' 
-            htmlFor='imageUpload' 
-            className='position-absolute' 
-            style={{ bottom: 0, right: -10 }}
-          >
-            <Edit />
-          </IconButton>
+        
         <div className='mt-5'>
           <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
             <label>Unesite Novo Korisničko Ime</label>
@@ -186,7 +184,7 @@ function UserDetails() {
               required
               name = "userName"
               value = {userDetailsInput.userName}
-              onChange={handleUserInput}
+              onChange={handleInputChange}
             />
           </div>
           <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
@@ -198,7 +196,7 @@ function UserDetails() {
               required
               name = "name"
               value={userDetailsInput.name}
-              onChange={handleUserInput}
+              onChange={handleInputChange}
             />
           </div>
           <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
@@ -210,7 +208,7 @@ function UserDetails() {
                 required
                 name="password"
                 value={userDetailsInput.password}
-                onChange={handleUserInput}
+                onChange={handleInputChange}
                 fullWidth
                 InputProps={{
                   endAdornment: (
@@ -227,7 +225,17 @@ function UserDetails() {
                 }}
               />
           </div>
-
+          <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+              Broj Telefona
+              <PhoneInput
+                inputProps={{
+                  name:"phoneNumber"
+                }}
+                value={userDetailsInput.phoneNumber}
+                onChange={handleInputChange}
+                
+              />
+          </div>
           <div className='mt-5'>
             <button
               type='submit'

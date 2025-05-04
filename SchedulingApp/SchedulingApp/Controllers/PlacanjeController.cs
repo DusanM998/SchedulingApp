@@ -24,22 +24,17 @@ namespace SchedulingApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> OmoguciPlacanje(string userId, double ukupnaCena)
+        public async Task<ActionResult<ApiResponse>> OmoguciPlacanje(string userId)
         {
-            if (ukupnaCena <= 0)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Ukupna cena mora biti veća od 0.");
-                return BadRequest(_response);
-            }
-
             Korpa korpa = _db.Korpe
                 .Include(u => u.StavkaKorpe)
-                .ThenInclude(u => u.SportskiObjekat)
-                .FirstOrDefault(u => u.UserId == userId);
+            .ThenInclude(sk => sk.SportskiObjekat)
+                .Include(u => u.StavkaKorpe)
+            .ThenInclude(sk => sk.OdabraniTermini)
+            .FirstOrDefault(u => u.UserId == userId);
 
-            if(korpa == null || korpa.StavkaKorpe == null || korpa.StavkaKorpe.Count() == 0)
+
+            if (korpa == null || korpa.StavkaKorpe == null || korpa.StavkaKorpe.Count() == 0)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
@@ -58,7 +53,7 @@ namespace SchedulingApp.Controllers
             }
 
             StripeConfiguration.ApiKey = stripeApiKey;
-            korpa.UkupnoZaPlacanje = ukupnaCena;
+            korpa.UkupnoZaPlacanje = korpa.StavkaKorpe.Sum(u => u.CenaZaObjekat);
 
             try
             {

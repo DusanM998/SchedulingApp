@@ -59,41 +59,6 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
         setIsProcessing(false);
     }
 
-    function racunajUkupnuCenu() {
-        return data.stavkaKorpe?.reduce((acc, stavka) => {
-            if (!stavka.sportskiObjekat || !stavka.sportskiObjekat.selectedTermin) {
-                return acc;
-            }
-
-            const termin = stavka.sportskiObjekat.selectedTermin;
-
-            if (!termin.vremePocetka || !termin.vremeZavrsetka || !termin.datumTermina) {
-                return acc;
-            }
-
-            // Parsiranje vremena početka i završetka
-            const [startHours, startMinutes] = termin.vremePocetka.split(":").map(Number);
-            const [endHours, endMinutes] = termin.vremeZavrsetka.split(":").map(Number);
-
-            const datum = new Date(termin.datumTermina);
-            const startTime = new Date(datum);
-            startTime.setHours(startHours, startMinutes, 0);
-
-            const endTime = new Date(datum);
-            endTime.setHours(endHours, endMinutes, 0);
-
-            if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-                return acc;
-            }
-
-            // Izračunavanje trajanja termina u satima
-            const durationInHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
-            const cenaPoSatu = stavka.sportskiObjekat.cenaPoSatu;
-
-            return acc + (cenaPoSatu * durationInHours);
-        }, 0);
-    }
-
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         // We don't want to let default form submission happen here,
         // which would refresh the page.
@@ -107,32 +72,7 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
 
         setIsProcessing(true);
 
-        // ✅ Validacija pre slanja rezervacije
-        if (ukupnoCena <= 0) {
-            toastNotify("Greška: Ukupna cena nije ispravna.", "error");
-            setIsProcessing(false);
-            return;
-        }
-
-        // ✅ Kreiranje rezervacija detalja
-        const rezervacijaDetaljiDTO = data.stavkaKorpe?.map((stavka) => {
-            if (!stavka.sportskiObjekat?.selectedTermin) {
-                toastNotify(`Molimo odaberite termin za ${stavka.sportskiObjekat?.naziv}`, "error");
-                return null;
-            }
-
-            return {
-                TerminId: stavka.sportskiObjekat.selectedTermin.terminId,
-                Cena: racunajUkupnuCenu(),
-                Kvantitet: stavka.kolicina,
-            };
-        }).filter(Boolean); // ✅ Uklanja `null` vrednosti ako korisnik nije odabrao termin
-
-        // ✅ Ako postoje nevalidne stavke, zaustavi izvršenje
-        if (!rezervacijaDetaljiDTO || rezervacijaDetaljiDTO.length === 0) {
-            setIsProcessing(false);
-            return;
-        }
+        const rezervacijaDetaljiDTO: any = [];
 
         const result = await stripe.confirmPayment({
             elements,
@@ -146,8 +86,9 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
             toastNotify("Došlo je do greške!", "error");
             setIsProcessing(false);
         } else {
-            // ✅ Slanje podataka ka backendu
+            //Slanje podataka ka backendu
             const response: apiResponse = await kreirajRezervaciju({
+                
                 imeKorisnika: userInput.name,
                 brojKorisnika: userInput.phoneNumber,
                 emailKorisnika: userInput.email,
@@ -175,14 +116,14 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
         <PaymentElement />
         <button 
             className='btn mt-5 w-100' 
-            style={{backgroundColor:"#8d3d5b", color:"white"}}
+            style={{backgroundColor:"#51285f", color:"white"}}
             disabled={!stripe || isProcessing}
         >
             <span id='button-text'> {isProcessing ? "Obrada..." : "Potvrdi"}</span>
         </button>
         <button 
             className='btn mt-5 w-100' 
-            style={{backgroundColor:"#ffeed3", color:"#8d3d5b"}}
+            style={{backgroundColor:"#ffeed3", color:"#51285f"}}
             type="button"
             onClick={potvrdiRezervaciju}
             disabled={isProcessing}

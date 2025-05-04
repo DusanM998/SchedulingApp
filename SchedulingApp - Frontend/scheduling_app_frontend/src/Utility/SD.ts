@@ -9,8 +9,11 @@ export enum SD_SortTypes {
 }
 
 export enum SD_Status {
-    Cekanje = "Čekanje",
-    Potvrdjena = "Potvrđena"
+    Cekanje = "Na Čekanju",
+    Potvrdjena = "Potvrđena",
+    U_Toku = "U Toku",
+    Otkazana = "Otkazana",
+    Zavrsena = "Završena"
 }
 
 export enum SD_Status_Termina {

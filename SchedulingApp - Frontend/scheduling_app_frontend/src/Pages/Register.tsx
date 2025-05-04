@@ -7,12 +7,15 @@ import { MainLoader } from '../Components/Page/Common';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { SD_Roles } from '../Utility/SD';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css'
 
 const userInputData = {
     userName: "",
     password: "",
     role: "",
     name: "",
+    phoneNumber: ""
 };
 
 function Register() {
@@ -27,11 +30,21 @@ function Register() {
     const navigate = useNavigate();
 
     const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string
     ) => {
-        const tempData = inputHelper(e, userInputs);
-        setUserInputs(tempData);
+        if (typeof e === "string") {
+            // Ako je string, znamo da je broj telefona
+            setUserInputs(prev => ({
+                ...prev,
+                phoneNumber: e
+            }));
+        } else {
+            // Inače radi kao i do sada za obične inpute
+            const tempData = inputHelper(e, userInputs);
+            setUserInputs(tempData);
+        }
     };
+    
 
     const handleSelectChange = (
         e: React.ChangeEvent<HTMLSelectElement>
@@ -56,6 +69,7 @@ function Register() {
         formData.append("Password", userInputs.password) ;
         formData.append("Role", userInputs.role);
         formData.append("Name", userInputs.name);
+        formData.append("PhoneNumber", userInputs.phoneNumber)
         if(imageToBeDisplayed) formData.append("File", imageToBeStore);
 
         console.log(Array.from(formData.entries()));
@@ -171,6 +185,13 @@ function Register() {
                         </InputAdornment>
                         ),
                 }}
+                />
+            </div>
+            <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+                <PhoneInput 
+                    country={'us'}
+                    value={userInputs.phoneNumber}
+                    onChange={handleInputChange}
                 />
             </div>
             <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">

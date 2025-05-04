@@ -16,6 +16,7 @@ namespace SchedulingApp.Models
         public string ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId")]
         public ApplicationUser User { get; set; }
+        public double UkupnoCena { get; set; }
         public string Status { get; set; }
         public DateTime DatumRezervacije { get; set; }
         public int UkupnoRezervacija { get; set; }

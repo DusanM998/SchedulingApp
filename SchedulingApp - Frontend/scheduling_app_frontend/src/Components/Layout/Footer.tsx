@@ -1,8 +1,24 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from "../../Assets/Images/logo.png"
+import { toast } from 'react-toastify';
 
 function Footer() {
+
+  const handleReservationClick = () => {
+      const sportskiObjektiSection = document.getElementById("containerObjekti");
+      if (sportskiObjektiSection) {
+        sportskiObjektiSection.scrollIntoView({ behavior: "smooth" });
+      }
+  
+      // Prikazivanje toast notifikacije
+      toast.info("Molimo Vas da prvo odaberete sportski objekat.", {
+        position: "top-center",
+        autoClose: 3000, // Automatsko zatvaranje nakon 3 sekunde
+      });
+  };
+  
+  
   return (
     <footer className="bg-dark text-white py-5 px-4">
       <div className="container">
@@ -15,7 +31,7 @@ function Footer() {
             <p className="text-secondary">
               Proveri dostupnost i rezerviši termin u sportskom objektu.
             </p>
-            <button className="btn btn-light mt-3">Rezerviši Termin</button>
+            <button className="btn btn-light mt-3" onClick={handleReservationClick}>Rezerviši Termin</button>
           </div>
           
           <div className="col-md-4 d-flex justify-content-between">

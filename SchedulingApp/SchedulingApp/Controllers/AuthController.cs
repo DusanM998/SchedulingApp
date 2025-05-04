@@ -64,7 +64,8 @@ namespace SchedulingApp.Controllers
                 Email = register.UserName,
                 NormalizedEmail = register.UserName.ToUpper(),
                 Name = register.Name,
-                Image = imageUrl
+                Image = imageUrl,
+                PhoneNumber = register.PhoneNumber
             };
 
             try
@@ -238,6 +239,7 @@ namespace SchedulingApp.Controllers
                     {
                         _response.StatusCode = HttpStatusCode.NotFound;
                         _response.IsSuccess = false;
+                        _response.ErrorMessages.Add("Korisnik nije pronadjen!");
                         return NotFound(_response);
                     }
 
@@ -246,27 +248,33 @@ namespace SchedulingApp.Controllers
                     user.Email = userDetailsUpdateDTO.UserName;
                     user.NormalizedEmail = userDetailsUpdateDTO.UserName.ToUpper();
                     user.NormalizedUserName = userDetailsUpdateDTO.UserName.ToUpper();
-                    var passwordHasher = new PasswordHasher<ApplicationUser>();
-                    user.PasswordHash = passwordHasher.HashPassword(user, userDetailsUpdateDTO.Password);
+                    user.PhoneNumber = userDetailsUpdateDTO.PhoneNumber;
 
-                    if (!string.IsNullOrEmpty(user.Image))
+                    //Azuriranje lozinke samo ako je poslata nova
+                    if(!string.IsNullOrWhiteSpace(userDetailsUpdateDTO.Password))
                     {
-                        try
-                        {
-                            await _cloudinaryService.DeleteImageAsync(user.Image);
-                        }
-                        catch (Exception ex)
-                        {
-                            _response.StatusCode = HttpStatusCode.InternalServerError;
-                            _response.IsSuccess = false;
-                            _response.ErrorMessages.Add($"Greška prilikom brisanja stare slike: {ex.Message}");
-                            return StatusCode(500, _response);
-                        }
+                        var passwordHasher = new PasswordHasher<ApplicationUser>();
+                        user.PasswordHash = passwordHasher.HashPassword(user, userDetailsUpdateDTO.Password);
                     }
-
                     //Upload nove slike ako postoji
                     if (userDetailsUpdateDTO.File != null && userDetailsUpdateDTO.File.Length > 0)
                     {
+                        //Ako se salje nova slika prvo se brisa stara
+                        if (!string.IsNullOrEmpty(user.Image))
+                        {
+                            try
+                            {
+                                await _cloudinaryService.DeleteImageAsync(user.Image);
+                            }
+                            catch (Exception ex)
+                            {
+                                _response.StatusCode = HttpStatusCode.InternalServerError;
+                                _response.IsSuccess = false;
+                                _response.ErrorMessages.Add($"Greška prilikom brisanja stare slike: {ex.Message}");
+                                return StatusCode(500, _response);
+                            }
+                        }
+                        //Upload nove slike
                         try
                         {
                             string imageUrl = await _cloudinaryService.UploadImageAsync(userDetailsUpdateDTO.File);
@@ -283,7 +291,7 @@ namespace SchedulingApp.Controllers
 
 
                     _db.ApplicationUsers.Update(user);
-                    _db.SaveChanges();
+                    await _db.SaveChangesAsync();
                     _response.StatusCode = HttpStatusCode.NoContent;
                     _response.IsSuccess = true;
                     return Ok(_response);

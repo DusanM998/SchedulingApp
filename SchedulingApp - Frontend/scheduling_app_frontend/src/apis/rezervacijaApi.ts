@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const rezervacijaApi = createApi({
-    reducerPath: "rezervacija",
+    reducerPath: "rezervacijaApi",
     baseQuery: fetchBaseQuery({
         baseUrl: "https://localhost:7210/api/",
         prepareHeaders: (headers: Headers, api) => {
@@ -22,12 +22,31 @@ const rezervacijaApi = createApi({
             }),
             invalidatesTags: ["Rezervacije"],
         }),
-
+        getRezervacijaDetalji: builder.query({
+            query: (id) => ({
+                url:`rezervacija/${id}`,
+            }),
+            providesTags: ["Rezervacije"],
+        }),
+        updateRezervacijaHeader: builder.mutation({
+            query: (rezevacijaDetalji) => ({
+                url: "order/" + rezevacijaDetalji.rezervacijaHeaderId,
+                method: "PUT",
+                headers: {
+                    "Content-type" : "application/json",
+                },
+                body: rezevacijaDetalji
+            }),
+            invalidatesTags: ["Rezervacije"]
+        })
     })
 })
 
 export const {
-    useKreirajRezervacijuMutation
+    useKreirajRezervacijuMutation,
+    useGetRezervacijaDetaljiQuery,
+    useUpdateRezervacijaHeaderMutation
+
 } = rezervacijaApi;
 
 export default rezervacijaApi;

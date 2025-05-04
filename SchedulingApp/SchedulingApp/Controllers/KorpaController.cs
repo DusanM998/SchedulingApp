@@ -267,7 +267,7 @@ namespace SchedulingApp.Controllers
             {
                 // Ako stavka ne postoji, pravimo je celu sa sve cenom
                 double ukupnoSati = IzracunajUkupnoVremeBezPreklapanja(sviTermini);
-                double cena = sportskiObjekat.CenaPoSatu * ukupnoSati;
+                double cena = sportskiObjekat.CenaPoSatu * ukupnoSati * brojUcesnika;
 
                 stavka = new StavkaKorpe
                 {
@@ -298,7 +298,7 @@ namespace SchedulingApp.Controllers
                     .ToListAsync();
 
                 double ukupnoSati = IzracunajUkupnoVremeBezPreklapanja(sviTerminiZaStavku);
-                stavka.CenaZaObjekat = sportskiObjekat.CenaPoSatu * ukupnoSati;
+                stavka.CenaZaObjekat = sportskiObjekat.CenaPoSatu * ukupnoSati * stavka.Kolicina;
 
                 // Ažuriraj broj učesnika ako je veći
                 if (brojUcesnika > stavka.Kolicina)

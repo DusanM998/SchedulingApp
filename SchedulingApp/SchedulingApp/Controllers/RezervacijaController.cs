@@ -218,6 +218,55 @@ namespace SchedulingApp.Controllers
             }
         }
 
-        
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<ApiResponse>> UpdateRezervacijeHeader(int id, [FromBody] RezervacijaHeaderUpdateDTO rezervacijaheaderUpdateDTO)
+        {
+            try
+            {
+                if(rezervacijaheaderUpdateDTO == null || id!= rezervacijaheaderUpdateDTO.RezervacijaHeaderId)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest();
+                }
+                RezervacijaHeader rezervacijaHeaderFromDb = _db.RezervacijaHeader.FirstOrDefault(u => u.RezervacijaHeaderId == id);
+
+                if(rezervacijaHeaderFromDb == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest();
+                }
+                if(!string.IsNullOrEmpty(rezervacijaheaderUpdateDTO.ImeKorisnika))
+                {
+                    rezervacijaHeaderFromDb.ImeKorisnika = rezervacijaheaderUpdateDTO.ImeKorisnika;
+                }
+                if (!string.IsNullOrEmpty(rezervacijaheaderUpdateDTO.EmailKorisnika))
+                {
+                    rezervacijaHeaderFromDb.EmailKorisnika = rezervacijaheaderUpdateDTO.EmailKorisnika;
+                }
+                if (!string.IsNullOrEmpty(rezervacijaheaderUpdateDTO.BrojKorisnika))
+                {
+                    rezervacijaHeaderFromDb.BrojKorisnika = rezervacijaheaderUpdateDTO.BrojKorisnika;
+                }
+                if (!string.IsNullOrEmpty(rezervacijaheaderUpdateDTO.StripeIntentPaymentId))
+                {
+                    rezervacijaHeaderFromDb.StripePaymentIntentId = rezervacijaheaderUpdateDTO.StripeIntentPaymentId;
+                }
+                if (!string.IsNullOrEmpty(rezervacijaheaderUpdateDTO.Status))
+                {
+                    rezervacijaHeaderFromDb.Status = rezervacijaheaderUpdateDTO.Status;
+                }
+                _db.SaveChanges();
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+            }
+            catch(Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return _response;
+        }
     }
 }
