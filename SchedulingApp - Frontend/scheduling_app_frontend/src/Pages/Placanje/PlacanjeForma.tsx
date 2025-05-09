@@ -27,12 +27,28 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
             return;
         }
 
-        let ukupnoCena = 0;
+        let ukupnoCena = data.stavkaKorpe?.reduce((suma, stavka) => 
+            suma + (stavka.cenaZaObjekat ?? 0), 0);
         let kolicina = 0;
 
-        const rezervacijaDetaljiDTO: any = [];
+        const rezervacijaDetalji = data.stavkaKorpe?.flatMap((stavka: stavkaKorpeModel) =>
+            stavka.odabraniTermini?.map((termin) => ({
+                terminId: termin.terminId,
+                termin: {
+                    terminId: termin.terminId,
+                    sportskiObjekatId: termin.sportskiObjekatId,
+                    datumTermina: termin.datumTermina,
+                    vremePocetka: termin.vremePocetka,
+                    vremeZavrsetka: termin.vremeZavrsetka,
+                    status: termin.status
+                },
+                cena: ukupnoCena,
+                brojUcesnika: stavka.kolicina ?? 0
+            })) ?? []
+        );
+        
 
-        data.stavkaKorpe?.forEach((stavka: stavkaKorpeModel) => {
+        /*data.stavkaKorpe?.forEach((stavka: stavkaKorpeModel) => {
             const tempRezervacijaDetalji: any = {};
             //tempRezervacijaDetalji["sportskiObjekatId"] = stavka.sportskiObjekat?.sportskiObjekatId;
             tempRezervacijaDetalji["kolicina"] = stavka.kolicina;
@@ -40,18 +56,20 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
             tempRezervacijaDetalji["cenaPoSatu"] = stavka.sportskiObjekat?.cenaPoSatu;
             rezervacijaDetaljiDTO.push(tempRezervacijaDetalji);
             kolicina += stavka.kolicina!;
-        });
+        });*/
 
         const response: apiResponse = await kreirajRezervaciju({
             imeKorisnika: userInput.name,
             brojKorisnika: userInput.phoneNumber,
             emailKorisnika: userInput.email,
-            kolicina: kolicina,
-            rezervacijaDetaljiDTO: rezervacijaDetaljiDTO,
-            stripePaymentIntentId: data.stripePaymentIntentId,
             applicationUserId: data.userId,
             status: SD_Status.Potvrdjena,
+            ukupnoRezervacija: data.stavkaKorpe?.length,
+            rezervacijaDetalji: rezervacijaDetalji,
+            stripePaymentIntentId: data.stripePaymentIntentId,
         });
+
+        console.log("Logujem response", response);
 
         if (response) {
             if (response.data?.result.status === SD_Status.Potvrdjena) {
@@ -66,56 +84,89 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
     }
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        // We don't want to let default form submission happen here,
-        // which would refresh the page.
         event.preventDefault();
-
-        if (!stripe || !elements) {
-        // Stripe.js hasn't yet loaded.
-        // Make sure to disable form submission until Stripe.js has loaded.
-        return;
-        }
-
+    
+        if (!stripe || !elements) return;
+    
         setIsProcessing(true);
-
-        const rezervacijaDetaljiDTO: any = [];
-
-        const result = await stripe.confirmPayment({
-            elements,
-            confirmParams: {
-                return_url: "https://example.com/rezervacija/123/complete",
-            },
-            redirect: "if_required",
-        });
-
-        if (result.error) {
-            toastNotify("Došlo je do greške!", "error");
-            setIsProcessing(false);
-        } else {
-            //Slanje podataka ka backendu
-            const response: apiResponse = await kreirajRezervaciju({
-                
-                imeKorisnika: userInput.name,
-                brojKorisnika: userInput.phoneNumber,
-                emailKorisnika: userInput.email,
-                stripePaymentIntentId: data.stripePaymentIntentId,
-                applicationUserId: data.userId,
-                ukupnoCena: ukupnoCena,
-                rezervacijaDetaljiDTO: rezervacijaDetaljiDTO,
-                status: result.paymentIntent?.status === "succeeded"
-                    ? SD_Status.Potvrdjena
-                    : SD_Status.Cekanje,
-            });
-
-            if (response && response.data?.result.status === SD_Status.Potvrdjena) {
-                navigate(`/`);
+    
+        const ukupnoCena = data.stavkaKorpe?.reduce(
+            (suma: number, stavka: stavkaKorpeModel) => suma + (stavka.cenaZaObjekat ?? 0),
+            0
+        );
+    
+        const rezervacijaDetalji = data.stavkaKorpe?.flatMap((stavka: stavkaKorpeModel) =>
+            (stavka.odabraniTermini ?? []).map((termin) => ({
+                terminId: termin.terminId,
+                termin: {
+                    terminId: termin.terminId,
+                    sportskiObjekatId: termin.sportskiObjekatId,
+                    datumTermina: termin.datumTermina,
+                    vremePocetka: termin.vremePocetka,
+                    vremeZavrsetka: termin.vremeZavrsetka,
+                    status: termin.status
+                },
+                cena: ukupnoCena,
+                brojUcesnika: stavka.kolicina ?? 0
+            }))
+        );
+    
+        const rezervacijaPayload = {
+            imeKorisnika: userInput.name,
+            brojKorisnika: userInput.phoneNumber,
+            emailKorisnika: userInput.email,
+            stripePaymentIntentId: data.stripePaymentIntentId,
+            applicationUserId: data.userId,
+            ukupnoCena: ukupnoCena,
+            rezervacijaDetalji: rezervacijaDetalji,
+            status: SD_Status.Potvrdjena
+        };
+    
+        try {
+            // Ako je kartično plaćanje
+            if (paymentMethod === "kartica") {
+                const result = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: "https://example.com/rezervacija/complete", // zameni ako treba
+                    },
+                    redirect: "if_required"
+                });
+    
+                console.log("Stripe Payment Result:", result);
+    
+                if (result.error) {
+                    console.error("Stripe error:", result.error);
+                    toastNotify("Greška: " + result.error.message, "error");
+                    setIsProcessing(false);
+                    return;
+                }
+    
+                // Ako nije "succeeded", tretiraj kao neuspelo
+                if (result.paymentIntent?.status !== "succeeded") {
+                    throw new Error("Plaćanje nije uspelo. Status: " + result.paymentIntent?.status);
+                }
+            }
+    
+            // Kreiraj rezervaciju nakon uspešnog plaćanja ili ako je gotovina
+            const response = await kreirajRezervaciju(rezervacijaPayload).unwrap();
+    
+            console.log("Rezervacija uspešna:", response);
+    
+            if (response?.result?.status === SD_Status.Potvrdjena) {
+                navigate("/");
             } else {
                 navigate("/failed");
             }
+        } catch (err: any) {
+            console.error("GREŠKA:", err?.data?.errorMessages ?? err.message ?? err);
+            toastNotify("Greška: " + (err?.data?.errorMessages?.[0] ?? err.message ?? "Nepoznata greška"), "error");
         }
-
+    
         setIsProcessing(false);
-    }
+    };
+    
+    
 
   return (
     <form onSubmit={handleSubmit}>
@@ -177,6 +228,20 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
             disabled={isProcessing || (paymentMethod === 'kartica' && (!stripe || !elements))}
         >
             {isProcessing ? "Obrada..." : (paymentMethod === 'gotovina' ? "💵 Plaćanje Gotovinom" : "💳 Plaćanje Karticom")}
+        </button>
+        <button
+          type='button'
+          style={{
+            color:"white",
+            backgroundColor:"red",
+            fontWeight:"bold",
+            fontSize:"18px",
+            padding:"12px"
+          }}
+          className='btn w-100 mt-3'
+          onClick={() => navigate("/rezervacija")}
+        >
+          Otkaži
         </button>
     </form>
   )

@@ -38,9 +38,8 @@ function Footer() {
             <div>
               <h5 className="text-white">Strane</h5>
               <ul className="list-unstyled text-secondary">
-                <li><a href="#" className="text-decoration-none text-secondary">Objekti</a></li>
+                <li><a href="/sportskiObjektiPage" className="text-decoration-none text-secondary">Objekti</a></li>
                 <li><a href="#" className="text-decoration-none text-secondary">Aplikacija</a></li>
-                <li><a href="#" className="text-decoration-none text-secondary">Nesto</a></li>
               </ul>
             </div>
             <div>

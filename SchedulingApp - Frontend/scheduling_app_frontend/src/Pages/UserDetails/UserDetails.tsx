@@ -43,7 +43,7 @@ function UserDetails() {
     }
   }, [data]);
 
-  //console.log(data);
+  console.log(data);
 
   const handleInputChange = (
           e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string
@@ -55,7 +55,7 @@ function UserDetails() {
                   phoneNumber: e
               }));
           } else {
-              // Inače radi kao i do sada za obične inpute
+              // Inace radi za obične inpute
               const tempData = inputHelper(e, userDetailsInput);
               setUserDetailsInput(tempData);
           }

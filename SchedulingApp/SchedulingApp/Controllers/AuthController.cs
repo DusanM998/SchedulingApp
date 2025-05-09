@@ -135,6 +135,7 @@ namespace SchedulingApp.Controllers
                     new Claim("id", userFromDb.Id.ToString()),
                     new Claim(ClaimTypes.Email, userFromDb.UserName.ToString()),
                     new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
+                    new Claim("phoneNumber", userFromDb.PhoneNumber ?? "")
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),

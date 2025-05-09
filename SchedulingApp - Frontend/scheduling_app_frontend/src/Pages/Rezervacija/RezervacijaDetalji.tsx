@@ -40,7 +40,7 @@ function RezervacijaDetalji() {
         phoneNumber: e
       }));
     } else {
-      // Inače radi kao i do sada za obične inpute
+      // Inace radi za obicne inpute
         const tempData = inputHelper(e, userInput);
           setUserInput(tempData);
         }
@@ -58,6 +58,7 @@ function RezervacijaDetalji() {
   let ukuponoStavki = shoppingCartStore.length;
 
   useEffect(() => {
+    console.log("Logujem userData: ", userData);
     setUserInput({
       name: userData.name,
       email: userData.email,

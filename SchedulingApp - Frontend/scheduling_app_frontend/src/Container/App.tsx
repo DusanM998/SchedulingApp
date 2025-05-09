@@ -7,7 +7,7 @@ import { Route, Routes } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import { Footer, Header } from "../Components/Layout";
 import { Home, Kontakt, Login, NotFound, Register, UserDetails, UserPage } from "../Pages";
-import { SportskiObjekatDetails, SportskiObjekatKreirajAzuriraj, SportskiObjekatList, SportskiObjektiTabela } from "../Pages/SportskiObjekat";
+import { SportskiObjekatDetails, SportskiObjekatKreirajAzuriraj, SportskiObjekatList, SportskiObjektiPage, SportskiObjektiTabela } from "../Pages/SportskiObjekat";
 import { Rezervacija } from "../Pages/Rezervacija";
 import { setShoppingCart } from "../Storage/Redux/shoppingCartSlice";
 import { useGetShoppingCartByIdQuery } from "../apis/shoppingCartApi";
@@ -26,10 +26,12 @@ function App() {
     
     useEffect(() => { //Koristi se kako bi se token automatski cuvao u localStorage kada se promeni
         const localToken = localStorage.getItem("token");
+        //console.log("Logujem token", localToken);
 
         if (localToken) {
-            const { name, id, email, role }: userModel = jwtDecode(localToken);
-            dispatch(setLoggedInUser({ name, id, email, role })); //Akcija setLoggedInUser azurira stanje u store-u o prijavljenom korisniku
+            const { name, id, email, role, phoneNumber }: userModel = jwtDecode(localToken);
+            
+            dispatch(setLoggedInUser({ name, id, email, role, phoneNumber })); //Akcija setLoggedInUser azurira stanje u store-u o prijavljenom korisniku
 
             /*if (currentUserData) {
                 dispatch(setLoggedInUser(currentUserData));
@@ -50,7 +52,7 @@ function App() {
     return (
         <div>
             <Header />
-            <div className="pb-5">
+            <div>
                 <Routes>
                     <Route path="/" element={<Home />}></Route>
                     <Route path="*" element={<NotFound />}></Route>
@@ -69,6 +71,7 @@ function App() {
                     <Route path="/termin/terminKreirajAzuriraj" element={<TerminKreirajAzuriraj />}></Route>
                     <Route path="/kontakt" element={<Kontakt />}></Route>
                     <Route path="/placanje" element={<Placanje />}></Route>
+                    <Route path="/sportskiObjektiPage" element={<SportskiObjektiPage />}></Route>
                 </Routes>
             </div>
         </div>
