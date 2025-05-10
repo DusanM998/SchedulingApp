@@ -53,7 +53,7 @@ const Header = () => {
                             <ul className="dropdown-menu">
                                 <li
                                     className='dropdown-item' 
-                                    onClick={() => navigate("/")}
+                                    onClick={() => navigate("/rezervacija/sveRezervacije")}
                                     style={{cursor:"pointer"}}>
                                 Sve rezervacije
                                 </li>

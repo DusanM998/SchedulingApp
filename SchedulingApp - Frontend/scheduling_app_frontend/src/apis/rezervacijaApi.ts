@@ -28,6 +28,25 @@ const rezervacijaApi = createApi({
             }),
             providesTags: ["Rezervacije"],
         }),
+        getSveRezervacije: builder.query({
+            query: ({ userId, searchString, status, pageSize, pageNumber }) => ({
+                url: "rezervacija",
+                params: {
+                    ...(userId && { userId }),
+                    ...(searchString && { searchString }),
+                    ...(status && { status }),
+                    ...(pageSize && { pageSize }),
+                    ...(pageNumber && { pageNumber }),
+                },
+            }),
+            transformResponse(apiResponse: { result: any }, meta: any) {
+                return {
+                    apiResponse,
+                    totalRecords: meta.response.headers.get("X-Pagination"),
+                }
+            },
+            providesTags: ["Rezervacije"]
+        }),
         updateRezervacijaHeader: builder.mutation({
             query: (rezevacijaDetalji) => ({
                 url: "order/" + rezevacijaDetalji.rezervacijaHeaderId,
@@ -45,8 +64,8 @@ const rezervacijaApi = createApi({
 export const {
     useKreirajRezervacijuMutation,
     useGetRezervacijaDetaljiQuery,
-    useUpdateRezervacijaHeaderMutation
-
+    useUpdateRezervacijaHeaderMutation,
+    useGetSveRezervacijeQuery
 } = rezervacijaApi;
 
 export default rezervacijaApi;

@@ -4,9 +4,11 @@ import RezervacijaDetalji from "./RezervacijaDetalji";
 import RezervacijaRezime from "./RezervacijaRezime";
 import RezervacijaPotvrdjena from "./RezervacijaPotvrdjena";
 import RezervacijaLista from "./RezervacijaLista";
+import SveRezervacije from "./SveRezervacije";
 
 export {
     Rezervacija, RezervacijaSummary,
     RezervacijaDetalji, RezervacijaRezime,
-    RezervacijaPotvrdjena, RezervacijaLista
+    RezervacijaPotvrdjena, RezervacijaLista,
+    SveRezervacije
 };

@@ -24,7 +24,7 @@ namespace SchedulingApp.Controllers
             _response = new ApiResponse();
         }
 
-        [HttpGet]
+        [HttpGet("SveRezervacije")]
         public async Task<ActionResult<ApiResponse>> GetAllRezervacije()
         {
             try
@@ -48,15 +48,13 @@ namespace SchedulingApp.Controllers
             return _response;
         }
 
-        /*[HttpGet]
+        [HttpGet]
         public async Task<ActionResult<ApiResponse>> GetRezervacije(string? userId, string? searchString,
-            string status, int pageNumber = 1, int pageSize = 5)
+            string? status, int pageNumber = 1, int pageSize = 5)
         {
             try
             {
                 IEnumerable<RezervacijaHeader> rezervacijaHeader = _db.RezervacijaHeader
-                    .Include(u => u.RezervacijaDetalji)
-                        .ThenInclude(u => u.SportskiObjekat)
                     .Include(u => u.RezervacijaDetalji)
                         .ThenInclude(u => u.Termin)
                     .OrderByDescending(u => u.RezervacijaHeaderId);
@@ -67,11 +65,12 @@ namespace SchedulingApp.Controllers
                 }
                 if(!string.IsNullOrEmpty(searchString))
                 {
-                    rezervacijaHeader = rezervacijaHeader.Where(u => u.BrojKorisnika.Contains(searchString.ToLower())
+                    rezervacijaHeader = rezervacijaHeader.Where(u => 
+                    u.BrojKorisnika.Contains(searchString.ToLower())
                     || u.EmailKorisnika.Contains(searchString.ToLower())
                     || u.ImeKorisnika.Contains(searchString.ToLower()));
                 }
-                if(!string.IsNullOrEmpty(searchString))
+                if(!string.IsNullOrEmpty(status))
                 {
                     rezervacijaHeader = rezervacijaHeader.Where(u => u.Status.ToLower() == status.ToLower());
                 }
@@ -95,7 +94,7 @@ namespace SchedulingApp.Controllers
                 _response.ErrorMessages = new List<string> { ex.ToString() };
             }
             return _response;
-        }*/
+        }
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> KreirajRezervaciju([FromBody] RezervacijaHeaderCreateDTO rezervacijaHeaderCreateDTO)

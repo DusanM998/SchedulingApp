@@ -121,7 +121,7 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
                 const result = await stripe.confirmPayment({
                     elements,
                     confirmParams: {
-                        return_url: "https://example.com/rezervacija/complete", // zameni ako treba
+                        return_url: "https://example.com/rezervacija/complete", 
                     },
                     redirect: "if_required"
                 });

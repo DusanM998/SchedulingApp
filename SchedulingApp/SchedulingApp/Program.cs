@@ -51,8 +51,9 @@ builder.Services.AddCors(options =>
         {
             // Dozvoljava samo http://localhost:3000
             policy.WithOrigins("http://localhost:3000")
-                .AllowAnyHeader()
                 .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithExposedHeaders("X-Pagination")
                 .AllowCredentials();
         });
 });
