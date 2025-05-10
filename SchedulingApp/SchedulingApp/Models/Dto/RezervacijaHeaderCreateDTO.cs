@@ -15,7 +15,8 @@ namespace SchedulingApp.Models.Dto
         public string Status { get; set; }
         //public DateTime DatumRezervacije { get; set; }
         public int UkupnoRezervacija { get; set; }
+        public double UkupnoCena { get; set; }
         public string StripePaymentIntentId { get; set; }
-        public IEnumerable<RezervacijaDetalji> RezervacijaDetalji { get; set; }
+        public IEnumerable<RezervacijaDetaljiCreateDTO> RezervacijaDetaljiCreateDTO { get; set; }
     }
 }

@@ -13,6 +13,6 @@ namespace SchedulingApp.Models.Dto
         public int TerminId { get; set; }
         [Required]
         public double Cena { get; set; }
-        public int Kvantitet { get; set; }
+        public int BrojUcesnika { get; set; }
     }
 }

@@ -6,6 +6,7 @@ export default interface rezervacijaHeaderModel {
     imeKorisnika?: string;
     brojKorisnika?: string;
     emailKorisnika?: string;
+    ukupnoCena?: number,
     applicationUserId?: string;
     user?: any;
     status?: SD_Status;

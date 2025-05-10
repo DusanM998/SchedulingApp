@@ -98,18 +98,10 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
         const rezervacijaDetalji = data.stavkaKorpe?.flatMap((stavka: stavkaKorpeModel) =>
             (stavka.odabraniTermini ?? []).map((termin) => ({
                 terminId: termin.terminId,
-                termin: {
-                    terminId: termin.terminId,
-                    sportskiObjekatId: termin.sportskiObjekatId,
-                    datumTermina: termin.datumTermina,
-                    vremePocetka: termin.vremePocetka,
-                    vremeZavrsetka: termin.vremeZavrsetka,
-                    status: termin.status
-                },
-                cena: ukupnoCena,
+                cena: stavka.cenaZaObjekat,
                 brojUcesnika: stavka.kolicina ?? 0
             }))
-        );
+        ) ?? [];
     
         const rezervacijaPayload = {
             imeKorisnika: userInput.name,
@@ -118,7 +110,8 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
             stripePaymentIntentId: data.stripePaymentIntentId,
             applicationUserId: data.userId,
             ukupnoCena: ukupnoCena,
-            rezervacijaDetalji: rezervacijaDetalji,
+            ukupnoRezervacija: data.stavkaKorpe?.length,
+            rezervacijaDetaljiCreateDTO: rezervacijaDetalji,
             status: SD_Status.Potvrdjena
         };
     
@@ -149,12 +142,17 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
             }
     
             // Kreiraj rezervaciju nakon uspešnog plaćanja ili ako je gotovina
-            const response = await kreirajRezervaciju(rezervacijaPayload).unwrap();
+            const response: apiResponse = await kreirajRezervaciju(rezervacijaPayload);
+
+            const statusRezervacije = (response.data?.result as any)?.status;
     
             console.log("Rezervacija uspešna:", response);
+
+            console.log("Status iz rezultata: ", response.data?.result.status);
+            console.log("Status iz SD_Status: ", SD_Status.Potvrdjena);
     
-            if (response?.result?.status === SD_Status.Potvrdjena) {
-                navigate("/");
+            if (statusRezervacije === SD_Status.Potvrdjena) {
+                navigate(`/rezervacija/rezervacijaPotvrdjena/${response.data?.result.rezervacijaHeaderId}`);
             } else {
                 navigate("/failed");
             }

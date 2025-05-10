@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace SchedulingApp.Models
 {
@@ -16,9 +17,11 @@ namespace SchedulingApp.Models
         [Required]
         public int TerminId { get; set; }
         [ForeignKey("TerminId")]
+        //[JsonIgnore]
         public Termin Termin { get; set; }
         [Required]
         public double Cena { get; set; }
         public int BrojUcesnika { get; set; }
+        public string NazivSportskogObjekta { get; set; }
     }
 }

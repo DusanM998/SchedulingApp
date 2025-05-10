@@ -98,6 +98,80 @@ namespace SchedulingApp.Controllers
         }*/
 
         [HttpPost]
+        public async Task<ActionResult<ApiResponse>> KreirajRezervaciju([FromBody] RezervacijaHeaderCreateDTO rezervacijaHeaderCreateDTO)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = ModelState.Values.SelectMany(v => v.Errors)
+                                                               .Select(e => e.ErrorMessage)
+                                                               .ToList();
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+
+                // Kreiranje novog rezervacionog zaglavlja
+                RezervacijaHeader rezervacija = new()
+                {
+                    ApplicationUserId = rezervacijaHeaderCreateDTO.ApplicationUserId,
+                    ImeKorisnika = rezervacijaHeaderCreateDTO.ImeKorisnika,
+                    BrojKorisnika = rezervacijaHeaderCreateDTO.BrojKorisnika,
+                    EmailKorisnika = rezervacijaHeaderCreateDTO.EmailKorisnika,
+                    UkupnoCena = rezervacijaHeaderCreateDTO.UkupnoCena,
+                    Status = string.IsNullOrEmpty(rezervacijaHeaderCreateDTO.Status) ? SD.StatusRezervacije_Cekanje : rezervacijaHeaderCreateDTO.Status,
+                    DatumRezervacije = DateTime.Now,
+                    UkupnoRezervacija = rezervacijaHeaderCreateDTO.UkupnoRezervacija,
+                    StripePaymentIntentId = rezervacijaHeaderCreateDTO.StripePaymentIntentId
+                };
+
+                _db.RezervacijaHeader.Add(rezervacija);
+                await _db.SaveChangesAsync();
+
+                foreach (var detaljiDTO in rezervacijaHeaderCreateDTO.RezervacijaDetaljiCreateDTO)
+                {
+                    // (Opcionalno) Proveri da li termin postoji
+                    var termin = await _db.Termini
+                                  .Include(t => t.SportskiObjekat)
+                                  .FirstOrDefaultAsync(t => t.TerminId == detaljiDTO.TerminId);
+                    if (termin == null)
+                    {
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages = new List<string> { $"Termin sa ID {detaljiDTO.TerminId} ne postoji." };
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        return BadRequest(_response);
+                    }
+
+                    RezervacijaDetalji detalji = new()
+                    {
+                        RezervacijaHeaderId = rezervacija.RezervacijaHeaderId,
+                        TerminId = detaljiDTO.TerminId,
+                        BrojUcesnika = detaljiDTO.BrojUcesnika,
+                        Cena = detaljiDTO.Cena,
+                        NazivSportskogObjekta = termin.SportskiObjekat?.Naziv,
+                    };
+
+                    _db.RezervacijaDetalji.Add(detalji);
+                }
+
+                await _db.SaveChangesAsync();
+
+                _response.Result = rezervacija;
+                _response.StatusCode = HttpStatusCode.Created;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Došlo je do greške prilikom kreiranja rezervacije.", ex.Message, ex.InnerException?.Message ?? "" };
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                return StatusCode(StatusCodes.Status500InternalServerError, _response);
+            }
+        }
+
+
+        /*[HttpPost]
         public async Task<ActionResult<ApiResponse>> CreateRezervacija([FromBody] RezervacijaHeaderCreateDTO rezervacijaHeaderCreateDTO)
         {
             using var transaction = await _db.Database.BeginTransactionAsync();
@@ -113,9 +187,9 @@ namespace SchedulingApp.Controllers
                 }
 
                 var terminiIds = rezervacijaHeaderCreateDTO.RezervacijaDetalji.Select(d => d.TerminId).ToList();
-                var termini = await _db.Termini.Include(t => t.SportskiObjekat)
-                                               .Where(t => terminiIds.Contains(t.TerminId))
-                                               .ToListAsync();
+                var termini = await _db.Termini
+                                       .Where(t => terminiIds.Contains(t.TerminId))
+                                       .ToListAsync();
 
                 if (termini.Count != rezervacijaHeaderCreateDTO.RezervacijaDetalji.Count())
                 {
@@ -123,36 +197,6 @@ namespace SchedulingApp.Controllers
                     {
                         IsSuccess = false,
                         ErrorMessages = new List<string> { "Jedan ili više termina nisu pronađeni!" }
-                    });
-                }
-
-                int sportskiObjekatId = termini.First().SportskiObjekatId;
-                if (termini.Any(t => t.SportskiObjekatId != sportskiObjekatId))
-                {
-                    return BadRequest(new ApiResponse
-                    {
-                        IsSuccess = false,
-                        ErrorMessages = new List<string> { "Svi termini moraju pripadati istom sportskom objektu!" }
-                    });
-                }
-
-                var sportskiObjekat = await _db.SportskiObjekti.FindAsync(sportskiObjekatId);
-                if (sportskiObjekat == null)
-                {
-                    return BadRequest(new ApiResponse
-                    {
-                        IsSuccess = false,
-                        ErrorMessages = new List<string> { "Sportski objekat nije pronađen!" }
-                    });
-                }
-
-                int ukupniBrojUcesnika = rezervacijaHeaderCreateDTO.RezervacijaDetalji.Sum(d => d.BrojUcesnika);
-                if (ukupniBrojUcesnika > sportskiObjekat.Kapacitet)
-                {
-                    return BadRequest(new ApiResponse
-                    {
-                        IsSuccess = false,
-                        ErrorMessages = new List<string> { $"Ukupan broj učesnika ({ukupniBrojUcesnika}) premašuje kapacitet objekta ({sportskiObjekat.Kapacitet})!" }
                     });
                 }
 
@@ -165,6 +209,7 @@ namespace SchedulingApp.Controllers
                     Status = rezervacijaHeaderCreateDTO.Status ?? SD.StatusRezervacije_Cekanje,
                     DatumRezervacije = DateTime.UtcNow,
                     UkupnoRezervacija = rezervacijaHeaderCreateDTO.RezervacijaDetalji.Count(),
+                    UkupnoCena = rezervacijaHeaderCreateDTO.UkupnoCena,
                     StripePaymentIntentId = rezervacijaHeaderCreateDTO.StripePaymentIntentId
                 };
 
@@ -173,24 +218,6 @@ namespace SchedulingApp.Controllers
 
                 foreach (var rezervacijaDetaljiDTO in rezervacijaHeaderCreateDTO.RezervacijaDetalji)
                 {
-                    var termin = termini.FirstOrDefault(t => t.TerminId == rezervacijaDetaljiDTO.TerminId);
-                    if (termin == null || termin.Status == "Zauzet" || termin.SportskiObjekat.Kapacitet < rezervacijaDetaljiDTO.BrojUcesnika)
-                    {
-                        await transaction.RollbackAsync();
-                        return BadRequest(new ApiResponse
-                        {
-                            IsSuccess = false,
-                            ErrorMessages = new List<string> { $"Termin sa ID-jem {rezervacijaDetaljiDTO.TerminId} nema dovoljno mesta!" }
-                        });
-                    }
-
-                    termin.SportskiObjekat.Kapacitet -= rezervacijaDetaljiDTO.BrojUcesnika;
-                    if (termin.SportskiObjekat.Kapacitet == 0)
-                    {
-                        termin.Status = "Zauzet";
-                    }
-                    _db.Termini.Update(termin);
-
                     RezervacijaDetalji rezervacijaDetalji = new()
                     {
                         RezervacijaHeaderId = rezervacija.RezervacijaHeaderId,
@@ -216,7 +243,7 @@ namespace SchedulingApp.Controllers
                     ErrorMessages = new List<string> { "Greška prilikom kreiranja rezervacije!", ex.Message }
                 });
             }
-        }
+        }*/
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ApiResponse>> UpdateRezervacijeHeader(int id, [FromBody] RezervacijaHeaderUpdateDTO rezervacijaheaderUpdateDTO)
