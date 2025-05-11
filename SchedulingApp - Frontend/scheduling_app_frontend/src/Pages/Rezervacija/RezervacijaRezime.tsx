@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Storage/Redux/store';
 import { useUpdateRezervacijaHeaderMutation } from '../../apis/rezervacijaApi';
-import { SD_Status } from '../../Utility/SD';
+import { SD_Roles, SD_Status } from '../../Utility/SD';
 import { MainLoader } from '../../Components/Page/Common';
 import { stavkaKorpeModel } from '../../Interfaces';
 import PhoneInput from 'react-phone-input-2';
@@ -59,7 +59,7 @@ function RezervacijaRezime({ data, userInput }: rezervacijaRezimeProps) {
   return (
     <div>
       {loading && <MainLoader />}
-      {!loading && 
+      {!loading && (
         <>
          <div className='d-flex justify-content-between align-items-center'>
           <h3 style={{ color: "#51285f" }}>Rezime Rezervacije</h3>
@@ -123,7 +123,28 @@ function RezervacijaRezime({ data, userInput }: rezervacijaRezimeProps) {
             </div>
           </div>
          </div>
-        </>}
+         <div className='d-flex justify-content-between align-items-center mt-3'>
+          <button className='btn btn-secondary' onClick={() => navigate(-1)}>Nazad</button>
+          {userData.role == SD_Roles.ADMIN && (
+            <div className='d-flex'>
+              {data.status! !== SD_Status.Otkazana && 
+                data.status! !== SD_Status.Zavrsena && 
+                <button style={{
+                    color:"white",
+                    backgroundColor:"red",
+                    fontWeight:"bold",
+                    fontSize:"18px",
+                    padding:"12px"
+                  }}
+                  className='btn mx-2'
+                  onClick={handleCancelRezervacija}
+                >Otkaži</button>
+              }
+              <button className={`btn btn-${nextStatus.color}`} onClick={handleNextStatus}>{nextStatus.value}</button>
+            </div>
+          )}
+         </div>
+        </>)}
     </div>
   )
 }

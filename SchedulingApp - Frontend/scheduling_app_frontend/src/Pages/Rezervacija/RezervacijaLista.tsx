@@ -42,6 +42,7 @@ function RezervacijaLista({ isLoading, rezervacijaData }: RezervacijaListaProps)
                                     <button
                                         className='btn'
                                         style={{backgroundColor:"#51285f", color:"white"}}
+                                        onClick={()=> navigate("/rezervacija/rezervacijaDetaljiPage/" + rezervacija.rezervacijaHeaderId)}
                                     >
                                         Detalji
                                     </button>

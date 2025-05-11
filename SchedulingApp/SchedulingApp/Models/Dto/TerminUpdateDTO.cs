@@ -7,12 +7,10 @@ namespace SchedulingApp.Models.Dto
     {
         [Key]
         public int TerminId { get; set; }
-        [Required]
         public DateTime DatumTermina { get; set; }
-        [Required]
         public string VremePocetka { get; set; }
-        [Required]
         public string VremeZavrsetka { get; set; }
         public string Status { get; set; }
+        public string? UserId { get; set; }
     }
 }

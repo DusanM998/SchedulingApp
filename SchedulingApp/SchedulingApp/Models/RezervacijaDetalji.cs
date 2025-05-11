@@ -18,7 +18,7 @@ namespace SchedulingApp.Models
         public int TerminId { get; set; }
         [ForeignKey("TerminId")]
         //[JsonIgnore]
-        public Termin Termin { get; set; }
+        public Termin OdabraniTermini { get; set; }
         [Required]
         public double Cena { get; set; }
         public int BrojUcesnika { get; set; }

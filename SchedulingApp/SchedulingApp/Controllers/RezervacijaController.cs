@@ -33,7 +33,7 @@ namespace SchedulingApp.Controllers
                     .Include(u => u.RezervacijaDetalji)
                     //.ThenInclude(u => u.SportskiObjekat)
                     .Include(u => u.RezervacijaDetalji)
-                        .ThenInclude(u => u.Termin)
+                        .ThenInclude(u => u.OdabraniTermini)
                     .OrderByDescending(u => u.RezervacijaHeaderId);
 
                 _response.Result = rezervacijaHeader;
@@ -56,7 +56,7 @@ namespace SchedulingApp.Controllers
             {
                 IEnumerable<RezervacijaHeader> rezervacijaHeader = _db.RezervacijaHeader
                     .Include(u => u.RezervacijaDetalji)
-                        .ThenInclude(u => u.Termin)
+                        .ThenInclude(u => u.OdabraniTermini)
                     .OrderByDescending(u => u.RezervacijaHeaderId);
 
                 if(!string.IsNullOrEmpty(userId))
@@ -92,6 +92,43 @@ namespace SchedulingApp.Controllers
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return _response;
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ApiResponse>> GetRezervacijaById(int id)
+        {
+            try
+            {
+                if(id == 0)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.ErrorMessages = new List<string>() { $"Rezervacija sa ID {id} ne postoji." };
+                    return BadRequest(_response);
+                }
+
+                var rezervacijaHeader = _db.RezervacijaHeader
+                    .Include(u => u.RezervacijaDetalji)
+                        .ThenInclude(u => u.OdabraniTermini)
+                    .OrderByDescending(u => u.RezervacijaHeaderId);
+
+                if(rezervacijaHeader == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.ErrorMessages = new List<string> { $"Rezervacija ne postoji!" };
+                    return NotFound(_response);
+                }
+
+                _response.Result = rezervacijaHeader;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch(Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return _response;
         }

@@ -7,7 +7,7 @@ export default interface rezervacijaDetaljiModel {
     sportskiObjekatId?: number;
     sportskiObjekat: sportskiObjekatModel;
     terminId?: number;
-    termin: terminModel;
+    odabraniTermini?: terminModel[];
     cena?: number;
     brojUcesnika?: number;
 }

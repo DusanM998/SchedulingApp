@@ -8,7 +8,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Footer, Header } from "../Components/Layout";
 import { Home, Kontakt, Login, NotFound, Register, UserDetails, UserPage } from "../Pages";
 import { SportskiObjekatDetails, SportskiObjekatKreirajAzuriraj, SportskiObjekatList, SportskiObjektiPage, SportskiObjektiTabela } from "../Pages/SportskiObjekat";
-import { Rezervacija, RezervacijaPotvrdjena, SveRezervacije } from "../Pages/Rezervacija";
+import { Rezervacija, RezervacijaDetailsPage, RezervacijaPotvrdjena, SveRezervacije } from "../Pages/Rezervacija";
 import { setShoppingCart } from "../Storage/Redux/shoppingCartSlice";
 import { useGetShoppingCartByIdQuery } from "../apis/shoppingCartApi";
 import { TerminiList, TerminKreirajAzuriraj } from "../Pages/Termin";
@@ -74,6 +74,7 @@ function App() {
                     <Route path="/sportskiObjektiPage" element={<SportskiObjektiPage />}></Route>
                     <Route path="/rezervacija/rezervacijaPotvrdjena/:id" element={<RezervacijaPotvrdjena />}></Route>
                     <Route path="/rezervacija/sveRezervacije" element={<SveRezervacije />}></Route>
+                    <Route path="/rezervacija/rezervacijaDetaljiPage/:id" element={<RezervacijaDetailsPage />}></Route>
                 </Routes>
             </div>
         </div>

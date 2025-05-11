@@ -120,6 +120,7 @@ namespace SchedulingApp.Controllers
                     terminFromDb.VremePocetka = terminUpdateDTO.VremePocetka;
                     terminFromDb.VremeZavrsetka = terminUpdateDTO.VremeZavrsetka;
                     terminFromDb.Status = terminUpdateDTO.Status;
+                    terminFromDb.UserId = terminUpdateDTO.UserId;
 
                     _db.Termini.Update(terminFromDb);
                     _db.SaveChanges();

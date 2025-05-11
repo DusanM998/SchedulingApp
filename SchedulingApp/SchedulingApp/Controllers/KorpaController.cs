@@ -173,11 +173,16 @@ namespace SchedulingApp.Controllers
                     return BadRequest(_response);
                 }
 
-                //Menja se status termina kada korisnik ukloni termin iz korpe
+                //Menja se status termina kada korisnik ukloni termin iz korpe, ali za jedinstvenog korisnika
                 foreach(var termin in stavkaKorpe.OdabraniTermini)
                 {
-                    termin.Status = "Slobodan";
-                    _db.Termini.Update(termin);
+                    if(termin.UserId == userId)
+                    {
+                        termin.Status = "Slobodan";
+                        termin.UserId = null; //Uklanja vlasnistvo korisnika nad terminom
+                        _db.Termini.Update(termin);
+                    }
+                    
                 }
 
                 stavkaKorpe.OdabraniTermini.Clear(); //Prekida se veza izmedju stavke i termina(ali se ne brise termin)
@@ -247,6 +252,7 @@ namespace SchedulingApp.Controllers
                 if (termin.Status == "Slobodan")
                 {
                     termin.Status = "Zauzet";
+                    termin.UserId = userId;
                 }
             }
             _db.Termini.UpdateRange(sviTermini);

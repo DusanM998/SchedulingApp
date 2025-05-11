@@ -20,5 +20,6 @@ namespace SchedulingApp.Models
         [Required]
         public string VremeZavrsetka { get; set; }
         public string Status { get; set; }
+        public string? UserId { get; set; }
     }
 }
