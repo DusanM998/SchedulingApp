@@ -32,7 +32,7 @@ namespace SchedulingApp.Controllers
                 IEnumerable<RezervacijaHeader> rezervacijaHeader = _db.RezervacijaHeader
                     .Include(u => u.RezervacijaDetalji)
                     //.ThenInclude(u => u.SportskiObjekat)
-                    .Include(u => u.RezervacijaDetalji)
+                    //.Include(u => u.RezervacijaDetalji)
                         .ThenInclude(u => u.OdabraniTermini)
                     .OrderByDescending(u => u.RezervacijaHeaderId);
 
@@ -109,6 +109,7 @@ namespace SchedulingApp.Controllers
                 }
 
                 var rezervacijaHeader = _db.RezervacijaHeader
+                    .Where(r => r.RezervacijaHeaderId == id)
                     .Include(u => u.RezervacijaDetalji)
                         .ThenInclude(u => u.OdabraniTermini)
                     .OrderByDescending(u => u.RezervacijaHeaderId);
