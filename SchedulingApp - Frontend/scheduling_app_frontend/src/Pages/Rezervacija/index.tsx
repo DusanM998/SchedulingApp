@@ -6,10 +6,12 @@ import RezervacijaPotvrdjena from "./RezervacijaPotvrdjena";
 import RezervacijaLista from "./RezervacijaLista";
 import SveRezervacije from "./SveRezervacije";
 import RezervacijaDetailsPage from "./RezervacijaDetailsPage";
+import MojeRezervacije from "./MojeRezervacije";
 
 export {
     Rezervacija, RezervacijaSummary,
     RezervacijaDetalji, RezervacijaRezime,
     RezervacijaPotvrdjena, RezervacijaLista,
-    SveRezervacije, RezervacijaDetailsPage
+    SveRezervacije, RezervacijaDetailsPage,
+    MojeRezervacije
 };

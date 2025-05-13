@@ -274,7 +274,11 @@ function RezervacijaSummary() {
   return (
     <div className='container p-4 m-2'>
       <h4 className="text-center" style={{ color: "#51285f" }}>Rezime rezervacije</h4>
-      {shoppingCartStore.map((stavkaKorpe: stavkaKorpeModel, index: number) => (
+      {shoppingCartStore.length === 0 ? (
+        <div className="text-center mt-4">
+          <h5 className="text-muted">Još uvek nemate nijednu rezervaciju.</h5>
+        </div>
+      ) : shoppingCartStore.map((stavkaKorpe: stavkaKorpeModel, index: number) => (
         <div
           key={index}
           className={`d-flex flex-sm-column align-items-center custom-card-shadow rounded m-3 p-3

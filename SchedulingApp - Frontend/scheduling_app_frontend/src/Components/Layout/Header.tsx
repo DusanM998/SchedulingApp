@@ -55,7 +55,13 @@ const Header = () => {
                                     className='dropdown-item' 
                                     onClick={() => navigate("/rezervacija/sveRezervacije")}
                                     style={{cursor:"pointer"}}>
-                                Sve rezervacije
+                                Sve Rezervacije
+                                </li>
+                                <li
+                                    className='dropdown-item' 
+                                    onClick={() => navigate("/rezervacija/mojeRezervacije")}
+                                    style={{cursor:"pointer"}}>
+                                Moje Rezervacije
                                 </li>
                                 <li 
                                     className='dropdown-item' 

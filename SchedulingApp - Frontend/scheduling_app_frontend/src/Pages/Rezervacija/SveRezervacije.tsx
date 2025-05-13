@@ -4,6 +4,7 @@ import { inputHelper } from '../../Helper';
 import { SD_Status } from '../../Utility/SD';
 import { MainLoader } from '../../Components/Page/Common';
 import RezervacijaLista from './RezervacijaLista';
+import { withAdminAuth } from '../../HOC';
 
 const filterOptions = [
   "Sve",
@@ -161,4 +162,4 @@ function SveRezervacije() {
   )
 }
 
-export default SveRezervacije
+export default withAdminAuth(SveRezervacije);
