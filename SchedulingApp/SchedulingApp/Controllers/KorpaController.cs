@@ -251,7 +251,7 @@ namespace SchedulingApp.Controllers
             {
                 if (termin.Status == "Slobodan")
                 {
-                    termin.Status = "Zauzet";
+                    termin.Status = "Rezervisan";
                     termin.UserId = userId;
                 }
             }

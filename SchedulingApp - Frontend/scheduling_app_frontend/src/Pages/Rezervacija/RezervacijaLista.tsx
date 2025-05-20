@@ -21,7 +21,7 @@ function RezervacijaLista({ isLoading, rezervacijaData }: RezervacijaListaProps)
                         <div className='col-2 border'>Broj Telefona</div>
                         <div className='col-1 border'>Ukupna Cena</div>
                         <div className='col-1 border'>Ukupno Rezervacija</div>
-                        <div className='col-2 border'>Datum</div>
+                        <div className='col-2 border'>Datum Kreiranja Rezervacije</div>
                         <div className='col-2 border'>Status</div>
                         <div className='col-1 border'>Detalji</div>
                     </div>

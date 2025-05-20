@@ -1,46 +1,130 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useGetRezervacijaDetaljiQuery } from '../../apis/rezervacijaApi';
+import { useGetRezervacijaDetaljiQuery, useUpdateRezervacijaHeaderMutation } from '../../apis/rezervacijaApi';
 import RezervacijaRezime from './RezervacijaRezime';
 import getStatusColor from '../../Helper/getStatusColor';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { SD_Status } from '../../Utility/SD';
 
 function RezervacijaDetailsPage() {
 
     const { id } = useParams();
     const { data, isLoading } = useGetRezervacijaDetaljiQuery(id);
     const navigate = useNavigate();
-    //const tipBoja = getStatusColor(data.result[0].status);
+    const [updateRezervacijaHeader] = useUpdateRezervacijaHeaderMutation();
+
+    const [status, setStatus] = useState<SD_Status | null>(null);
+
+    useEffect(() => {
+      let intervalId: NodeJS.Timeout;
+
+      const proveriStatus = () => {
+        if (!isLoading && data?.result) {
+          const rezervacija = data.result[0];
+          const trenutniStatus = rezervacija.status as SD_Status;
+
+          const danas = new Date();
+          const danasnjiDatum = danas.toISOString().split('T')[0];
+          const trenutnoVreme = danas.getHours() * 60 + danas.getMinutes();
+
+          const sviTermini = rezervacija.rezervacijaDetalji.flatMap((stavka: any) =>
+            Array.isArray(stavka.odabraniTermini) ? stavka.odabraniTermini : [stavka.odabraniTermini]
+          );
+
+          let postojiUToku = false;
+          let postojiUBuducnosti = false;
+
+          for (const termin of sviTermini) {
+            const datumTermina = termin.datumTermina.split('T')[0];
+            const [pocSat, pocMin] = termin.vremePocetka.split(':').map(Number);
+            const [krajSat, krajMin] = termin.vremeZavrsetka.split(':').map(Number);
+            const pocetak = pocSat * 60 + pocMin;
+            const kraj = krajSat * 60 + krajMin;
+
+            if (datumTermina === danasnjiDatum) {
+              if (trenutnoVreme >= pocetak && trenutnoVreme <= kraj) {
+                postojiUToku = true;
+                break;
+              } else if (trenutnoVreme < pocetak) {
+                postojiUBuducnosti = true;
+              }
+            } else {
+              const terminDatum = new Date(termin.datumTermina);
+              if (terminDatum > danas) {
+                postojiUBuducnosti = true;
+              }
+            }
+          }
+
+          let noviStatus: SD_Status | null = null;
+
+          if (postojiUToku) {
+            noviStatus = SD_Status.U_Toku;
+          } else if (!postojiUBuducnosti) {
+            noviStatus = SD_Status.Zavrsena;
+          } else {
+            noviStatus = trenutniStatus;
+          }
+
+          if (noviStatus && noviStatus !== trenutniStatus) {
+            updateRezervacijaHeader({
+              rezervacijaHeaderId: rezervacija.rezervacijaHeaderId,
+              imeKorisnika: rezervacija.imeKorisnika,
+              emailKorisnika: rezervacija.emailKorisnika,
+              brojKorisnika: rezervacija.brojKorisnika,
+              stripeIntentPaymentId: rezervacija.stripePaymentIntentId ?? "",
+              status: noviStatus
+            });
+            setStatus(noviStatus);
+          } else {
+            setStatus(trenutniStatus);
+          }
+        }
+      };
+
+      proveriStatus(); // odmah pri mountu
+
+      intervalId = setInterval(() => {
+        proveriStatus();
+      }, 60000); // proverava svakih 60 sekundi
+
+      return () => {
+        clearInterval(intervalId);
+      };
+    }, [data, isLoading]);
+
+
     
     //console.log("Logujem status: ", data.result[0].status);
 
-    let userInput, rezervacijaDetalji;
+    //let userInput, rezervacijaDetalji, tipBoja;
+    //let status : SD_Status;
+    const rezervacija = data?.result?.[0];
+    const tipBoja = useMemo(() => getStatusColor(status ?? SD_Status.Cekanje), [status])
 
-    if (!isLoading && data.result) {
-        console.log("Logujem detalje rezervacije", data.result);
-        
-
-        console.log("Logujem res[0]", data.result[0]);
-        
-        userInput = {
-            name: data.result[0].imeKorisnika,
-            email: data.result[0].emailKorisnika,
-            phoneNumber: data.result[0].brojKorisnika,
-        };
-        rezervacijaDetalji = {
-            rezervacijaHeaderId: data.result[0].rezervacijaHeaderId,
-            stavkaKorpe: data.result[0].rezervacijaDetalji.map((stavka: any) => ({
-              ...stavka,
-              odabraniTermini: Array.isArray(stavka.odabraniTermini)
-                ? stavka.odabraniTermini
-                : [stavka.odabraniTermini]
-            })),
-            ukupnoCena: data.result[0].ukupnoCena,
-            status: data.result[0].status,
-        };
+    if (!isLoading && !rezervacija || status === null) {
+      return <div className='container my-5'>Učitavanje...</div>
     }
 
+    const userInput = {
+      name: rezervacija.imeKorisnika,
+      email: rezervacija.emailKorisnika,
+      phoneNumber: rezervacija.brojKorisnika
+    }
+
+    const rezervacijaDetalji = {
+      rezervacijaHeaderId: rezervacija.rezervacijaHeaderId,
+      stavkaKorpe: rezervacija.rezervacijaDetalji.map((stavka: any) => ({
+        ...stavka,
+        odabraniTermini: Array.isArray(stavka.odabraniTermini)
+          ? stavka.odabraniTermini
+          : [stavka.odabraniTermini]
+      })),
+      ukupnoCena: rezervacija.ukupnoCena,
+      status: status
+    }
+  
     return (
       <div className='container my-5 mx-auto p-5 w-100' style={{ maxWidth: '800px' }}>
         {!isLoading && rezervacijaDetalji && userInput && (
@@ -48,7 +132,7 @@ function RezervacijaDetailsPage() {
             <div>
               <div className='d-flex justify-content-between align-items-center'>
                 <h2 className="mb-4" style={{ color: "#51285f" }}>Detalji rezervacije</h2>
-                <span className={`btn btn-outline-primary fs-6 mb-4`}>{rezervacijaDetalji.status}</span>
+                <span className={`btn btn-outline-${tipBoja} fs-6 mb-4`}>{rezervacijaDetalji.status}</span>
               </div>
             <div className="mb-3">
               <div className='border py-3 px-2'><strong>Korisnik:</strong> {userInput.name} <br /></div>
@@ -66,7 +150,7 @@ function RezervacijaDetailsPage() {
             <div className="mb-3">
               <strong>Status rezervacije:</strong> {rezervacijaDetalji.status} <br />
               <hr />
-              <h5><strong>Ukupna cena:</strong> {rezervacijaDetalji.ukupnoCena} RSD</h5>
+              <h5><strong>Ukupna cena:</strong> {rezervacijaDetalji.ukupnoCena.toFixed(2)} RSD</h5>
             </div>
   
             <div className='border rounded py-3 px-2'>
@@ -118,7 +202,7 @@ function RezervacijaDetailsPage() {
                       <p>Nema termina</p>
                     )}
                     <hr />
-                    <h5><strong>Cena:</strong> {info.cena} RSD</h5>
+                    <h5><strong>Cena:</strong> {info.cena.toFixed(2)} RSD</h5>
                   </div>
                 ));
               })()}

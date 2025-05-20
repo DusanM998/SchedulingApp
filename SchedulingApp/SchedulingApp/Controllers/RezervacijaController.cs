@@ -189,6 +189,8 @@ namespace SchedulingApp.Controllers
                         NazivSportskogObjekta = termin.SportskiObjekat?.Naziv,
                     };
 
+                    termin.Status = "Zauzet";
+
                     _db.RezervacijaDetalji.Add(detalji);
                 }
 

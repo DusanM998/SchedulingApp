@@ -49,7 +49,7 @@ const rezervacijaApi = createApi({
         }),
         updateRezervacijaHeader: builder.mutation({
             query: (rezevacijaDetalji) => ({
-                url: "order/" + rezevacijaDetalji.rezervacijaHeaderId,
+                url: "rezervacija/" + rezevacijaDetalji.rezervacijaHeaderId,
                 method: "PUT",
                 headers: {
                     "Content-type" : "application/json",

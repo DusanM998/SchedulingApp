@@ -8,6 +8,7 @@ import {apiResponse, stavkaKorpeModel, terminModel} from '../../Interfaces';
 import { useInicirajPlacanjeMutation } from '../../apis/placanjeApi';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { toast } from 'react-toastify';
 
 function RezervacijaDetalji() {
 
@@ -68,6 +69,19 @@ function RezervacijaDetalji() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const imaTermina = shoppingCartStore.some(stavka =>
+      stavka.odabraniTermini && stavka.odabraniTermini.length > 0
+    );
+
+    if (!imaTermina) {
+      toast.error("Molimo Vas da odaberete barem jedan termin pre nego što nastavite!", {
+        position: "top-center",
+        autoClose: 3000,
+      });
+      return;
+    }
+
     setLoading(true);
 
     const { data }: apiResponse = await inicirajPlacanje(userData.id);

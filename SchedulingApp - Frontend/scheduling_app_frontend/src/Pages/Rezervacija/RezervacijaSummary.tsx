@@ -261,13 +261,13 @@ function RezervacijaSummary() {
 
     const [hours, minutes] = termin.vremeZavrsetka.split(':').map(Number);
 
-    const datumZavrsetka = new Date(termin.datumTermina);
-    datumZavrsetka.setHours(hours);
-    datumZavrsetka.setMinutes(minutes);
-    datumZavrsetka.setSeconds(0);
-    datumZavrsetka.setMilliseconds(0);
+    // Napravi datum samo sa datumskom komponentom termina
+    const datum = new Date(termin.datumTermina);
+    const datumZavrsetka = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate(), hours, minutes, 0, 0);
 
-    return datumZavrsetka < new Date();
+    const sada = new Date();
+
+    return sada > datumZavrsetka;
   }
 
 
@@ -367,6 +367,10 @@ function RezervacijaSummary() {
                       } else if (isExpired) {
                         cardColor = "bg-warning";
                         statusText = "Termin je istekao!";
+                        isClickable = false;
+                      } else if (termin.status === "Rezervisan") {
+                        cardColor = "bg-primary";
+                        statusText = "Rezervisan";
                         isClickable = false;
                       }
 
