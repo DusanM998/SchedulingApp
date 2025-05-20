@@ -7,7 +7,7 @@ import { Route, Routes } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import { Footer, Header } from "../Components/Layout";
 import { Home, Kontakt, Login, NotFound, Register, UserDetails, UserPage } from "../Pages";
-import { SportskiObjekatDetails, SportskiObjekatKreirajAzuriraj, SportskiObjekatList, SportskiObjektiPage, SportskiObjektiTabela } from "../Pages/SportskiObjekat";
+import { SportskiObjekatDetails, SportskiObjekatKreirajAzuriraj, SportskiObjekatList, SportskiObjektiPage, SportskiObjektiTabela, SportskiObjektiWithLocation } from "../Pages/SportskiObjekat";
 import { MojeRezervacije, Rezervacija, RezervacijaDetailsPage, RezervacijaPotvrdjena, SveRezervacije } from "../Pages/Rezervacija";
 import { setShoppingCart } from "../Storage/Redux/shoppingCartSlice";
 import { useGetShoppingCartByIdQuery } from "../apis/shoppingCartApi";
@@ -76,6 +76,7 @@ function App() {
                     <Route path="/rezervacija/sveRezervacije" element={<SveRezervacije />}></Route>
                     <Route path="/rezervacija/rezervacijaDetaljiPage/:id" element={<RezervacijaDetailsPage />}></Route>
                     <Route path="/rezervacija/mojeRezervacije" element={<MojeRezervacije />}></Route>
+                    <Route path="/sportskiObjekti/sportskiObjektiWithLocation" element={<SportskiObjektiWithLocation />} ></Route>
                 </Routes>
             </div>
         </div>

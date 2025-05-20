@@ -201,11 +201,18 @@ function TerminKreirajAzuriraj() {
               showIcon
               toggleCalendarOnIconClick
               selected={terminInputs.datumTermina ? new Date(terminInputs.datumTermina) : null}
-              onChange={(date: Date | null) => setTerminInputs({
-                ...terminInputs, 
-                datumTermina: date})}
+              onChange={(date: Date | null) => {
+                if (date) {
+                  date.setHours(12, 0, 0, 0);
+                }
+                
+                setTerminInputs({
+                  ...terminInputs,
+                  datumTermina: date
+                });
+              }}
               className='form-control'
-              dateFormat="yyyy-MM-dd"
+              dateFormat="dd-MM-yyyy"
             />
             <input
               type='text'

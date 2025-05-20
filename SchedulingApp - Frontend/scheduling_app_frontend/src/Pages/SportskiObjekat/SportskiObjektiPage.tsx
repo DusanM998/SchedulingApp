@@ -10,6 +10,7 @@ import { Carousel } from 'react-bootstrap';
 import SportskiObjekatCard from './SportskiObjekatCard';
 import maps from "../../Assets/Images/maps.jpg";
 import { Footer } from '../../Components/Layout';
+import { useNavigate } from 'react-router-dom';
 
 function SportskiObjektiPage() {
 
@@ -19,6 +20,7 @@ function SportskiObjektiPage() {
     const [vrstaSportaNaziv, setVrstaSportaNaziv] = useState(SD_SortTypes.Naziv_A_Z);
     const dispatch = useDispatch();
     const { data, isLoading } = useGetSportskiObjektiQuery(null);
+    const navigate = useNavigate();
     
     const sortOptions: Array<SD_SortTypes> = [
         SD_SortTypes.Naziv_A_Z,
@@ -193,7 +195,10 @@ function SportskiObjektiPage() {
       <div className='col-md-6 text-start'>
         <h3 style={{fontSize:"3rem", color:"#51285f"}} className='fw-bold m-5'>Lokacije sportsth objekata</h3>
         <p className='m-5 text-secondary fs-5'>Svi sportski objekti na jednom mestu. Proverite lokaciju i rezervišite termin u Vašoj blizini.</p>
-        <button className='btn btn-lg m-5' style={{backgroundColor:"#26a172", color:"white"}}>Pretraži sportske objekte</button>
+        <button className='btn btn-lg m-5' 
+          style={{backgroundColor:"#26a172", color:"white"}}
+          onClick={() => navigate("/sportskiObjekti/sportskiObjektiWithLocation")}
+          >Pretraži sportske objekte</button>
       </div>
         <div className='col-md-6 text-center'>
           <img
