@@ -4,10 +4,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import background from "../../../Assets/Images/background.jpg";
 import "./banner.css";
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 function Banner() {
   const [value, setValue] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
@@ -35,7 +37,8 @@ function Banner() {
         <p className="mt-4 text-secondary fs-5">
           Proveri dostupnost i rezerviši salu za fudbal, teren za tenis ili salu za košarku.
         </p>
-        <button className="btn btn-dark btn-lg mt-3" onClick={handleReservationClick}>Rezerviši Termin</button>
+        <button className="btn btn-dark btn-lg mt-3" onClick={handleReservationClick}>Rezerviši Termin</button> <br />
+        <button className="btn btn-lg mt-3" style={{backgroundColor:"#4da172", color:"white"}} onClick={() => navigate("/filter")}>Pretraga Termia i Objekata</button>
       </div>
       <div className='custom-banner'>
         <div className='gradient-overlay'>

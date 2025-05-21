@@ -14,6 +14,7 @@ import { useGetShoppingCartByIdQuery } from "../apis/shoppingCartApi";
 import { TerminiList, TerminKreirajAzuriraj } from "../Pages/Termin";
 import { useGetCurrentUserQuery } from "../apis/authApi";
 import { Placanje } from "../Pages/Placanje";
+import { Filter } from "../Filter";
 
 function App() {
     const dispatch = useDispatch();
@@ -77,6 +78,7 @@ function App() {
                     <Route path="/rezervacija/rezervacijaDetaljiPage/:id" element={<RezervacijaDetailsPage />}></Route>
                     <Route path="/rezervacija/mojeRezervacije" element={<MojeRezervacije />}></Route>
                     <Route path="/sportskiObjekti/sportskiObjektiWithLocation" element={<SportskiObjektiWithLocation />} ></Route>
+                    <Route path="/filter" element={<Filter />} ></Route>
                 </Routes>
             </div>
         </div>

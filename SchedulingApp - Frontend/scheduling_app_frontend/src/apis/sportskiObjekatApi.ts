@@ -18,6 +18,21 @@ const sportskiObjekatApi = createApi({
             }),
             providesTags: ["SportskiObjekti"]
         }),
+        getSportskiObjektiWithPagination: builder.query({
+            query: ({pageNumber, pageSize}) => ({
+                url: "sportskiObjektiWithPagination",
+                params: {
+                    ...(pageNumber && { pageNumber }),
+                    ...(pageSize && {pageSize})
+                },
+            }),
+            transformResponse(apiResponse: { result: any }, meta: any) {
+                return {
+                    apiResponse,
+                    totalRecords: meta.response.headers.get("X-Pagination"),
+                }
+            },
+        }),
         getSportskiObjekatById: builder.query({
             query: (sportskiObjekatId) => ({
                 url:`sportskiObjektiApi/${sportskiObjekatId}`,
@@ -55,7 +70,8 @@ export const {
     useGetSportskiObjekatByIdQuery,
     useUpdateSportskiObjekatMutation,
     useCreateSportskiObjekatMutation,
-    useDeleteSportskiObjekatMutation
+    useDeleteSportskiObjekatMutation,
+    useGetSportskiObjektiWithPaginationQuery
 } = sportskiObjekatApi;
 
 export default sportskiObjekatApi;

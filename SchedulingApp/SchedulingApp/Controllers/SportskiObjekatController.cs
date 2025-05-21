@@ -6,6 +6,7 @@ using SchedulingApp.Models;
 using SchedulingApp.Models.Dto;
 using SchedulingApp.Services;
 using System.Net;
+using System.Text.Json;
 
 namespace SchedulingApp.Controllers
 {
@@ -31,6 +32,34 @@ namespace SchedulingApp.Controllers
             _response.Result = objekti;
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_db.SportskiObjekti);
+        }
+
+        [HttpGet("/api/sportskiObjektiWithPagination")]
+        public async Task<ActionResult<ApiResponse>> GetSportskiObjektiWithPagination(int pageNumber = 1, int pageSize = 5)
+        {
+            try
+            {
+                IEnumerable<SportskiObjekat> objekti = _db.SportskiObjekti.Include(u => u.Termini).ToList();
+                
+
+                Pagination pagination = new()
+                {
+                    CurrentPage = pageNumber,
+                    PageSize = pageSize,
+                    TotalRecords = objekti.Count()
+                };
+
+                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
+                _response.Result = objekti.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch(Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.Message };
+            }
+            return _response;
         }
 
         [HttpGet("{id:int}", Name = "GetSportskiObjekatById")]

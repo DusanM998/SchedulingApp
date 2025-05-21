@@ -50,7 +50,7 @@ namespace SchedulingApp.Controllers
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse>> GetRezervacije(string? userId, string? searchString,
-            string? status, int pageNumber = 1, int pageSize = 5)
+            string? status, int pageNumber = 1, int pageSize = 2)
         {
             try
             {

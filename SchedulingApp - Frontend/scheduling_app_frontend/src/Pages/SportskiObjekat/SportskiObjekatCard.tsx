@@ -74,7 +74,16 @@ function SportskiObjekatCard(props: Props) {
               </Link>
             </p>
             <hr />
-            <p className='badge bg-secondary' style={{ cursor: "pointer" }}
+            <p className='badge bg-secondary'
+              style={{
+                  cursor: "pointer",
+                  minHeight: "30px",
+                  whiteSpace: "normal",
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  display: "inline-block", 
+                  maxWidth: "100%"
+                }}
               onClick={() => openGoogleMaps(props.sportskiObjekat.lokacija)}
             >
               <i className="bi bi-geo-alt-fill">&nbsp;</i>

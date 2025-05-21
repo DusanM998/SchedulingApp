@@ -4,6 +4,7 @@ import terminApi from "./terminApi";
 import shoppingCartApi from "./shoppingCartApi";
 import placanjeApi from "./placanjeApi";
 import rezervacijaApi from "./rezervacijaApi";
+import filterApi from "./filterApi";
 
 export {
     authApi,
@@ -11,5 +12,6 @@ export {
     terminApi,
     shoppingCartApi,
     placanjeApi,
-    rezervacijaApi
+    rezervacijaApi,
+    filterApi
 };

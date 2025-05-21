@@ -59,9 +59,15 @@ function SveRezervacije() {
   useEffect(() => {
     if (data) {
       setRezervacijaData(data.apiResponse.result);
-      const { TotalRecords } = JSON.parse(data.totalRecords);
-      setTotalRecords(TotalRecords);
-      setTotalRecords(data.totalRecords?.TotalRecords ?? 0);
+      let total = 0;
+      try {
+        const parsed = JSON.parse(data.totalRecords);
+        total = parsed.TotalRecords ?? 0;
+      } catch (e) {
+        console.error("Greška prilikom parsiranja totalRecords:", e);
+      }
+
+      setTotalRecords(total);
     }
   }, [data]);
 
