@@ -107,10 +107,3 @@
 .slide-in-bottom {
   animation: slideInBottom 0.4s ease-out;
 }
-
-/* ------------------------------------
-   Dugmad
------------------------------------- */
-button.btn {
-  min-width: 180px;
-}

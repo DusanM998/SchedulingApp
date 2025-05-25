@@ -165,6 +165,46 @@ namespace SchedulingApp.Controllers
             return _response;
         }
 
+        [HttpPut("UpdateStatus")]
+        public async Task<ActionResult<ApiResponse>> UpdateExpiredTermin()
+        {
+            try
+            {
+                var danasnjiDatum = DateTime.Today;
+
+                var termini = _db.Termini
+                    .Where(t => t.DatumTermina < danasnjiDatum && t.Status == SD.StatusTermina_Slobodan)
+                    .ToList();
+
+                if(termini.Count == 0)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "Nema termina za azuriranje!" };
+                    return NotFound(_response);
+                }
+
+                foreach(var termin in termini)
+                {
+                    termin.Status = SD.StatusTermina_Istekao;
+                }
+
+                await _db.SaveChangesAsync();
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = $"{termini.Count} termina je azurirano na status 'Istekao'";
+                return Ok(_response);
+            }
+            catch(Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.Message };
+                return StatusCode(500, _response);
+            }
+        }
+
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<ApiResponse>> DeleteTermin(int id)
         {
