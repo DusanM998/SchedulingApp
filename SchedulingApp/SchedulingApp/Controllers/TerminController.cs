@@ -94,6 +94,31 @@ namespace SchedulingApp.Controllers
             return Ok(sportskiObjekat.Termini);
         }
 
+        [HttpGet("termin/{id:int}", Name = "GetTerminById")]
+        public async Task<IActionResult> GetTerminById(int id)
+        {
+            if (id == 0)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                return BadRequest(_response);
+            }
+            var termini = await _db.Termini
+                .Include(t => t.SportskiObjekat)
+                .Where(t => t.TerminId == id)
+                .ToListAsync();
+
+            if (termini == null || !termini.Any())
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                return NotFound(_response);
+            }
+            _response.Result = termini;
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
+        }
+
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ApiResponse>> UpdateTermin(int id, [FromForm] TerminUpdateDTO terminUpdateDTO)
         {

@@ -1,0 +1,116 @@
+/* ------------------------------------
+   Navigacija (sidebar)
+------------------------------------ */
+.navigation {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.navigation ul {
+  display: flex;
+  flex-direction: row;       /* Na manjim ekranima horizontalno */
+  overflow-x: auto;
+  white-space: nowrap;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .navigation {
+    width: 250px;
+  }
+
+  .navigation ul {
+    flex-direction: column;   /* Na većim ekranima vertikalno */
+    overflow-x: unset;
+    white-space: normal;
+  }
+}
+
+.list-group-horizontal-md > .list-group-item {
+  border-radius: 0;
+  white-space: nowrap;
+}
+
+/* ------------------------------------
+   Wrapper za odabir
+------------------------------------ */
+.odabir-wrapper {
+  display: flex;
+  flex-direction: column;   /* Na manjim ekranima kolone */
+}
+
+@media (min-width: 768px) {
+  .odabir-wrapper {
+    flex-direction: row;     /* Na većim ekranima red */
+  }
+
+  .content-wrapper {
+    margin-left: 2rem;
+    width: 100%;
+  }
+}
+
+/* ------------------------------------
+   Kartice sportskih objekata
+------------------------------------ */
+.objekat-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.objekat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.selected {
+  border: 2px solid #26a172;
+  background-color: #f0faf6;
+}
+
+/* Slika objekta */
+.objekat-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+/* ------------------------------------
+   Animacije
+------------------------------------ */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInBottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.5s ease-out forwards;
+}
+
+.slide-in-bottom {
+  animation: slideInBottom 0.4s ease-out;
+}
+
+/* ------------------------------------
+   Dugmad
+------------------------------------ */
+button.btn {
+  min-width: 180px;
+}

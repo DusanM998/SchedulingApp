@@ -12,13 +12,12 @@ const filterApi = createApi({
     tagTypes: ["Filter"],
     endpoints: (builder) => ({
         getRecords: builder.query({
-            query: ({ lokacija, datum, vremePocetka, vremeZavrsetka, pageNumber, pageSize }) => ({
-                url: "rezervacija",
+            query: ({ lokacija, vrstaSporta, datumTermina, pageNumber, pageSize }) => ({
+                url: "filter",
                 params: {
                     ...(lokacija && { lokacija }),
-                    ...(datum && { datum }),
-                    ...(vremePocetka && { vremePocetka }),
-                    ...(vremeZavrsetka && { vremeZavrsetka }),
+                    ...(vrstaSporta && { vrstaSporta }),
+                    ...(datumTermina && { datumTermina }),
                     ...(pageNumber && (pageNumber)),
                     ...(pageSize && (pageSize)),
                 },

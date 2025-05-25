@@ -38,7 +38,8 @@ function Banner() {
           Proveri dostupnost i rezerviši salu za fudbal, teren za tenis ili salu za košarku.
         </p>
         <button className="btn btn-dark btn-lg mt-3" onClick={handleReservationClick}>Rezerviši Termin</button> <br />
-        <button className="btn btn-lg mt-3" style={{backgroundColor:"#4da172", color:"white"}} onClick={() => navigate("/filter")}>Pretraga Termia i Objekata</button>
+        <button className="btn btn-lg mt-2" style={{backgroundColor:"#51285f", color:"white"}} onClick={() => navigate("/filter/odabirObjekata")}>Izaberi Objekat</button> <br />
+        <button className="btn btn-lg mt-2" style={{ backgroundColor: "#4da172", color: "white" }} onClick={() => navigate("/filter")}>Pretraga Termina i Objekata</button>
       </div>
       <div className='custom-banner'>
         <div className='gradient-overlay'>

@@ -15,6 +15,7 @@ import { TerminiList, TerminKreirajAzuriraj } from "../Pages/Termin";
 import { useGetCurrentUserQuery } from "../apis/authApi";
 import { Placanje } from "../Pages/Placanje";
 import { Filter } from "../Filter";
+import OdabirObjekata from "../Filter/OdabirObjekata";
 
 function App() {
     const dispatch = useDispatch();
@@ -79,6 +80,7 @@ function App() {
                     <Route path="/rezervacija/mojeRezervacije" element={<MojeRezervacije />}></Route>
                     <Route path="/sportskiObjekti/sportskiObjektiWithLocation" element={<SportskiObjektiWithLocation />} ></Route>
                     <Route path="/filter" element={<Filter />} ></Route>
+                    <Route path="/filter/odabirObjekata" element={<OdabirObjekata />} ></Route>
                 </Routes>
             </div>
         </div>

@@ -214,18 +214,21 @@ function TerminKreirajAzuriraj() {
               className='form-control'
               dateFormat="dd-MM-yyyy"
             />
+            <br />
+            <label className="form-label mt-3">Unesite Vreme Početka: </label>
             <input
-              type='text'
-              className='form-control mt-3'
+              type='time'
+              className='form-control'
               placeholder='Unesite Vreme Početka'
               required
               name='vremePocetka'
               value={terminInputs.vremePocetka}
               onChange={handleTerminInput}
             />
+            <label className="form-label mt-3">Unesite Vreme Završetka: </label>
             <input
-              type='text'
-              className='form-control mt-3'
+              type='time'
+              className='form-control'
               placeholder='Unesite Vreme Završetka'
               required
               name='vremeZavrsetka'

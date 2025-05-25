@@ -192,8 +192,9 @@ function SportskiObjekatKreirajAzuriraj() {
               value={sportskiObjekatInputs.lokacija}
               onChange={handleSportskiObjekatInput}
             />
+            <label className='form-label mt-3'>Odaberite Vrstu Sporta: </label>
             <select
-              className='form-control mt-3 form-select'
+              className='form-control form-select'
               required
               name='vrstaSporta'
               value={sportskiObjekatInputs.vrstaSporta ?? VrstaSporta[0]}
@@ -238,9 +239,10 @@ function SportskiObjekatKreirajAzuriraj() {
               value={sportskiObjekatInputs.kapacitet}
               onChange={handleSportskiObjekatInput}
             />
+            <label className='form-label mt-3'>Odaberite Sliku: </label>
             <input
               type='file'
-              className='form-control mt-3'
+              className='form-control'
               onChange={handleFileChange}
             />
             <div className='row'>

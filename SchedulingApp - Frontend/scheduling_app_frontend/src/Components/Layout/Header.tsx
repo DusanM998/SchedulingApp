@@ -77,20 +77,7 @@ const Header = () => {
                                 >
                                 Upravljanje Terminima
                                 </li>
-                                <li 
-                                    className='dropdown-item' 
-                                    style={{ cursor: "pointer" }}
-                                    onClick={() => navigate("*")}
-                                >
-                                Upravljanje Rezervacijama
-                                </li>
-                                <li 
-                                    className='dropdown-item' 
-                                    style={{ cursor: "pointer" }}
-                                    onClick={() => navigate("*")}
-                                >
-                                Not Found
-                                </li>
+                                
                             </ul>
                         </li>
                     ) :

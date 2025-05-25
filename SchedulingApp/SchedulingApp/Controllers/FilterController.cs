@@ -22,8 +22,8 @@ namespace SchedulingApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetRecords(string? lokacija, DateTime? datum,
-            string? vremePocetka, string? vremeZavrsetka, int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<ApiResponse>> GetRecords(string? lokacija, string? vrstaSporta, DateTime? datum,
+            int pageNumber = 1, int pageSize = 10)
         {
             try
             {
@@ -36,17 +36,24 @@ namespace SchedulingApp.Controllers
                 if (!string.IsNullOrEmpty(lokacija))
                 {
                     termini = termini.Where(t => t.SportskiObjekat.Lokacija.ToLower()
-                    .Contains(lokacija.ToLower()));
+                        .Contains(lokacija.ToLower()));
+                }
+
+                //Filter po vrsti sporta
+                if (!string.IsNullOrEmpty(vrstaSporta))
+                {
+                    termini = termini.Where(t => t.SportskiObjekat.VrstaSporta.ToLower()
+                        .Contains(vrstaSporta.ToLower()));
                 }
 
                 //Filter po datumu termina
-                if (!string.IsNullOrEmpty(vremePocetka))
+                if (datum.HasValue)
                 {
                     termini = termini.Where(t => t.DatumTermina.Date == datum.Value.Date);
                 }
 
                 //Filter po vremenu pocetka
-                if (!string.IsNullOrEmpty(vremePocetka))
+                /*if (!string.IsNullOrEmpty(vremePocetka))
                 {
                     termini = termini.Where(t => string.Compare(t.VremePocetka, vremePocetka) >= 0);
                 }
@@ -55,7 +62,7 @@ namespace SchedulingApp.Controllers
                 if (!string.IsNullOrEmpty(vremeZavrsetka))
                 {
                     termini = termini.Where(t => string.Compare(t.VremeZavrsetka, vremeZavrsetka) <= 0);
-                }
+                }*/
 
                 int totalRecords = termini.Count();
 

@@ -3,9 +3,11 @@ import { useGetSportskiObjektiQuery, useGetSportskiObjektiWithPaginationQuery } 
 import { MainLoader } from '../../Components/Page/Common';
 import { Footer } from '../../Components/Layout';
 import { inputHelper } from '../../Helper';
+import { useNavigate } from 'react-router-dom';
 
 function SportskiObjektiWithLocation() {
 
+  const navigate = useNavigate();
   const [sportskiObjektiData, setSportskiObjektiData] = useState([]);
   const [expandedCardId, setExpandedCardId] = useState<number | null>(null);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -162,7 +164,7 @@ function SportskiObjektiWithLocation() {
                       className="mt-3 overflow-hidden"
                       style={{
                         maxHeight: '1000px',
-                        transition: 'max-height 0.5s ease-in-out'
+                        transition: 'max-height 0.5s ease-in-out',
                       }}
                     >
                       <h5>Termini</h5>
@@ -183,7 +185,43 @@ function SportskiObjektiWithLocation() {
             </div>
             </div>
         ))}
-        
+        <button className='btn btn-secondary' onClick={() => navigate(-1)}>Nazad</button>
+        <div className='d-flex mb-5 justify-content-end align-items-center'>
+          <div>Prikaza po stranici: </div>
+          <div>
+            <select
+              className='form-select mx-2'
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                handlePageOptionChange("change", Number(e.target.value));
+                setCurrentPageSize(Number(e.target.value));
+              }}
+              style={{ width: "80px" }}
+              value={currentPageSize}
+            >
+              <option>2</option>
+              <option>4</option>
+              <option>6</option>
+              <option>10</option>
+            </select>
+          </div>
+          <div className='mx-2'>
+            {getPageDetails()}
+          </div>
+          <button
+            className='btn btn-outline-secondary px-3 mx-2'
+            onClick={() => handlePageOptionChange("prev")}
+            disabled={pageOptions.pageNumber === 1}
+          >
+            <i className='bi bi-chevron-left'></i>
+          </button>
+          <button
+            className='btn btn-outline-secondary px-3 mx-2'
+            onClick={() => handlePageOptionChange("next")}
+            disabled={pageOptions.pageNumber * pageOptions.pageSize >= totalRecords}
+          >
+            <i className='bi bi-chevron-right'></i>
+          </button>
+        </div>
         </div>
         <Footer />
     </>
