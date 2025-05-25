@@ -19,7 +19,8 @@ export enum SD_Status {
 export enum SD_Status_Termina {
     Slobodan = "Slobodan",
     Zauzet = "Zauzet",
-    Rezervisan = "Rezervisan"
+    Rezervisan = "Rezervisan",
+    Istekao = "Istekao"
 }
 
 export enum SD_VrstaSporta {

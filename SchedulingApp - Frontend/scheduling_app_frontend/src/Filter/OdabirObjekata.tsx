@@ -7,6 +7,9 @@ import { MainLoader } from '../Components/Page/Common';
 import { useNavigate } from 'react-router-dom';
 import { useGetTerminByIdQuery } from '../apis/terminApi';
 import { terminModel } from '../Interfaces';
+import { RootState } from '../Storage/Redux/store';
+import { useSelector } from 'react-redux';
+import { inputHelper } from '../Helper';
 
 function OdabirObjekata() {
     const { data: objekti, isLoading } = useGetSportskiObjektiQuery(null);
@@ -14,11 +17,36 @@ function OdabirObjekata() {
     const [showDetails, setShowDetails] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
     const [showTermini, setShowTermini] = useState(false);
+    const [showObjekatAndTermini, setShowObjekatAndTermini] = useState(false);
     const [selectedTerminId, setSelectedTerminId] = useState<number | null>(null);
     const [selectedTermini, setSelectedTermini] = useState<number[]>([]); //Za cuvanje id-eva odabranih termina
     const [activeTab, setActiveTab] = useState(0); //Za seketovanje aktivnog taba, 0 - odaberi teren, 1 - datum
 
     const navigate = useNavigate();
+
+    const userData = useSelector((state: RootState) => state.userAuthStore);
+
+    const initialUserData = {
+        name: userData.name,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber,
+    };
+
+    const [userInput, setUserInput] = useState(initialUserData);
+
+    const handleUserInput = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string
+    ) => {
+        if(typeof e ==="string"){
+            setUserInput(prev => ({
+                ...prev,
+                phoneNumber: e
+            }));
+        } else {
+            const tempData = inputHelper(e, userInput);
+            setUserInput(tempData);
+        }
+    }
 
     useEffect(() => {
         setTimeout(() => setMenuVisible(true), 100);
@@ -68,6 +96,7 @@ function OdabirObjekata() {
 
     const handleKontaktPodaci = () => {
         setActiveTab(2);
+        setShowObjekatAndTermini(true);
     }
 
     const handleVasaRezervacija = () => {
@@ -88,17 +117,29 @@ function OdabirObjekata() {
                 <div className='col-md-3 col-12 mb-3'>
                     <div className={`navigation shadow p-3 mb-3 ${menuVisible ? 'slide-in-left' : 'invisible'}`}>
                         <ul className="list-group list-group-horizontal-md w-100 justify-content-center text-center">
-                            <li className={`list-group-item ${activeTab === 0 ? 'active' : ''}`}>
-                                <i className="bi bi-hdd-fill me-2"></i>Odaberi teren
+                            <li className="list-group-item">
+                                <i className="bi bi-hdd-fill me-2"
+                                    style={{ color: activeTab === 0 ? '#26a172' : '' }}
+                                ></i>
+                                <span style={{ color: activeTab === 0 ? '#26a172' : '' }}>Odaberi teren</span>
                             </li>
-                            <li className={`list-group-item ${activeTab === 1 ? 'active' : ''}`}>
-                                <i className="bi bi-calendar-event me-2"></i>Datum & Vreme
+                            <li className="list-group-item">
+                                <i className="bi bi-calendar-event me-2"
+                                    style={{ color: activeTab === 1 ? '#26a172' : '' }}
+                                ></i>
+                                <span style={{ color: activeTab === 1 ? '#26a172' : '' }}>Datum & Vreme</span>
                             </li>
-                            <li className={`list-group-item ${activeTab === 2 ? 'active' : ''}`}>
-                                <i className="bi bi-file-earmark-text me-2"></i>Kontakt podaci
+                            <li className="list-group-item">
+                                <i className="bi bi-file-earmark-text me-2"
+                                    style={{ color: activeTab === 2 ? '#26a172' : '' }}
+                                ></i>
+                                <span style={{ color: activeTab === 2 ? '#26a172' : '' }}>Kontakt podaci</span>
                             </li>
-                            <li className={`list-group-item ${activeTab === 3 ? 'active' : ''}`}>
-                                <i className="bi bi-check2-square me-2"></i>Vaša rezervacija
+                            <li className="list-group-item">
+                                <i className="bi bi-check2-square me-2"
+                                    style={{ color: activeTab === 3 ? '#26a172' : '' }}
+                                ></i>
+                                <span style={{ color: activeTab === 3 ? '#26a172' : '' }}>Vaša rezervacija</span>
                             </li>
                         </ul>
                     </div>
@@ -107,6 +148,7 @@ function OdabirObjekata() {
             
             <div className='col-md-9 col-12'>
                 <div className="content-wrapper flex-fill border rounded p-3">
+                    {!showObjekatAndTermini && (
                         <>
                             <h4 className="fw-bold">Odaberi teren</h4>
                             <div className="row mx-1">
@@ -194,6 +236,8 @@ function OdabirObjekata() {
                                 </div>
                             )}
                         </>
+                    )}
+                        
 
                     {activeTab === 2 && (
                         <div className="p-4 border rounded shadow slide-in-bottom">

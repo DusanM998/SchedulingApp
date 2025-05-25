@@ -8,6 +8,7 @@ import { MainLoader, MiniLoader } from '../../Components/Page/Common';
 import { useGetTerminByIdQuery } from '../../apis/terminApi';
 import { useUpdateShoppingCartMutation } from '../../apis/shoppingCartApi';
 import { toastNotify } from '../../Helper';
+import { SD_Status_Termina } from '../../Utility/SD';
 
 function SportskiObjekatDetails() {
 
@@ -116,10 +117,29 @@ function SportskiObjekatDetails() {
               <div className='d-flex flex-wrap'>
                 {terminiData.length > 0 ? (
                   terminiData.map((termin: terminModel) => {
+
+                    let cardColor = "bg-success";
+                    let statusText = "Slobodan";
+                    let isClickable = true;
+
+                    if (termin.status === SD_Status_Termina.Zauzet) {
+                      cardColor = "bg-danger";
+                      statusText = "Zauzet";
+                      isClickable = false;
+                    } else if (termin.status === SD_Status_Termina.Istekao) {
+                      cardColor = "bg-warning";
+                      statusText = "Termin je istekao!";
+                      isClickable = false;
+                    } else if (termin.status === SD_Status_Termina.Rezervisan) {
+                      cardColor = "bg-primary";
+                      statusText = "Rezervisan";
+                      isClickable = false;
+                    }
+
                     return (
                       <div
                         key={termin.terminId}
-                        className={`termin-card m-2 p-3 rounded ${termin.status === "Zauzet" ? "bg-danger" : "bg-success"}`}
+                        className={`termin-card m-2 p-3 rounded ${cardColor}`}
                         style={{
                           width: "250px",
                           color: "#fff",
@@ -127,7 +147,7 @@ function SportskiObjekatDetails() {
                       >
                         <h6>Datum: {termin.datumTermina ? new Date(termin.datumTermina).toLocaleDateString("sr-RS") : "Nepoznat datum"}</h6>
                         <h6>Vreme: {termin.vremePocetka} - {termin.vremeZavrsetka}</h6>
-                        <p>Status: {termin.status === "Zauzet" ? "Zauzet" : "Slobodan"}</p>
+                        <p>Status: {termin.status}</p>
                       </div>
                     );
                   })
