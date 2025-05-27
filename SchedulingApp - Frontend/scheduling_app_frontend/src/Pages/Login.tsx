@@ -115,7 +115,8 @@ function Login() {
                 style={{width: "200px", backgroundColor: "#4da172"}}>
                 Login
             </button>
-            <button 
+            <button
+                type="button"
                 className="btn btn-outlined rounded-pill text-white mx-2"
                 style={{ width: "200px", backgroundColor:"#999393" }}
                 disabled={loading}

@@ -119,7 +119,7 @@
 }
 
 /* Stil dugmeta */
-.custom-cart-btn {
+.custom-cart-objekat-btn {
     background-color: #26a172;
     color: white;
     border: none;
@@ -132,7 +132,7 @@
     transition: transform 0.2s;
 }
 
-.custom-cart-btn:hover {
+.custom-cart-objekat-btn:hover {
     transform: scale(1.1);
     background-color: #219f67;
 }

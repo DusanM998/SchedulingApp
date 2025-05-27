@@ -8,7 +8,7 @@
         public const string StatusRezervacije_Cekanje = "Na Čekanju";
         public const string StatusRezervacije_Potvrdjeno = "Potvrđeno";
         public const string StatusRezervacije_U_Toku = "U Toku";
-        public const string StatusRezervacije_Otkazano = "Otkazano";
+        public const string StatusRezervacije_Otkazana = "Otkazana";
         public const string StatusRezervacije_Zavrseno = "Završeno";
 
         public const string StatusTermina_Slobodan = "Slobodan";

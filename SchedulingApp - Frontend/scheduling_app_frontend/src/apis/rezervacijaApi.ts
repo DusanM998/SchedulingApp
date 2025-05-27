@@ -57,7 +57,14 @@ const rezervacijaApi = createApi({
                 body: rezevacijaDetalji
             }),
             invalidatesTags: ["Rezervacije"]
-        })
+        }),
+        cancelRezervacija: builder.mutation({
+            query: (rezervacijaId) => ({
+                url: `rezervacija/otkaziRezervaciju/${rezervacijaId}`,
+                method: "PUT",
+            }),
+            invalidatesTags: ["Rezervacije"]
+        }),
     })
 })
 
@@ -65,7 +72,8 @@ export const {
     useKreirajRezervacijuMutation,
     useGetRezervacijaDetaljiQuery,
     useUpdateRezervacijaHeaderMutation,
-    useGetSveRezervacijeQuery
+    useGetSveRezervacijeQuery,
+    useCancelRezervacijaMutation
 } = rezervacijaApi;
 
 export default rezervacijaApi;

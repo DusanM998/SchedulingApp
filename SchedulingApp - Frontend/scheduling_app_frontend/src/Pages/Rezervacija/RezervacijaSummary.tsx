@@ -72,39 +72,58 @@ function RezervacijaSummary() {
   };
   
   const handleTerminSelection = (sportskiObjekatId: number, termin: terminModel) => {
-    setSelectedTermini((prev) => {
-      const trenutniTermini = prev[sportskiObjekatId] || [];
+  const stavka = shoppingCartStore.find(
+    (s) => s.sportskiObjekat?.sportskiObjekatId === sportskiObjekatId
+  );
 
-      // Proveravamo da li je termin vec odabran
-      const postoji = trenutniTermini.some(t => t.terminId === termin.terminId);
-      const noviTermini = postoji
-        ? trenutniTermini.filter(t => t.terminId !== termin.terminId) // Uklanja ako već postoji
-        : [...trenutniTermini, termin]; // Dodaje ako ne postoji
+  if (!stavka) return;
 
-      /*const novaCena = racunajCenuZaObjekat({
-        ...shoppingCartStore.find(s => s.sportskiObjekat?.sportskiObjekatId === sportskiObjekatId)!,
-        kolicina: shoppingCartStore.find(s => s.sportskiObjekat?.sportskiObjekatId === sportskiObjekatId)?.kolicina || 0,
-      }, noviTermini);*/
-      const stavka = shoppingCartStore.find(s => s.sportskiObjekat?.sportskiObjekatId === sportskiObjekatId);
-      if (stavka) {
-        const novaCena = racunajCenuZaObjekat({
-          ...stavka,
-          odabraniTermini: noviTermini
-        });
+  setSelectedTermini((prev) => {
+    const trenutniTermini = prev[sportskiObjekatId] || [];
 
-        //Azuriranje cene odmah nakon promene termina
-        dispatch(setTerminForObjekat({
-          sportskiObjekatId,
-          terminId: noviTermini.map(t => t.terminId),
-          termin: noviTermini
-        }))
-        console.log(`Odabran termin ${termin.terminId} za objekat ${sportskiObjekatId}`);
-        dispatch(azurirajCenu({ sportskiObjekatId, cenaZaObjekat: novaCena }));
-      }
+    const postoji = trenutniTermini.some(t => t.terminId === termin.terminId);
+    const noviTermini = postoji
+      ? trenutniTermini.filter(t => t.terminId !== termin.terminId)
+      : [...trenutniTermini, termin];
 
-      return { ...prev, [sportskiObjekatId]: noviTermini };
+    if (noviTermini.length === 0) {
+      dispatch(azurirajCenu({
+        sportskiObjekatId,
+        cenaZaObjekat: (stavka.sportskiObjekat?.cenaPoSatu ?? 0) * (stavka.kolicina ?? 1)
+      }));
+
+      dispatch(setTerminForObjekat({
+        sportskiObjekatId,
+        terminId: [],
+        termin: []
+      }));
+
+      const noviState = { ...prev };
+      delete noviState[sportskiObjekatId]; // Alternativa: noviState[sportskiObjekatId] = []
+      return noviState;
+    }
+
+    // Ako postoji bar jedan termin, računamo novu cenu
+    const novaCena = racunajCenuZaObjekat({
+      ...stavka,
+      odabraniTermini: noviTermini
     });
-  };
+
+    dispatch(setTerminForObjekat({
+      sportskiObjekatId,
+      terminId: noviTermini.map(t => t.terminId),
+      termin: noviTermini
+    }));
+
+    dispatch(azurirajCenu({
+      sportskiObjekatId,
+      cenaZaObjekat: novaCena
+    }));
+
+    return { ...prev, [sportskiObjekatId]: noviTermini };
+  });
+};
+
 
   const handleBrojUcesnika = (brojUcesnika: number, stavkaKorpe: stavkaKorpeModel, ukloni?: boolean) => {
     if (ukloni) {

@@ -334,5 +334,54 @@ namespace SchedulingApp.Controllers
             }
             return _response;
         }
+
+        [HttpPut("otkaziRezervaciju/{rezervacijaId}")]
+        public async Task<ActionResult<ApiResponse>> CancelRezervacija(int rezervacijaId)
+        {
+            try
+            {
+                var rezervacija = await _db.RezervacijaHeader
+                    .Include(r => r.RezervacijaDetalji)
+                    .ThenInclude(d => d.OdabraniTermini)
+                    .FirstOrDefaultAsync(r => r.RezervacijaHeaderId == rezervacijaId);
+
+                if (rezervacija == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.ErrorMessages = new List<string> { "Rezervacija nije pronađena." };
+                    return NotFound(_response);
+                }
+
+                // Postavi status rezervacije na "Otkazano"
+                rezervacija.Status = SD.StatusRezervacije_Otkazana;
+                _db.RezervacijaHeader.Update(rezervacija);
+
+                // Postavi sve povezane termine na "Slobodan" i ukloni UserId
+                foreach (var detalj in rezervacija.RezervacijaDetalji)
+                {
+                    var termin = detalj.OdabraniTermini;
+                    if (termin != null)
+                    {
+                        termin.Status = "Slobodan";
+                        termin.UserId = null;
+                        _db.Termini.Update(termin);
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.ErrorMessages = new List<string> { ex.Message };
+                return StatusCode(StatusCodes.Status500InternalServerError, _response);
+            }
+        }
     }
 }

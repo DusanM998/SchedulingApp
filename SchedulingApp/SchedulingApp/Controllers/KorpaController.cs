@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchedulingApp.DbContexts;
 using SchedulingApp.Models;
+using SchedulingApp.Utility;
 using System.Net;
 
 namespace SchedulingApp.Controllers
@@ -178,9 +179,16 @@ namespace SchedulingApp.Controllers
                 {
                     if(termin.UserId == userId)
                     {
-                        termin.Status = "Slobodan";
-                        termin.UserId = null; //Uklanja vlasnistvo korisnika nad terminom
-                        _db.Termini.Update(termin);
+                        if(termin.Status != SD.StatusTermina_Zauzet)
+                        {
+                            termin.Status = "Slobodan";
+                            termin.UserId = null; //Uklanja vlasnistvo korisnika nad terminom
+                            _db.Termini.Update(termin);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Termin {termin.TerminId} je vec potvrdjen!");
+                        }
                     }
                     
                 }

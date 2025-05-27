@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { userModel } from '../../Interfaces';
+import { stavkaKorpeModel, userModel } from '../../Interfaces';
 import { RootState } from '../../Storage/Redux/store';
 import { emptyUserState, setLoggedInUser } from '../../Storage/Redux/userAuthSlice';
 import { SD_Roles } from '../../Utility/SD';
@@ -14,7 +14,29 @@ const Header = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const [adminOpen, setAdminOpen] = useState(false);
+    const adminRef = useRef<HTMLLIElement>(null);
+
+    // Zatvaranje menija klikom van njega
+    useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+        if (adminRef.current && !adminRef.current.contains(event.target as Node)) {
+        setAdminOpen(false);
+        }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+    };
+    }, []);
+
     const userData: userModel = useSelector((state: RootState) => state.userAuthStore);
+
+    const shoppingCartStore: stavkaKorpeModel[] = useSelector(
+        (state: RootState) => state.shoppingCartFromStore.stavkaKorpe ?? []
+    );
+
+    let ukupnoStavki = shoppingCartStore.length;
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -46,34 +68,43 @@ const Header = () => {
                     </li>
                     {userData.role == SD_Roles.ADMIN ?
                     (
-                        <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <li className="nav-item dropdown" ref={adminRef}>
+                            <a className="nav-link admin-toggle" 
+                            href="#" role="button" 
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setAdminOpen((prev: boolean) => !prev);
+                            }}>
                                 Admin Panel
+                                <i
+                                    className={`bi ms-2 ${adminOpen ? "bi-chevron-up" : "bi-chevron-down"}`}
+                                    style={{ transition: "transform 0.3s" }}
+                                ></i>
                             </a>
-                            <ul className="dropdown-menu">
+                            <ul className={`dropdown-menu custom-dropdown ${adminOpen ? "show" : ""}`}>
                                 <li
                                     className='dropdown-item' 
-                                    onClick={() => navigate("/rezervacija/sveRezervacije")}
+                                    onClick={() => {navigate("/rezervacija/sveRezervacije"); setAdminOpen(false);}}
                                     style={{cursor:"pointer"}}>
                                 Sve Rezervacije
                                 </li>
                                 <li
                                     className='dropdown-item' 
-                                    onClick={() => navigate("/rezervacija/mojeRezervacije")}
+                                    onClick={() => {navigate("/rezervacija/mojeRezervacije"); setAdminOpen(false);}}
                                     style={{cursor:"pointer"}}>
                                 Moje Rezervacije
                                 </li>
                                 <li 
                                     className='dropdown-item' 
                                     style={{ cursor: "pointer" }}
-                                    onClick={() => navigate("/sportskiObjekat/sportskiObjektiTabela")}
+                                    onClick={() => {navigate("/sportskiObjekat/sportskiObjektiTabela"); setAdminOpen(false);}}
                                 >
                                 Upravljanje Sportskim Objektima
                                 </li>
                                 <li 
                                     className='dropdown-item' 
                                     style={{ cursor: "pointer" }}
-                                    onClick={() => navigate("/termin/terminList")}
+                                    onClick={() => {navigate("/termin/terminList"); setAdminOpen(false);}}
                                 >
                                 Upravljanje Terminima
                                 </li>
@@ -82,15 +113,27 @@ const Header = () => {
                         </li>
                     ) :
                     (
-                        <li>
-                            <NavLink className="nav-link" aria-current="page" to="/">Moje rezervacije</NavLink>
-                        </li>
+                        userData.id ? (
+                            <li>
+                                <NavLink className="nav-link" aria-current="page" to="/rezervacija/mojeRezervacije">Moje rezervacije</NavLink>
+                            </li>
+                        ) : null
+                        
                     )}
-                    <li className='nav-item'>
-                        <NavLink className="nav-link" aria-current="page" to="/rezervacija">
-                            <i className='bi bi-cart4'>&nbsp;Rezervacije</i>{" "}
-                        </NavLink>
-                    </li>
+                    {
+                        userData.id && (
+                            <li className='nav-item'>
+                                <NavLink className="nav-link" aria-current="page" to="/rezervacija">
+                                    <i className='bi bi-cart4'>&nbsp;Rezervacije
+                                    {ukupnoStavki > 0 && (
+                                        <span className="badge bg-danger ms-2">{ukupnoStavki}</span>
+                                    )}
+                                    </i>{" "}
+                                </NavLink>
+                            </li>
+                        )
+                    }
+                    
                     <div className='d-flex' style={{marginLeft: "auto"}}>
                         {userData.id &&
                         (<>

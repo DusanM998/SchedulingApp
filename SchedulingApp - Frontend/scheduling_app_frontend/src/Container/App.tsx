@@ -21,7 +21,7 @@ function App() {
     const dispatch = useDispatch();
     const [skip, setSkip] = useState(true);
     const userData: userModel = useSelector((state: RootState) => state.userAuthStore);
-    const { data: currentUserData, isLoading: userLoading } = useGetCurrentUserQuery();
+    //const { data: currentUserData, isLoading: userLoading } = useGetCurrentUserQuery();
     const { data, isLoading } = useGetShoppingCartByIdQuery(userData.id, {
         skip: skip,
     });

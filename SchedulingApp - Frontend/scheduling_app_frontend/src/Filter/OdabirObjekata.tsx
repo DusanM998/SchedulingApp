@@ -12,9 +12,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { inputHelper, toastNotify } from '../Helper';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { useUpdateShoppingCartMutation } from '../apis/shoppingCartApi';
+import { useUpdateShoppingCartMutation, useUpdateShoppingCartWithTerminiMutation } from '../apis/shoppingCartApi';
 import { toast } from 'react-toastify';
-import { azurirajKolicinu } from '../Storage/Redux/shoppingCartSlice';
+import { azurirajCenu, azurirajKolicinu, azurirajStatusTermina, setTerminForObjekat } from '../Storage/Redux/shoppingCartSlice';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function OdabirObjekata() {
     const { data: objekti, isLoading } = useGetSportskiObjektiQuery(null);
@@ -28,7 +29,9 @@ function OdabirObjekata() {
     const [activeTab, setActiveTab] = useState(0); //Za seketovanje aktivnog taba, 0 - odaberi teren, 1 - datum
     const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
     const [updateKorpa] = useUpdateShoppingCartMutation();
+    const [azurirajKorpuSaTerminima] = useUpdateShoppingCartWithTerminiMutation();
     const [addedToCartIds, setAddedToCartIds] = useState<number[]>([]); //Stanje koje prati koji id-evi objekata su dodati u korpu
+    const [selectedTerminii, setSelectedTerminii] = useState<Record<number, terminModel[]>>({});
 
     const shoppingCartStore: stavkaKorpeModel[] = useSelector(
         (state: RootState) => state.shoppingCartFromStore.stavkaKorpe ?? []
@@ -49,6 +52,11 @@ function OdabirObjekata() {
     };
 
     const [userInput, setUserInput] = useState(initialUserData);
+
+    useEffect(() => {
+        const initialIds = shoppingCartStore.map(item => item.sportskiObjekat?.sportskiObjekatId);
+        setAddedToCartIds(initialIds.filter((id): id is number => id !== undefined));
+    }, [shoppingCartStore]);
 
     const handleUserInput = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string
@@ -121,19 +129,19 @@ function OdabirObjekata() {
     };
 
     const handleNastavi = (sportskiObjekatId: number) => {
-        if (!addedToCartIds.includes(sportskiObjekatId)) {
-            toast.info("Morate dodati objekat u korpu pre nego što nastavite!", {
-                position: "top-center",
-                autoClose: 3000,
-            });
-            return;
-        }
-        
-        if (selectedObjekat) {
+        // Provera da li je objekat već u korpi
+        if (addedToCartIds.includes(sportskiObjekatId)) {
+            // Ako jeste, nastavi dalje (otvori termine, podesi selektovani objekat, itd.)
             setShowTermini(true);
             setSelectedObjekatId(sportskiObjekatId);
             setActiveTab(1);
             //console.log("Kliknuto na sportski objekat: ", sportskiObjekatId);
+        } else {
+            // Ako nije u korpi, prikaži obaveštenje
+            toast.info("Morate dodati objekat u korpu pre nego što nastavite!", {
+                position: "top-center",
+                autoClose: 3000,
+            });
         }
     };
 
@@ -193,6 +201,140 @@ function OdabirObjekata() {
         });
         dispatch(azurirajKolicinu({ stavkaKorpe: { ...stavkaKorpe }, kolicina: novaKolicina }));
     }
+
+    const racunajCenuZaObjekat = (stavkaKorpe: stavkaKorpeModel, termini?: terminModel[]) => {
+        if (!stavkaKorpe.sportskiObjekat) return 0;
+      
+        const sportskiObjekatId = stavkaKorpe.sportskiObjekat.sportskiObjekatId;
+        const terminiZaObjekat = [
+          ...(stavkaKorpe.odabraniTermini || []),
+          ...(selectedTerminii[sportskiObjekatId] || [])
+        ].filter((termin, index, self) => 
+          index === self.findIndex(t => t.terminId === termin.terminId)
+        );
+        
+        const cenaPoSatu = stavkaKorpe.sportskiObjekat.cenaPoSatu ?? 0;
+        const brojUcesnika = stavkaKorpe.kolicina ?? 1;
+    
+        if (terminiZaObjekat.length === 0) {
+          //Ako postoji vec izracunata cena u stavci korpe, koristi nju
+          
+          if (stavkaKorpe.cenaZaObjekat !== undefined && stavkaKorpe.cenaZaObjekat !== null) {
+            //const staraCena = stavkaKorpe.cenaZaObjekat;
+            return stavkaKorpe.cenaZaObjekat;
+          }
+          return cenaPoSatu * brojUcesnika;
+        }
+      
+        return terminiZaObjekat.reduce((ukupno, termin) => {
+          if (!termin.vremePocetka || !termin.vremeZavrsetka) return ukupno;
+      
+          const [startHours, startMinutes] = termin.vremePocetka.split(":").map(Number);
+          const [endHours, endMinutes] = termin.vremeZavrsetka.split(":").map(Number);
+      
+          const startTime = new Date();
+          startTime.setHours(startHours, startMinutes, 0);
+      
+          const endTime = new Date();
+          endTime.setHours(endHours, endMinutes, 0);
+      
+          const trajanjeUSatima = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+          return ukupno + (cenaPoSatu * trajanjeUSatima * brojUcesnika);
+        }, 0);
+    };
+
+    const handleTerminSelection = (sportskiObjekatId: number, termin: terminModel) => {
+        setSelectedTerminii((prev) => {
+            const trenutniTermini = prev[sportskiObjekatId] || [];
+            
+            // Proveravamo da li je termin vec odabran
+            const postoji = trenutniTermini.some(t => t.terminId === termin.terminId);
+            const noviTermini = postoji
+                ? trenutniTermini.filter(t => t.terminId !== termin.terminId) // Uklanja ako već postoji
+                : [...trenutniTermini, termin]; // Dodaje ako ne postoji
+            
+            /*const novaCena = racunajCenuZaObjekat({
+                ...shoppingCartStore.find(s => s.sportskiObjekat?.sportskiObjekatId === sportskiObjekatId)!,
+                kolicina: shoppingCartStore.find(s => s.sportskiObjekat?.sportskiObjekatId === sportskiObjekatId)?.kolicina || 0,
+            }, noviTermini);*/
+            const stavka = shoppingCartStore.find(s => s.sportskiObjekat?.sportskiObjekatId === sportskiObjekatId);
+            if (stavka) {
+                const novaCena = racunajCenuZaObjekat({
+                    ...stavka,
+                    odabraniTermini: noviTermini
+                });
+            
+                //Azuriranje cene odmah nakon promene termina
+                dispatch(setTerminForObjekat({
+                    sportskiObjekatId,
+                    terminId: noviTermini.map(t => t.terminId),
+                    termin: noviTermini
+                }))
+                console.log(`Odabran termin ${termin.terminId} za objekat ${sportskiObjekatId}`);
+                dispatch(azurirajCenu({ sportskiObjekatId, cenaZaObjekat: novaCena }));
+            }
+        
+            return { ...prev, [sportskiObjekatId]: noviTermini };
+        });
+
+        //Za vizuelnu reprezentaciju koje je termin selektovan
+        toggleTerminSelection(termin.terminId);
+    }
+
+    const handleConfirmSelection = (sportskiObjekatId: number, stavkaKorpe: stavkaKorpeModel) => {
+        if (!selectedTerminii[sportskiObjekatId] || selectedTerminii[sportskiObjekatId].length === 0) {
+          toast.error("Morate odabrati bar jedan termin!", { position: "top-center", autoClose: 3000 });
+          return;
+        }
+    
+        const terminiIds = selectedTerminii[sportskiObjekatId].map(t => Number(t.terminId));
+        console.log("Tip podataka terminIds:", Array.isArray(terminiIds), typeof terminiIds[0]);
+    
+        const izracunataCena = racunajCenuZaObjekat(stavkaKorpe, selectedTerminii[sportskiObjekatId]);
+        console.log("Izračunata cena za objekat:", izracunataCena);
+    
+        azurirajKorpuSaTerminima({
+          sportskiObjekatId,
+          userId: userData.id,
+          kolicina: stavkaKorpe.kolicina,
+          terminIds: terminiIds
+        }).then((response) => {
+          console.log('Odgovor servera:', response);
+            if ("data" in response) {
+              const azuriraniTermini = selectedTerminii[sportskiObjekatId].map(t => ({
+                ...t,
+                status: "Zauzet"
+              }));
+            
+              // Update Redux store sa azuriranim terminima
+              dispatch(setTerminForObjekat({
+                sportskiObjekatId,
+                terminId: terminiIds,
+                termin: azuriraniTermini,
+              }));
+    
+              const novaCena = racunajCenuZaObjekat(stavkaKorpe, selectedTerminii[sportskiObjekatId]);
+              dispatch(azurirajCenu({ sportskiObjekatId, cenaZaObjekat: novaCena }));
+    
+              dispatch(azurirajStatusTermina({ sportskiObjekatId }));
+    
+              toast.success("Termini uspešno ažurirani!", { position: "top-center", autoClose: 3000 });
+            } else {
+              toast.error("Došlo je do greške pri ažuriranju termina!", { position: "top-center", autoClose: 3000 });
+            }
+        }).catch((error) => {
+            console.error('Greška prilikom ažuriranja termina:', error);
+            toast.error("Došlo je do greške prilikom ažuriranja!", { position: "top-center", autoClose: 3000 });
+        });
+    
+        //toast.success("Termini uspešno ažurirani!", { position: "top-center", autoClose: 3000 });
+    
+        console.log("Azuriranje termina u korpi", { sportskiObjekatId, terminiIds });
+    }
+
+    const stavkaKorpe = shoppingCartStore.find(
+        (stavka: stavkaKorpeModel) => stavka.sportskiObjekatId === selectedObjekatId
+    );
 
     if (isLoading) return <div><MainLoader /></div>;
 
@@ -257,13 +399,13 @@ function OdabirObjekata() {
                                         {selectedObjekatId === objekat.sportskiObjekatId && (
                                             <div className='fade-in d-flex justify-content-center mt-3'> 
                                                 <button
-                                                    className="btn custom-cart-btn"
+                                                    className="btn custom-cart-objekat-btn"
                                                     onClick={(e) => {
                                                         e.stopPropagation(); // Sprecava onClick selekciju kartice
                                                         handleAddToCart(objekat.sportskiObjekatId);
                                                     }}
                                                 >
-                                                    <FaShoppingCart size={20} />
+                                                    <FaShoppingCart size={24} />
                                                 </button>
                                             </div>
                                             
@@ -330,22 +472,53 @@ function OdabirObjekata() {
                                     {termini?.length === 0 && <p>Nema dostupnih termina.</p>}
                                     {termini?.length > 0 && (
                                         <div className="row">
-                                            {termini.map((termin: terminModel) => (
-                                                <div
-                                                    key={termin.terminId}
-                                                    className={`col-md-4 mb-3 p-3 m-2 border rounded shadow ${selectedTerminId === termin.terminId ? 'border-success' : ''}`}
-                                                    onClick={() => toggleTerminSelection(termin.terminId)}
-                                                    style={{ cursor: 'pointer' }}
-                                                >
-                                                    <h5>Datum: {termin.datumTermina ? new Date(termin.datumTermina).toLocaleDateString("sr-RS") : "Nepoznat datum"}</h5>
-                                                    <p>Vreme: {termin.vremePocetka} - {termin.vremeZavrsetka}</p>
-                                                    <p>Status: {termin.status}</p>
-                                                    {selectedTermini.includes(termin.terminId) && (
-                                                        <FaCheckCircle className="text-success fs-4" />
-                                                    )}
+                                            {termini.map((termin: terminModel) => {
+                                                const isSelected = selectedTerminId === termin.terminId;
+                                                const isRezervisan = termin.status === 'rezervisan';
+                                                const isZauzet = termin.status === 'zauzet';
 
+                                                // Odredjujemo klasu za okvir
+                                                let borderClass = 'border';
+                                                if (isRezervisan) borderClass += ' border-primary';
+                                                else if (isZauzet) borderClass += ' border-danger';
+                                                else if (isSelected) borderClass += ' border-success';
+
+                                                // Ako je rezervisan ili zauzet, disablovati klik
+                                                const isDisabled = isRezervisan || isZauzet;
+
+                                                return (
+                                                    <div
+                                                        key={termin.terminId}
+                                                        className={`col-md-4 mb-3 p-3 m-2 border rounded shadow ${borderClass}`}
+                                                        onClick={() => {
+                                                            if (!isDisabled) handleTerminSelection(selectedObjekat.sportskiObjekatId, termin);
+                                                        }}
+                                                        style={{
+                                                            cursor: isDisabled ? 'not-allowed' : 'pointer',
+                                                            opacity: isDisabled ? 0.6 : 1,
+                                                            pointerEvents: isDisabled ? 'none' : 'auto', // onemoguci interakciju
+                                                        }}
+                                                    >
+                                                        <h5>Datum: {termin.datumTermina ? new Date(termin.datumTermina).toLocaleDateString("sr-RS") : "Nepoznat datum"}</h5>
+                                                        <p>Vreme: {termin.vremePocetka} - {termin.vremeZavrsetka}</p>
+                                                        <p>Status: {termin.status}</p>
+                                                        {selectedTermini.includes(termin.terminId) && (
+                                                            <FaCheckCircle className="text-success fs-4" />
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+
+                                            
+                                            {stavkaKorpe && (
+                                                <div className='d-flex justify-content-center align-items-center w-100 my-3'>
+                                                    <button className='btn mx-2'
+                                                        style={{ backgroundColor: "#26a172", color: "white" }}
+                                                        onClick={() => handleConfirmSelection(selectedObjekat.sportskiObjekatId, stavkaKorpe)}
+                                                    >Potvrdi Odabir</button>
                                                 </div>
-                                            ))}
+                                            )}
+                                            
                                             <hr />
                                             <div className='d-flex justify-content-end align-items-center'>
                                                 <button className='btn btn-outline-secondary mx-2'
@@ -354,7 +527,7 @@ function OdabirObjekata() {
                                                     <button className='btn mx-2'
                                                         style={{ backgroundColor: "#26a172", color: "white" }}
                                                         onClick={handleKontaktPodaci}>
-                                                        Potvrdi odabir
+                                                        Nastavi
                                                     </button>
                                             </div>
                                         </div>

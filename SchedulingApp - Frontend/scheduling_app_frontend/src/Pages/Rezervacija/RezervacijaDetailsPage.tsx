@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useGetRezervacijaDetaljiQuery, useUpdateRezervacijaHeaderMutation } from '../../apis/rezervacijaApi';
+import { useCancelRezervacijaMutation, useGetRezervacijaDetaljiQuery, useUpdateRezervacijaHeaderMutation } from '../../apis/rezervacijaApi';
 import RezervacijaRezime from './RezervacijaRezime';
 import getStatusColor from '../../Helper/getStatusColor';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { SD_Status } from '../../Utility/SD';
+import { toastNotify } from '../../Helper';
 
 function RezervacijaDetailsPage() {
 
@@ -13,6 +14,8 @@ function RezervacijaDetailsPage() {
     const { data, isLoading } = useGetRezervacijaDetaljiQuery(id);
     const navigate = useNavigate();
     const [updateRezervacijaHeader] = useUpdateRezervacijaHeaderMutation();
+    const [cancelRezervacija] = useCancelRezervacijaMutation();
+    
 
     const [status, setStatus] = useState<SD_Status | null>(null);
 
@@ -123,7 +126,17 @@ function RezervacijaDetailsPage() {
       })),
       ukupnoCena: rezervacija.ukupnoCena,
       status: status
+  }
+  
+  const handleCancelRezervacija = async () => {
+    try {
+      await cancelRezervacija(id).unwrap();
+      toastNotify("Rezervacija uspešno otkazana!", "success");
+    } catch (error) {
+      console.error("Greska", error);
+      toastNotify("Greska prilikom otkazivanja rezervacije!", 'error');
     }
+  };
   
     return (
       <div className='container my-5 mx-auto p-5 w-100' style={{ maxWidth: '800px' }}>
@@ -209,8 +222,29 @@ function RezervacijaDetailsPage() {
             </div>
             </div>
             <div className='d-flex justify-content-between align-items-center mt-3'>
-              <button className='btn btn-secondary' onClick={() => navigate(-1)}>Nazad</button>
-
+              <button className='btn btn-secondary'
+                style={{
+                  color:"white",
+                  fontWeight:"bold",
+                  fontSize:"18px",
+                  padding:"12px"
+                }}
+                onClick={() => navigate(-1)}>Nazad
+              </button>
+              <button
+                type='button'
+                style={{
+                  color:"white",
+                  backgroundColor:"red",
+                  fontWeight:"bold",
+                  fontSize:"18px",
+                  padding:"12px"
+                }}
+                className='btn mt-3'
+                onClick={handleCancelRezervacija}
+              >
+                Otkaži rezervaciju
+              </button>
             </div>
           </>
         )}

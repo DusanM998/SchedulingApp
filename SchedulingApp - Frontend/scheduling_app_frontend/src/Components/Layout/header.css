@@ -30,3 +30,25 @@
 body {
     padding-top: 60px;
 }
+
+.dropdown-menu.custom-dropdown {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  visibility: hidden;
+  display: block; /* da ne bude display: none, da transition radi */
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+}
+
+.dropdown-menu.custom-dropdown.show {
+  opacity: 1;
+  transform: translateY(0px);
+  visibility: visible;
+}
+
+.admin-toggle::after {
+  display: none !important;
+}

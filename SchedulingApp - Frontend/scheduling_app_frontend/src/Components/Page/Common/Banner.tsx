@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import background from "../../../Assets/Images/background.jpg";
 import "./banner.css";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { RootState } from '../../../Storage/Redux/store';
+import { toastNotify } from '../../../Helper';
 
 function Banner() {
   const [value, setValue] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const userData = useSelector((state: RootState) => state.userAuthStore);
+
+  console.log("User data banner:", userData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
@@ -28,6 +34,16 @@ function Banner() {
     });
   };
 
+  const handleIzaberiObjekat = () => {
+    if (!userData.id) {
+      navigate("/login");
+      toastNotify("Prijavite se da biste mogli da nastavite.", "info");
+      return;
+    } else {
+      navigate("/filter/odabirObjekata")
+    }
+  }
+
   return (
     <div className="container-fluid min-vh-100 d-flex flex-column flex-md-row align-items-center justify-content-between bg-light p-5"
       style={{borderBottom: "5px solid #4da172"}}>
@@ -38,7 +54,7 @@ function Banner() {
           Proveri dostupnost i rezerviši salu za fudbal, teren za tenis ili salu za košarku.
         </p>
         <button className="btn btn-dark btn-lg mt-3" onClick={handleReservationClick}>Rezerviši Termin</button> <br />
-        <button className="btn btn-lg mt-2" style={{backgroundColor:"#51285f", color:"white"}} onClick={() => navigate("/filter/odabirObjekata")}>Izaberi Objekat</button> <br />
+        <button className="btn btn-lg mt-2" style={{backgroundColor:"#51285f", color:"white"}} onClick={handleIzaberiObjekat}>Izaberi Objekat</button> <br />
         <button className="btn btn-lg mt-2" style={{ backgroundColor: "#4da172", color: "white" }} onClick={() => navigate("/filter")}>Pretraga Termina i Objekata</button>
       </div>
       <div className='custom-banner'>
