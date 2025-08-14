@@ -14,7 +14,7 @@ using System.Text;
 
 namespace SchedulingApp.Controllers
 {
-    [Route("api/auth")]
+    [Route("api/auth")] //Svi endpoint - ovi u kontroleru pocinju sa ovim
     [ApiController]
     public class AuthController : ControllerBase
     {

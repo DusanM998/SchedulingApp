@@ -1,33 +1,36 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\miloj\\Desktop\\SchedulingApp\\SchedulingApp\\SchedulingApp\\SchedulingApp.csproj": {}
+    "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\SchedulingApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\miloj\\Desktop\\SchedulingApp\\SchedulingApp\\SchedulingApp\\SchedulingApp.csproj": {
+    "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\SchedulingApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\miloj\\Desktop\\SchedulingApp\\SchedulingApp\\SchedulingApp\\SchedulingApp.csproj",
+        "projectUniqueName": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\SchedulingApp.csproj",
         "projectName": "SchedulingApp",
-        "projectPath": "C:\\Users\\miloj\\Desktop\\SchedulingApp\\SchedulingApp\\SchedulingApp\\SchedulingApp.csproj",
+        "projectPath": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\SchedulingApp.csproj",
         "packagesPath": "C:\\Users\\miloj\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\miloj\\Desktop\\SchedulingApp\\SchedulingApp\\SchedulingApp\\obj\\",
+        "outputPath": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\miloj\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net7.0"
+          "net9.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\sdk\\8.0.100-preview.4.23260.5\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net7.0": {
-            "targetAlias": "net7.0",
+          "net9.0": {
+            "targetAlias": "net9.0",
             "projectReferences": {}
           }
         },
@@ -35,51 +38,57 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
+        "net9.0": {
+          "targetAlias": "net9.0",
           "dependencies": {
             "CloudinaryDotNet": {
               "target": "Package",
-              "version": "[1.27.4, )"
+              "version": "[1.27.5, )"
             },
             "Google.Cloud.Storage.V1": {
               "target": "Package",
-              "version": "[4.10.0, )"
+              "version": "[4.13.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[7.0.7, )"
+              "version": "[9.0.5, )"
             },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[7.0.7, )"
+              "version": "[9.0.5, )"
             },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[7.0.20, )"
+              "version": "[9.0.5, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[7.0.7, )"
+              "version": "[9.0.5, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[7.0.7, )"
+              "version": "[9.0.5, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[7.0.7, )"
+              "version": "[9.0.5, )"
             },
             "Microsoft.OpenApi": {
               "target": "Package",
-              "version": "[1.6.23, )"
+              "version": "[1.6.24, )"
             },
             "Microsoft.SqlServer.Server": {
               "target": "Package",
@@ -87,15 +96,15 @@
             },
             "Stripe.net": {
               "target": "Package",
-              "version": "[47.3.0, )"
+              "version": "[48.2.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.5.0, )"
+              "version": "[8.1.4, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
-              "version": "[8.3.1, )"
+              "version": "[8.12.0, )"
             },
             "dotenv.net": {
               "target": "Package",
@@ -121,7 +130,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100-preview.4.23260.5\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

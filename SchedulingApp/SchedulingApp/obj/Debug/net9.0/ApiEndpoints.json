@@ -1,0 +1,957 @@
+[
+  {
+    "ContainingType": "SchedulingApp.Controllers.AuthController",
+    "Method": "GetUserDetails",
+    "RelativePath": "api/auth/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "GetUserDetails"
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.AuthController",
+    "Method": "UpdateUserDetails",
+    "RelativePath": "api/auth/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "Id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Name",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PhoneNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "File",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.AuthController",
+    "Method": "GetCurrentUser",
+    "RelativePath": "api/auth/currentUser",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "login",
+        "Type": "SchedulingApp.Models.Dto.LoginRequestDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.AuthController",
+    "Method": "Logout",
+    "RelativePath": "api/auth/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.AuthController",
+    "Method": "Register",
+    "RelativePath": "api/auth/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Name",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Role",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "File",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "PhoneNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.AuthController",
+    "Method": "VerifyPassword",
+    "RelativePath": "api/auth/verify-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "verifyPasswordDTO",
+        "Type": "SchedulingApp.Models.Dto.VerifyPasswordDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.FilterController",
+    "Method": "GetRecords",
+    "RelativePath": "api/filter",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "lokacija",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "vrstaSporta",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "datum",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.KorpaController",
+    "Method": "GetKorpa",
+    "RelativePath": "api/korpa",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.KorpaController",
+    "Method": "DodajIliAzurirajStavkuKorpe",
+    "RelativePath": "api/korpa",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "sportskiObjekatId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "brojUcesnika",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.KorpaController",
+    "Method": "DodajIliAzurirajKorpuSaTerminima",
+    "RelativePath": "api/korpa/dodajIliAzurirajKorpuSaTerminima",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "sportskiObjekatId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "brojUcesnika",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "terminIds",
+        "Type": "System.Collections.Generic.List\u00601[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.KorpaController",
+    "Method": "UkloniStavkuIzKorpe",
+    "RelativePath": "api/korpa/ukloniStavku",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "sportskiObjekatId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.PlacanjeController",
+    "Method": "OmoguciPlacanje",
+    "RelativePath": "api/placanje",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.RezervacijaController",
+    "Method": "GetRezervacije",
+    "RelativePath": "api/rezervacija",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "searchString",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.RezervacijaController",
+    "Method": "KreirajRezervaciju",
+    "RelativePath": "api/rezervacija",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "rezervacijaHeaderCreateDTO",
+        "Type": "SchedulingApp.Models.Dto.RezervacijaHeaderCreateDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.RezervacijaController",
+    "Method": "GetRezervacijaById",
+    "RelativePath": "api/rezervacija/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.RezervacijaController",
+    "Method": "UpdateRezervacijeHeader",
+    "RelativePath": "api/rezervacija/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "rezervacijaheaderUpdateDTO",
+        "Type": "SchedulingApp.Models.Dto.RezervacijaHeaderUpdateDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.RezervacijaController",
+    "Method": "CancelRezervacija",
+    "RelativePath": "api/rezervacija/otkaziRezervaciju/{rezervacijaId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "rezervacijaId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.RezervacijaController",
+    "Method": "GetAllRezervacije",
+    "RelativePath": "api/rezervacija/SveRezervacije",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.SportskiObjekatController",
+    "Method": "GetSportskiObjekti",
+    "RelativePath": "api/sportskiObjektiApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.SportskiObjekatController",
+    "Method": "CreateSportskiObjekat",
+    "RelativePath": "api/sportskiObjektiApi",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Lokacija",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VrstaSporta",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Opis",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "RadnoVreme",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CenaPoSatu",
+        "Type": "System.Double",
+        "IsRequired": false
+      },
+      {
+        "Name": "Kapacitet",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "File",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.SportskiObjekatController",
+    "Method": "GetSportskiObjekatById",
+    "RelativePath": "api/sportskiObjektiApi/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "GetSportskiObjekatById"
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.SportskiObjekatController",
+    "Method": "DeleteSportskiObjekat",
+    "RelativePath": "api/sportskiObjektiApi/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.SportskiObjekatController",
+    "Method": "UpdateSportskiObjekat",
+    "RelativePath": "api/sportskiObjektiApi/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "SportskiObjekatId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Naziv",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Lokacija",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VrstaSporta",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Opis",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "RadnoVreme",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CenaPoSatu",
+        "Type": "System.Double",
+        "IsRequired": false
+      },
+      {
+        "Name": "Kapacitet",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "File",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.SportskiObjekatController",
+    "Method": "GetSportskiObjektiWithPagination",
+    "RelativePath": "api/sportskiObjektiWithPagination",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.TerminController",
+    "Method": "GetTermini",
+    "RelativePath": "api/termin",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.TerminController",
+    "Method": "CreateTermin",
+    "RelativePath": "api/termin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "DatumTermina",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "SportskiObjekatId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "VremePocetka",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VremeZavrsetka",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Status",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.TerminController",
+    "Method": "GetTermin",
+    "RelativePath": "api/termin/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "GetTermin"
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.TerminController",
+    "Method": "UpdateTermin",
+    "RelativePath": "api/termin/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "TerminId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "DatumTermina",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "VremePocetka",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "VremeZavrsetka",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Status",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "UserId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.TerminController",
+    "Method": "DeleteTermin",
+    "RelativePath": "api/termin/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.TerminController",
+    "Method": "GetTerminById",
+    "RelativePath": "api/termin/termin/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "EndpointName": "GetTerminById"
+  },
+  {
+    "ContainingType": "SchedulingApp.Controllers.TerminController",
+    "Method": "UpdateExpiredTermin",
+    "RelativePath": "api/termin/UpdateStatus",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "SchedulingApp.Models.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  }
+]

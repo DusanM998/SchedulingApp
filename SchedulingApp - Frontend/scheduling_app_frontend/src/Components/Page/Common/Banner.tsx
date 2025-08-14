@@ -28,7 +28,7 @@ function Banner() {
     }
 
     // Prikazivanje toast notifikacije
-    toast.info("Molimo Vas da prvo odaberete sportski objekat.", {
+    toast.info("Odaberite sportski objekat.", {
       position: "top-center",
       autoClose: 3000, // Automatsko zatvaranje nakon 3 sekunde
     });

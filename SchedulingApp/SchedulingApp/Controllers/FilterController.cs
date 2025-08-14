@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchedulingApp.DbContexts;
 using SchedulingApp.Models;
+using SchedulingApp.Models.Dto;
 using System.Net;
 using System.Text.Json;
 
@@ -23,7 +24,7 @@ namespace SchedulingApp.Controllers
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse>> GetRecords(string? lokacija, string? vrstaSporta, DateTime? datum,
-            int pageNumber = 1, int pageSize = 10)
+            int pageNumber = 1, int pageSize = 5)
         {
             try
             {
@@ -49,7 +50,9 @@ namespace SchedulingApp.Controllers
                 //Filter po datumu termina
                 if (datum.HasValue)
                 {
-                    termini = termini.Where(t => t.DatumTermina.Date == datum.Value.Date);
+                    var danPocetak = datum.Value.Date;
+                    var danKraj = danPocetak.AddDays(1);
+                    termini = termini.Where(t => t.DatumTermina >= danPocetak && t.DatumTermina < danKraj);
                 }
 
                 //Filter po vremenu pocetka
@@ -75,7 +78,18 @@ namespace SchedulingApp.Controllers
 
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
 
-                _response.Result = termini.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+                _response.Result = termini.Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(t => new TerminDTO
+                    {
+                        TerminId = t.TerminId,
+                        DatumTermina = t.DatumTermina,
+                        VremePocetka = t.VremePocetka,
+                        VremeZavrsetka = t.VremeZavrsetka,
+                        Status = t.Status,
+                        UserId = t.UserId,
+                        NazivSportskogObjekta = t.SportskiObjekat.Naziv,
+                    }).ToList();
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }

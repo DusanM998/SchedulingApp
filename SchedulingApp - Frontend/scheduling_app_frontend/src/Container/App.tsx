@@ -14,8 +14,8 @@ import { useGetShoppingCartByIdQuery } from "../apis/shoppingCartApi";
 import { TerminiList, TerminKreirajAzuriraj } from "../Pages/Termin";
 import { useGetCurrentUserQuery } from "../apis/authApi";
 import { Placanje } from "../Pages/Placanje";
-import { Filter } from "../Filter";
-import OdabirObjekata from "../Filter/OdabirObjekata";
+import { Filter } from "../Pages/Filter";
+import OdabirObjekata from "../Pages/Filter/OdabirObjekata";
 
 function App() {
     const dispatch = useDispatch();
