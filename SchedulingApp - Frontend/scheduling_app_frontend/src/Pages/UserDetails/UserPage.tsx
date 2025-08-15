@@ -50,11 +50,13 @@ function UserPage() {
     (state: RootState) => state.userAuthStore
   );
 
-  console.log(userData);
+  //console.log("Logujem userInput Data:", userData.role);
 
   useEffect(() => {
     if (data && data.result) {
       //console.log(data.result.password)
+      console.log("ROLE IZ API:", data.result.role);
+      console.log("Ceo res: " , data.result);
       const tempData = {
         userName: data.result.userName,
         name: data.result.name,

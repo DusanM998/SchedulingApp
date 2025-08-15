@@ -4,6 +4,8 @@ using SchedulingApp.Models;
 
 namespace SchedulingApp.DbContexts
 {
+    //Glavna klasa koja omogucava komunikaciju izmedju aplikacije i bp.
+    //DbSet property predstavljaju tabele u bazi podataka
     public class ApplicationDbContexts : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContexts(DbContextOptions options) : base(options) 

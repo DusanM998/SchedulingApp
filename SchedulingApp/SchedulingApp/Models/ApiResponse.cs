@@ -2,6 +2,8 @@
 
 namespace SchedulingApp.Models
 {
+    //Koristim ApiResponse da standartizujem izgled response-a
+    //Tada klijent uvek zna sta da ocekuje u JSON odgovoru
     public class ApiResponse
     {
         public ApiResponse()

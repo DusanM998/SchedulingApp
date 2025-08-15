@@ -25,6 +25,9 @@ namespace SchedulingApp.Controllers
         private readonly CloudinaryService _cloudinaryService;
         private string secretKey;
 
+        //Primer DI(Dependency Injection): tehnike dizajna koja omogucava objektima da dobiju svoje zavisnosti(druge objekte)
+        // od spoljnog izvora umesto da ih sami kreiraju. Ovde su zavisnosti definisane kao parametri konstruktora
+        //Postoji: Constructor, Property, Method i Interface injection
         public AuthController(ApplicationDbContexts db, IConfiguration configuration,
             UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, CloudinaryService cloudinaryService)
         {
@@ -37,6 +40,9 @@ namespace SchedulingApp.Controllers
         }
 
         [HttpPost("register")]
+        // IActionResult interfejs predstavlja bilo koji validan HTTP odgovor
+        // Kada metoda vraca IActionResult moze da vrati odgovor tipa Ok(), BadRequest(), NotFound()...
+        // IActionResult koristim kada metoda moze da vrati bilo sta (npr. JSON, file, plain text...)
         public async Task<IActionResult> Register([FromForm] RegisterRequestDTO register)
         {
             if (register.File == null || register.File.Length == 0)
@@ -201,7 +207,23 @@ namespace SchedulingApp.Controllers
                 //_response.ErrorMessages.Add("Korisnik ne postoji!");
                 return NotFound(_response);
             }
-            _response.Result = userFromDb;
+
+            // Dohvatanje role korisnika
+            var roles = await _userManager.GetRolesAsync(userFromDb);
+            var role = roles.FirstOrDefault(); // Ako ima samo jednu rolu
+
+            // Vracamo custom objekat sa rolom
+            _response.Result = new
+            {
+                userFromDb.Id,
+                userFromDb.UserName,
+                userFromDb.Name,
+                userFromDb.Email,
+                userFromDb.PhoneNumber,
+                userFromDb.Image,
+                Role = role
+            };
+
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             return Ok(_response);
@@ -220,6 +242,7 @@ namespace SchedulingApp.Controllers
         }
 
         [HttpPut("{id}")]
+        //ActionResult<T> je genericka verzija koja vraca HTTP odgovor koji sadrzi ApiResponse u telu odgovora
         public async Task<ActionResult<ApiResponse>> UpdateUserDetails(string id, [FromForm] UserDetailsUpdateDTO userDetailsUpdateDTO)
         {
             try

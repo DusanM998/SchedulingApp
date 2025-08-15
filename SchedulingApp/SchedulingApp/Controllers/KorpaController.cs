@@ -6,6 +6,10 @@ using SchedulingApp.Models;
 using SchedulingApp.Utility;
 using System.Net;
 
+//Controller za upravljanje korpom. Jedan korisnik moze imati jednu korpu
+// ApplicationUser - Korpa (1 - 1)
+// Jedna Korpa moze imati vise stavki korpe: Korpa - StavkaKorpe (1 - vise)
+// StavkaKorpe moze sadrzati SportskiObjekat i OdabraneTermine
 namespace SchedulingApp.Controllers
 {
     [Route("api/korpa")]
@@ -20,6 +24,7 @@ namespace SchedulingApp.Controllers
             _db = db;
         }
 
+        // Na osnovu id-a user-a pronalazi njegovu korpu
         [HttpGet]
         public async Task<ActionResult<ApiResponse>> GetKorpa(string userId)
         {
@@ -30,15 +35,17 @@ namespace SchedulingApp.Controllers
                 if (!string.IsNullOrEmpty(userId))
                 {
                     korpa = _db.Korpe
-                        .Include(u => u.StavkaKorpe)
-                            .ThenInclude(s => s.SportskiObjekat)
-                        .Include(u => u.StavkaKorpe)
+                        .Include(u => u.StavkaKorpe) //Kada ucitava korpu ucitaj i njenu kolekciju StavkaKorpe (eager loading)
+                            .ThenInclude(s => s.SportskiObjekat)  //korak dublje - ucitava za svaku stavku korpe njen SportskiObjekat
+                        .Include(u => u.StavkaKorpe) //Priprema za sledeci ThenInclude
                             .ThenInclude(s => s.OdabraniTermini) // Ucitavamo termine
-                        .FirstOrDefault(u => u.UserId == userId) ?? new Korpa();
+                        .FirstOrDefault(u => u.UserId == userId) ?? new Korpa(); //Uzima prvu ili jedinu korpu za odr. korisnika
+                                                                                 //Ako korisnik nema korpu kreira se nova 
                 }
 
                 if (korpa.StavkaKorpe != null && korpa.StavkaKorpe.Count > 0)
                 {
+                    // Ucitava stavke korpe zajedno sa SportskiomObjektom i OdabranimTerminima
                     korpa.UkupnoZaPlacanje = korpa.StavkaKorpe.Sum(stavka =>
                         stavka.OdabraniTermini.Sum(termin =>
                             stavka.SportskiObjekat?.CenaPoSatu ?? 0
