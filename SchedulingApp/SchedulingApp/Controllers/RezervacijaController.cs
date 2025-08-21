@@ -11,6 +11,8 @@ using System.Text.Json;
 
 namespace SchedulingApp.Controllers
 {
+    // Rest API za rad sa rezervacijama
+    // Rezervacija se sastoji od Header-a i Details-a
     [Route("api/rezervacija")]
     [ApiController]
     public class RezervacijaController : ControllerBase
@@ -24,16 +26,16 @@ namespace SchedulingApp.Controllers
             _response = new ApiResponse();
         }
 
-        [HttpGet("SveRezervacije")]
+        [HttpGet("SveRezervacije")] // endpoint GET/SveRezervacije
         public async Task<ActionResult<ApiResponse>> GetAllRezervacije()
         {
             try
             {
-                IEnumerable<RezervacijaHeader> rezervacijaHeader = _db.RezervacijaHeader
-                    .Include(u => u.RezervacijaDetalji)
+                IQueryable<RezervacijaHeader> rezervacijaHeader = _db.RezervacijaHeader
+                    .Include(u => u.RezervacijaDetalji) // ucitava detalje rezervacije
                     //.ThenInclude(u => u.SportskiObjekat)
                     //.Include(u => u.RezervacijaDetalji)
-                        .ThenInclude(u => u.OdabraniTermini)
+                        .ThenInclude(u => u.OdabraniTermini) // Zatim se ucitavaju odabrani termini u okviru rezervacije
                     .OrderByDescending(u => u.RezervacijaHeaderId);
 
                 _response.Result = rezervacijaHeader;
@@ -49,14 +51,17 @@ namespace SchedulingApp.Controllers
         }
 
         [HttpGet]
+        // Prima parametre iz query stringa userId, (searchString, status) - za filtriranje
+        // pageNumber i pageSize - za paginaciju
         public async Task<ActionResult<ApiResponse>> GetRezervacije(string? userId, string? searchString,
             string? status, int pageNumber = 1, int pageSize = 2)
         {
             try
             {
-                IEnumerable<RezervacijaHeader> rezervacijaHeader = _db.RezervacijaHeader
-                    .Include(u => u.RezervacijaDetalji)
-                        .ThenInclude(u => u.OdabraniTermini)
+                // Radi se eager loading da bi se ucitali svi rezervacijaHeader (zaglavlja rezervacije)
+                IQueryable<RezervacijaHeader> rezervacijaHeader = _db.RezervacijaHeader
+                    .Include(u => u.RezervacijaDetalji) // zatim se ucitavaju poveani RezervacijaDetalji
+                        .ThenInclude(u => u.OdabraniTermini) //...i odabrani termini u okviru rezervacije
                     .OrderByDescending(u => u.RezervacijaHeaderId);
 
                 if(!string.IsNullOrEmpty(userId))

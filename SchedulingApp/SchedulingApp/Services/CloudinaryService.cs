@@ -7,10 +7,14 @@ using System.Threading.Tasks;
 
 namespace SchedulingApp.Services
 {
+    // Koristim Cloudinary Service za upravljanje multimedijalnim fajlovima
+    // iz razloga sto on cuva fajlove na cloud, a ne lokalno, generise URL za te fajlove, itd
     public class CloudinaryService
     {
         private readonly Cloudinary _cloudinary;
 
+        // Constructor prima cloudinary kredencijale iz konfiguracije (appsettings.json)
+        // Kreira objekat Cloudinary koji sluzi za komunikaciju sa servisom
         public CloudinaryService(IOptions<CloudinarySettings> config)
         {
             var account = new Account(
@@ -23,6 +27,7 @@ namespace SchedulingApp.Services
             _cloudinary.Api.Secure = true;
         }
 
+        // Prima fajl iz HTTP zahteva (IFormFile) i pravi parametre za upload
         public async Task<string> UploadImageAsync(IFormFile file)
         {
             if(file == null || file.Length == 0)
@@ -33,13 +38,15 @@ namespace SchedulingApp.Services
             using var stream = file.OpenReadStream();
             var uploadParams = new ImageUploadParams
             {
-                File = new FileDescription(file.FileName, stream),
-                Folder = "slike",
-                Transformation = new Transformation().Width(500).Height(500).Crop("fill")
+                File = new FileDescription(file.FileName, stream), // File - ime fajla + stream
+                Folder = "slike", // Folder - slike ce se cuvati u folderu 'slike' na Coludinary-u
+                Transformation = new Transformation().Width(500).Height(500).Crop("fill") // Transformation -
+                                                                                          // slika ce automatski biti resize-ovana
+                                                                                          // na 500x500 tako da popuni okvir
             };
 
-            var uploadResult = await(_cloudinary.UploadAsync(uploadParams));
-            return uploadResult.SecureUrl.ToString();
+            var uploadResult = await(_cloudinary.UploadAsync(uploadParams)); // Poziva se UploadAsync metoda i dobija se rezultat
+            return uploadResult.SecureUrl.ToString(); //vraca URL slike koji se moze sacuvati u bazi i koristiti za prikaz
         }
 
         public async Task<bool> DeleteImageAsync(string imageUrl)
