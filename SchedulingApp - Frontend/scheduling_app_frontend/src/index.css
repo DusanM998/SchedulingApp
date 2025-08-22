@@ -28,3 +28,17 @@ code {
   border-bottom: 3px solid #51285f;
   color: #51285f !important;
 }
+
+.sport-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 1rem;
+}
+.sport-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+.sport-card-img {
+  border-radius: 1rem 1rem 0 0;
+  height: 180px;
+  object-fit: cover;
+}

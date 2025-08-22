@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import background from "../../../Assets/Images/background.jpg";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "../../../Storage/Redux/store";
+import { toastNotify } from "../../../Helper";
 import "./banner.css";
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import { RootState } from '../../../Storage/Redux/store';
-import { toastNotify } from '../../../Helper';
+
+import background from "../../../Assets/Images/sports-tools.jpg";
+import back1 from "../../../Assets/Images/back1.jpg";
 
 function Banner() {
   const [value, setValue] = useState("");
@@ -15,22 +16,14 @@ function Banner() {
 
   const userData = useSelector((state: RootState) => state.userAuthStore);
 
-  console.log("User data banner:", userData);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  };
-
   const handleReservationClick = () => {
     const sportskiObjektiSection = document.getElementById("containerObjekti");
     if (sportskiObjektiSection) {
       sportskiObjektiSection.scrollIntoView({ behavior: "smooth" });
     }
-
-    // Prikazivanje toast notifikacije
     toast.info("Odaberite sportski objekat.", {
       position: "top-center",
-      autoClose: 3000, // Automatsko zatvaranje nakon 3 sekunde
+      autoClose: 3000,
     });
   };
 
@@ -40,31 +33,80 @@ function Banner() {
       toastNotify("Prijavite se da biste mogli da nastavite.", "info");
       return;
     } else {
-      navigate("/filter/odabirObjekata")
+      navigate("/filter/odabirObjekata");
     }
-  }
+  };
 
   return (
-    <div className="container-fluid min-vh-100 d-flex flex-column flex-md-row align-items-center justify-content-between bg-light p-5"
-      style={{borderBottom: "5px solid #4da172"}}>
-      <div className="col-md-6 text-start">
-        <h1 style={{ color: "#51285f", fontSize:"3rem" }} className="fw-bold">Rezerviši sportske termine online.</h1>
-        <h2 className="text-success fw-bold mt-2">Besplatno!</h2>
-        <p className="mt-4 text-secondary fs-5">
-          Proveri dostupnost i rezerviši salu za fudbal, teren za tenis ili salu za košarku.
-        </p>
-        <button className="btn btn-dark btn-lg mt-3" onClick={handleReservationClick}>Rezerviši Termin</button> <br />
-        <button className="btn btn-lg mt-2" style={{backgroundColor:"#51285f", color:"white"}} onClick={handleIzaberiObjekat}>Izaberi Objekat</button> <br />
-        <button className="btn btn-lg mt-2" style={{ backgroundColor: "#4da172", color: "white" }} onClick={() => navigate("/filter")}>Pretraga Termina i Objekata</button>
-      </div>
-      <div className='custom-banner'>
-        <div className='gradient-overlay'>
-          <img src={background} alt="Scheduling App" className="banner-image" />
+    <section
+      className="banner d-flex align-items-center text-white"
+      style={{
+        backgroundImage: `url(${background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        minHeight: "100vh",
+        position: "relative",
+        borderBottom: "8px solid transparent",
+        borderImage: "linear-gradient(to right, #51285f, #4da172) 1",
+      }}
+    >
+      {/* Overlay preko slike */}
+      <div
+        className="overlay position-absolute top-0 start-0 w-100 h-100"
+        style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
+      ></div>
+
+      <div className="container position-relative z-2">
+        <div className="row align-items-center">
+          {/* Tekstualni deo */}
+          <div className="col-md-6 text-start">
+            <h1 className="display-4 fw-bold mb-3">
+              Rezerviši sportske termine online.
+            </h1>
+            <h2 className="fw-bold mb-4"><strong>Besplatno!</strong></h2>
+            <p className="lead mb-4">
+              Proveri dostupnost i rezerviši salu za fudbal, teren za tenis ili
+              salu za košarku.
+            </p>
+
+            <div className="d-flex flex-column flex-sm-row gap-3">
+              <button
+                className="btn btn-light btn-lg shadow"
+                onClick={handleReservationClick}
+              >
+                Rezerviši Termin
+              </button>
+              <button
+                className="btn btn-lg text-white shadow"
+                style={{ backgroundColor: "#51285f" }}
+                onClick={handleIzaberiObjekat}
+              >
+                Izaberi Objekat
+              </button>
+              <button
+                className="btn btn-lg text-white shadow"
+                style={{ backgroundColor: "#4da172" }}
+                onClick={() => navigate("/filter")}
+              >
+                Pretraga Termina i Objekata
+              </button>
+            </div>
+          </div>
+
+          {/* Slika sa desne strane */}
+          <div className="col-md-6 mt-5 mt-md-0 text-center">
+            <div className="card border-0 shadow-lg rounded-4 overflow-hidden">
+              <img
+                src={back1}
+                alt="Sports facility"
+                className="img-fluid"
+                style={{ maxHeight: "450px", objectFit: "cover" }}
+              />
+            </div>
+          </div>
         </div>
-          
       </div>
-      
-    </div>
+    </section>
   );
 }
 

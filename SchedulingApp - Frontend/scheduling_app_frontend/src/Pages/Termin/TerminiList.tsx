@@ -1,84 +1,104 @@
-import React, { useState } from 'react'
-import { useDeleteTerminMutation, useGetTerminiQuery } from '../../apis/terminApi'
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { MainLoader } from '../../Components/Page/Common';
-import { terminModel } from '../../Interfaces';
+import React from "react";
+import { useDeleteTerminMutation, useGetTerminiQuery } from "../../apis/terminApi";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { MainLoader } from "../../Components/Page/Common";
+import { terminModel } from "../../Interfaces";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 function TerminiList() {
+  const { data, isLoading } = useGetTerminiQuery(null);
+  const navigate = useNavigate();
+  const [deleteTermin] = useDeleteTerminMutation();
 
-    const { data, isLoading } = useGetTerminiQuery(null);
-    const navigate = useNavigate();
-    const [deleteTermin] = useDeleteTerminMutation();
-
-    console.log(data);
-
-    const handleTerminDelete = async (terminId: number) => {
-        toast.promise(
-            deleteTermin(terminId),
-            {
-                pending: 'Vaš zahtev se obrađuje...',
-                success: 'Termin obrisan uspešno',
-                error: 'Došlo je do greške!'
-            }
-        )
-    }
+  const handleTerminDelete = async (terminId: number) => {
+    toast.promise(deleteTermin(terminId), {
+      pending: "Vaš zahtev se obrađuje...",
+      success: "Termin obrisan uspešno",
+      error: "Došlo je do greške!",
+    });
+  };
 
   return (
     <>
-          {isLoading && <MainLoader />}
-          {!isLoading && (
-            <div className='table p-5'>
-              <div className='d-flex align-items-center justify-content-between'>
-                <h1 style={{ color: "##51285f" }}>Termini</h1>
-                  <button
-                    className='btn'
-                    style={{ backgroundColor: "#51285f", color: "white" }}
-                    onClick={() => navigate("/termin/terminKreirajAzuriraj")}
-                  >
-                    Kreiraj Termin
-                  </button>
-              </div>
-              <div className='p-2'>
-                <div className='row border'>
-                  <div className='col-1 border'>ID</div>
-                  <div className='col-1 border'>ID Sportskog Objekta</div>
-                  <div className='col-3 border'>Datum Termina</div>
-                  <div className='col-2 border'>Vreme Pocetka</div>
-                  <div className='col-2 border'>Vreme Završetka</div>
-                  <div className='col-1 border'>Status</div>
-                  <div className='col-2 border'>Akcije</div>
-                </div>
-                {data.map((termin: terminModel) => {
-                  return(
-                    <div className='row border' key={termin.terminId}>
-                        <div className='col-1 border'>{termin.terminId}</div>
-                        <div className='col-1 border'>{termin.sportskiObjekatId}</div>
-                        <div className='col-3 border'>{termin.datumTermina ? new Date(termin.datumTermina).toLocaleDateString() : "Nepoznat datum"}</div>
-                        <div className='col-2 border'>{termin.vremePocetka}</div>
-                        <div className='col-2 border'>{termin.vremeZavrsetka}</div>
-                        <div className='col-1 border'>{termin.status}</div>
-                        <div className='col-2 border'>
-                            <button className="btn"
-                            style={{ backgroundColor: "#51285f", color: "white" }} >
-                            <i className="bi bi-pencil-fill"
-                            onClick={()=> navigate("/sportskiObjekat/sportskiObjekatKreirajAzuriraj/" + termin.terminId)}></i>
-                            </button>
-                            <button className="btn btn-danger mx-2">
-                            <i className="bi bi-trash-fill"
-                                onClick={()=> handleTerminDelete(termin.terminId)}></i>
-                            </button>
+      {isLoading && <MainLoader />}
+      {!isLoading && (
+        <div className="container-fluid px-5 mt-4">
+          {/* Header i Dugme */}
+          <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+            <h2 style={{ color: "#51285f" }}>
+              <i className="fa fa-calendar-alt me-2"></i> Termini
+            </h2>
+            <button
+              className="btn"
+              style={{ backgroundColor: "#51285f", color: "white" }}
+              onClick={() => navigate("/termin/terminKreirajAzuriraj")}
+            >
+              <i className="bi bi-plus-circle me-2"></i> Kreiraj Termin
+            </button>
+          </div>
+
+          {/* Tabela */}
+          <div className="table-responsive">
+            <table className="table table-striped table-hover table-bordered align-middle text-center">
+              <thead className="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Sportski Objekat ID</th>
+                  <th>Datum</th>
+                  <th>Vreme Početka</th>
+                  <th>Vreme Završetka</th>
+                  <th>Status</th>
+                  <th>Akcije</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data && data.length > 0 ? (
+                  data.map((termin: terminModel) => (
+                    <tr key={termin.terminId}>
+                      <td>{termin.terminId}</td>
+                      <td>{termin.sportskiObjekatId}</td>
+                      <td>
+                        {termin.datumTermina
+                          ? new Date(termin.datumTermina).toLocaleDateString()
+                          : "Nepoznat datum"}
+                      </td>
+                      <td>{termin.vremePocetka}</td>
+                      <td>{termin.vremeZavrsetka}</td>
+                      <td>{termin.status}</td>
+                      <td>
+                        <div className="d-flex justify-content-center">
+                          <button
+                            className="btn btn-sm me-2"
+                            style={{ backgroundColor: "#51285f", color: "white" }}
+                            onClick={() =>
+                              navigate("/termin/terminKreirajAzuriraj/" + termin.terminId)
+                            }
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => handleTerminDelete(termin.terminId)}
+                          >
+                            <FaTrash />
+                          </button>
                         </div>
-                    </div>
-                  )
-                })
-    
-                }
-              </div>
-            </div>
-          )}
-        </>
-  )
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7}>Nema termina</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
-export default TerminiList
+export default TerminiList;

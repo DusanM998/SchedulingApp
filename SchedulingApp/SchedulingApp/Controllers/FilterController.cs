@@ -28,7 +28,12 @@ namespace SchedulingApp.Controllers
         {
             try
             {
-                IEnumerable<Termin> termini = _db.Termini
+                // Ucitavaju se termini iz b.p zajedno sa sportskim objektima
+                // i primenjuju se filteri na osnovu prosledjenih parametara
+                // Posto sam termine definisao kao IQueryable<Termin>
+                // svi filteri kasnije (Where, OrderBy, Skip, Take) prevode SQL upit i izvrsavaju se na bazi podataka
+                // Koristi se Eager Loading jer .Include direktno ucitava povezane entitete
+                IQueryable<Termin> termini = _db.Termini
                     .Include(t => t.SportskiObjekat)
                     .OrderBy(t => t.DatumTermina)
                     .ThenBy(t => t.VremePocetka);
@@ -76,8 +81,13 @@ namespace SchedulingApp.Controllers
                     TotalRecords = totalRecords
                 };
 
+                // Dodajem custom header(X-pagination) sa informacijama o paginaciji
+                // u HTTP response, zato sto tako razdvajam podatke i meta-podatke
+                // Header ce sadrzati meta-podatke o paginaciji: broj zapisa, trenutnu stranicu i velicinu stranice
+
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
 
+                // Dok ce _response.Result sadrzati samo podatke o terminima
                 _response.Result = termini.Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .Select(t => new TerminDTO

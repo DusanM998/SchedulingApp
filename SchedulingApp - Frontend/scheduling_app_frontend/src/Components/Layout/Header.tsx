@@ -6,7 +6,7 @@ import { RootState } from '../../Storage/Redux/store';
 import { emptyUserState, setLoggedInUser } from '../../Storage/Redux/userAuthSlice';
 import { SD_Roles } from '../../Utility/SD';
 import "./header.css";
-let logo = require("../../Assets/Images/logo.png");
+let logo2 = require("../../Assets/Images/logo2.png");
 
 
 const Header = () => {
@@ -50,7 +50,7 @@ const Header = () => {
       <nav className="navbar navbar-expand-lg bg-body-tertiary fixed-top">
         <div className='container-fluid'>
             <NavLink className="nav-link" aria-current="page" to="/">
-                <img src={logo} style={{ height: "40px" }} className='m-1'></img>
+                <img src={logo2} style={{ height: "40px" }} className='m-1'></img>
             </NavLink>
             <button className="navbar-toggler" 
                 type="button"

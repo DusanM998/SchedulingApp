@@ -73,7 +73,7 @@ function SportskiObjekatKreirajAzuriraj() {
       if (file) {
           //console.log(file);
           const imgType = file.type.split("/")[1];
-          const validImgTypes = ["jpeg", "jpg", "png"];
+          const validImgTypes = ["jpeg", "jpg", "png", "webp"];
 
           const isImgTypeValid = validImgTypes.filter((e) => {
               return e === imgType;

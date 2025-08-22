@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\models\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\models\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\controllers\\filtercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\controllers\\filtercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\models\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\models\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\controllers\\rezervacijacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -78,7 +78,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
@@ -138,25 +138,24 @@
               "RelativeToolTip": "SchedulingApp\\Controllers\\RezervacijaController.cs",
               "ViewState": "AgIAAC8AAAAAAAAAAAAAADUAAABBAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-14T19:05:17.97Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-14T19:05:17.97Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "FilterController.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Controllers\\FilterController.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Controllers\\FilterController.cs",
               "ToolTip": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Controllers\\FilterController.cs",
               "RelativeToolTip": "SchedulingApp\\Controllers\\FilterController.cs",
-              "ViewState": "AgIAAEoAAAAAAAAAAAAiwFoAAABIAAAAAAAAAA==",
+              "ViewState": "AgIAADIAAAAAAAAAAAAYwFkAAABMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-17T11:30:09.221Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "ApiResponse.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Models\\ApiResponse.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Models\\ApiResponse.cs",
@@ -164,8 +163,7 @@
               "RelativeToolTip": "SchedulingApp\\Models\\ApiResponse.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-02T21:25:24.976Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-02T21:25:24.976Z"
             },
             {
               "$type": "Document",

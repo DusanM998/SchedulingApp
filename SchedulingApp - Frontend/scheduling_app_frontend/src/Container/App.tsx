@@ -16,6 +16,7 @@ import { useGetCurrentUserQuery } from "../apis/authApi";
 import { Placanje } from "../Pages/Placanje";
 import { Filter } from "../Pages/Filter";
 import OdabirObjekata from "../Pages/Filter/OdabirObjekata";
+import AboutApp from "../Pages/AboutApp";
 
 function App() {
     const dispatch = useDispatch();
@@ -81,6 +82,7 @@ function App() {
                     <Route path="/sportskiObjekti/sportskiObjektiWithLocation" element={<SportskiObjektiWithLocation />} ></Route>
                     <Route path="/filter" element={<Filter />} ></Route>
                     <Route path="/filter/odabirObjekata" element={<OdabirObjekata />} ></Route>
+                    <Route path="/aboutApp" element={<AboutApp />}></Route>
                 </Routes>
             </div>
         </div>

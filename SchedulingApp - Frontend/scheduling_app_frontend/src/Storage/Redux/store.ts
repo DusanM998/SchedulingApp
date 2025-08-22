@@ -4,6 +4,7 @@ import { authApi, filterApi, placanjeApi, rezervacijaApi, shoppingCartApi, sport
 import { sportskiObjekatReducer } from "./sportskiObjekatSlice";
 import { shoppingCartReducer } from "./shoppingCartSlice";
 import { terminReducer } from "./terminSlice";
+import {rezervacijaReducer} from './rezervacijaSlice';
 
 const store = configureStore({
     reducer: {
@@ -11,6 +12,7 @@ const store = configureStore({
         sportskiObjekatStore: sportskiObjekatReducer,
         shoppingCartFromStore: shoppingCartReducer,
         terminStore: terminReducer,
+        rezervacijaStore: rezervacijaReducer,
         [authApi.reducerPath]: authApi.reducer,
         [sportskiObjekatApi.reducerPath]: sportskiObjekatApi.reducer,
         [terminApi.reducerPath]: terminApi.reducer,

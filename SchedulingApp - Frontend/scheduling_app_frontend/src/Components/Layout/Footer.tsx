@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import logo from "../../Assets/Images/logo.png"
+import logo2 from "../../Assets/Images/logo2.png"
 import { toast } from 'react-toastify';
 
 function Footer() {
@@ -25,7 +25,7 @@ function Footer() {
         <div className="row justify-content-between">
           <div className="col-md-4 mb-4">
             <div className="d-flex align-items-center mb-3">
-              <img src={logo} alt="SchedulingApp Logo" className="me-2" style={{ width: '40px', height: '40px' }} />
+              <img src={logo2} alt="SchedulingApp Logo" className="me-2" style={{ width: '40px', height: '40px' }} />
               <span className="fs-5 fw-bold">SchedulingApp</span>
             </div>
             <p className="text-secondary">
@@ -39,7 +39,7 @@ function Footer() {
               <h5 className="text-white">Strane</h5>
               <ul className="list-unstyled text-secondary">
                 <li><a href="/sportskiObjektiPage" className="text-decoration-none text-secondary">Objekti</a></li>
-                <li><a href="#" className="text-decoration-none text-secondary">Aplikacija</a></li>
+                <li><a href="/aboutApp" className="text-decoration-none text-secondary">Aplikacija</a></li>
               </ul>
             </div>
             <div>
