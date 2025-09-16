@@ -6,6 +6,12 @@ namespace SchedulingApp.DbContexts
 {
     //Glavna klasa koja omogucava komunikaciju izmedju aplikacije i bp.
     //DbSet property predstavljaju tabele u bazi podataka
+    // DbContext predstavlja sesiju sa bazom podataka (tj. on je posrednik ili most
+    // izmedju C# objekata i baze podataka tj. tabela)
+    // Omogucava: upite, cuvanje podataka, pracenje promena(change tracking)
+
+    // Nasledjuje IdentityDbContext sto znaci da imam sve funkcionalnosti DbContext klase i dodatnu podrsku za
+    // .NET Identity (koristim ga jer je gotov sistem za Autentifikaciju i Autorizaciju)
     public class ApplicationDbContexts : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContexts(DbContextOptions options) : base(options) 
@@ -22,6 +28,8 @@ namespace SchedulingApp.DbContexts
         public DbSet<StavkaKorpe> StavkeKorpe { get; set; }
         //public DbSet<Rezervacija> Rezervacije { get; set; }
 
+        // Moze se koristiti da rucno definisem odnose izmedju tabela
+        // ili da popunim b.p. inicijalnim podacima
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

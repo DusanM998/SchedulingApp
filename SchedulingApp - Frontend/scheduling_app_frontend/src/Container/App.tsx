@@ -42,6 +42,7 @@ function App() {
         }
     });
 
+    //
     useEffect(() => {
         if (!isLoading && data) {
             dispatch(setShoppingCart(data.result?.stavkaKorpe)); //Koristim dispatch da bih poslao akcije koje azuriraju stanje u Redux store

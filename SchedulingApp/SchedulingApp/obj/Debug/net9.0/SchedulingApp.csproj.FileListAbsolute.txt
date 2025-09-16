@@ -341,10 +341,11 @@ D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\staticw
 D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\staticwebassets.build.json.cache
 D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\staticwebassets.development.json
 D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\Scheduli.5389F816.Up2Date
 D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\SchedulingApp.dll
 D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\refint\SchedulingApp.dll
 D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\SchedulingApp.pdb
 D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\SchedulingApp.genruntimeconfig.cache
 D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\ref\SchedulingApp.dll
+D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\swae.build.ex.cache
+D:\Projects 1\SchedulingApp\SchedulingApp\SchedulingApp\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

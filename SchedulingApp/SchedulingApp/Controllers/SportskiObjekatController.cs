@@ -39,9 +39,11 @@ namespace SchedulingApp.Controllers
         {
             try
             {
+                // Eager loading da ucitam sve sportske objekte
                 IEnumerable<SportskiObjekat> objekti = _db.SportskiObjekti.Include(u => u.Termini).ToList();
                 
-
+                // Kreiram paginaciju, (racunam koliko je objekta preuzeto, koliko ce se prikazivati po stranici PageSize)
+                // Server - side paginacija, umesto da vracam sve rezultate, vracam samo stranicu koju klijent trazi
                 Pagination pagination = new()
                 {
                     CurrentPage = pageNumber,
@@ -49,7 +51,10 @@ namespace SchedulingApp.Controllers
                     TotalRecords = objekti.Count()
                 };
 
+                // U headeru stavljam dodatne informacije "X-Pagination" koje frontend moze da koristi
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
+                // Skip() preskace odr. br el. od pocetka kolekcije (pageNumber - 1) * pageSize racuna koliko el. treba preskociti
+                // Take() uzima odr. br. el. nakon sto su preskoceni neki (pageSize - definise koliko max moze da uzme)
                 _response.Result = objekti.Skip((pageNumber - 1) * pageSize).Take(pageSize);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);

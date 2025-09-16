@@ -43,7 +43,9 @@ function Login() {
             console.log(response.data);
             const { token } = response.data.result;
             const { name, id, email, role }: userModel = jwtDecode(token);
-            localStorage.setItem("token", token);
+            localStorage.setItem("token", token); // Cuvanje tokena u local storage
+            // koristim redux za globalno cuvanje podataka o ulogovanom korisniku
+            // zatim u localStorage cuvam token da bi korisnik bio ulogovan i nakon refresh-a stranice
 
             dispatch(setLoggedInUser({ name, id, email, role }));
 

@@ -228,7 +228,7 @@ namespace SchedulingApp.Controllers
         [HttpPost("dodajIliAzurirajKorpuSaTerminima")]
         public async Task<ActionResult<ApiResponse>> DodajIliAzurirajKorpuSaTerminima(string userId, int sportskiObjekatId, int brojUcesnika, [FromBody] List<int> terminIds)
         {
-            // Pronalazak postojeće korpe
+            // Pronalazak postojece korpe
             var korpa = await _db.Korpe
                                  .Include(k => k.StavkaKorpe)
                                      .ThenInclude(sk => sk.OdabraniTermini)
@@ -286,7 +286,7 @@ namespace SchedulingApp.Controllers
 
             if (stavka == null)
             {
-                // Ako stavka ne postoji, pravimo je celu sa sve cenom
+                // Ako stavka ne postoji, pravim celu sa sve cenom
                 double ukupnoSati = IzracunajUkupnoVremeBezPreklapanja(sviTermini);
                 double cena = sportskiObjekat.CenaPoSatu * ukupnoSati * brojUcesnika;
 
@@ -304,7 +304,7 @@ namespace SchedulingApp.Controllers
             }
             else
             {
-                // Filtriramo samo nove termine koje još nema u stavci
+                // Filtriram samo nove termine koje jos nema u stavci
                 var postojeciIds = stavka.OdabraniTermini.Select(t => t.TerminId).ToHashSet();
                 var noviTermini = sviTermini.Where(t => !postojeciIds.Contains(t.TerminId)).ToList();
 
@@ -313,7 +313,7 @@ namespace SchedulingApp.Controllers
                     stavka.OdabraniTermini.AddRange(noviTermini);
                 }
 
-                // Ovde **uvek** povlačimo sve termine ponovo iz baze da bi imali sigurne podatke
+                // Ovde **uvek** povlacim sve termine ponovo iz baze da bi imalo sigurne podatke
                 var sviTerminiZaStavku = await _db.Termini
                     .Where(t => stavka.OdabraniTermini.Select(ot => ot.TerminId).Contains(t.TerminId))
                     .ToListAsync();
@@ -321,7 +321,7 @@ namespace SchedulingApp.Controllers
                 double ukupnoSati = IzracunajUkupnoVremeBezPreklapanja(sviTerminiZaStavku);
                 stavka.CenaZaObjekat = sportskiObjekat.CenaPoSatu * ukupnoSati * stavka.Kolicina;
 
-                // Ažuriraj broj učesnika ako je veći
+                // Azuriraj broj ucesnika ako je veci
                 if (brojUcesnika > stavka.Kolicina)
                 {
                     stavka.Kolicina = brojUcesnika;
@@ -335,7 +335,7 @@ namespace SchedulingApp.Controllers
             return Ok(new ApiResponse { StatusCode = HttpStatusCode.OK, IsSuccess = true });
         }
 
-        // Funkcija za računanje ukupnog vremena bez preklapanja, uz poštovanje različitih datuma
+        // Funkcija za racunanje ukupnog vremena bez preklapanja, uz postovanje razlicitih datuma
         private double IzracunajUkupnoVremeBezPreklapanja(List<Termin> termini)
         {
             double ukupnoSati = 0;

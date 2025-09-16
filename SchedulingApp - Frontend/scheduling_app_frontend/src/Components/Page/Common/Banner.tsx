@@ -88,7 +88,7 @@ function Banner() {
                 style={{ backgroundColor: "#4da172" }}
                 onClick={() => navigate("/filter")}
               >
-                Pretraga Termina i Objekata
+                Pretraga Termina
               </button>
             </div>
           </div>

@@ -16,6 +16,8 @@ namespace SchedulingApp.Controllers
 {
     [Route("api/auth")] //Svi endpoint - ovi u kontroleru pocinju sa ovim
     [ApiController]
+    // Controller - rukuje HTTP zahtevima i vraca odgovore. Ovaj kontroler usmerava zahteve ka logici koja
+    // vrsi registraciju, prijavljivanje, a potom i autentifikaciju korisnika
     public class AuthController : ControllerBase
     {
         private readonly ApplicationDbContexts _db;
@@ -25,9 +27,9 @@ namespace SchedulingApp.Controllers
         private readonly CloudinaryService _cloudinaryService;
         private string secretKey;
 
-        //Primer DI(Dependency Injection): tehnike dizajna koja omogucava objektima da dobiju svoje zavisnosti(druge objekte)
+        // Primer DI(Dependency Injection): tehnike dizajna koja omogucava objektima da dobiju svoje zavisnosti(druge objekte)
         // od spoljnog izvora umesto da ih sami kreiraju. Ovde su zavisnosti definisane kao parametri konstruktora
-        //Postoji: Constructor, Property, Method i Interface injection
+        // Postoji: Constructor, Property, Method i Interface injection
         public AuthController(ApplicationDbContexts db, IConfiguration configuration,
             UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, CloudinaryService cloudinaryService)
         {
@@ -54,13 +56,14 @@ namespace SchedulingApp.Controllers
 
             string imageUrl = await _cloudinaryService.UploadImageAsync(register.File);
 
-            ApplicationUser userFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == register.UserName.ToLower());
+            ApplicationUser userFromDb = _db.ApplicationUsers
+                .FirstOrDefault(u => u.UserName.ToLower() == register.UserName.ToLower());
 
             if(userFromDb != null)
             {
                 _response.StatusCode = System.Net.HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Korisnicno ime vec postoji!");
+                _response.ErrorMessages.Add("Korisnicko ime vec postoji!");
                 return BadRequest(_response);
             }
 
@@ -71,14 +74,15 @@ namespace SchedulingApp.Controllers
                 NormalizedEmail = register.UserName.ToUpper(),
                 Name = register.Name,
                 Image = imageUrl,
-                PhoneNumber = register.PhoneNumber
+                PhoneNumber = register.PhoneNumber,
+                RefreshToken = null,
             };
 
             try
             {
-                var result = await _userManager.CreateAsync(newUser, register.Password);
+                var result = await _userManager.CreateAsync(newUser, register.Password); //Koristim Identity da registrujem hashovanu sifru
 
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
                     if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
                     {
@@ -112,15 +116,28 @@ namespace SchedulingApp.Controllers
             return BadRequest(_response);
         }
 
+        // Dodaj helper za generisanje refresh tokena
+        private string GenerateRefreshToken()
+        {
+            var randomBytes = new byte[64];
+            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomBytes);
+                return Convert.ToBase64String(randomBytes);
+            }
+        }
+
+        // Prijava korisnika (autentifikacija)
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO login)
         {
+            // Provera identiteta korisnika
             ApplicationUser userFromDb = _db.ApplicationUsers
                 .FirstOrDefault(u => u.UserName.ToLower() == login.UserName.ToLower());
 
-            bool isValid = await _userManager.CheckPasswordAsync(userFromDb, login.Password);
+            bool isValid = await _userManager.CheckPasswordAsync(userFromDb, login.Password); //Identity proverava hash sifre
 
-            if(isValid == false)
+            if (isValid == false)
             {
                 _response.Result = new LoginResponseDTO();
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -129,7 +146,16 @@ namespace SchedulingApp.Controllers
                 return BadRequest(_response);
             }
 
+            // Generise refresh token
+            var refreshToken = GenerateRefreshToken();
+            userFromDb.RefreshToken = refreshToken;
+            userFromDb.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1); // npr. 1 dan vazenja
+            await _db.SaveChangesAsync();
+
+            // Autorizacija korisnika (na osnovu role) i generisanje JWT tokena
             var roles = await _userManager.GetRolesAsync(userFromDb);
+
+            //Ako je password tacan generise se JWT token
             JwtSecurityTokenHandler tokenHandler = new();
             byte[] key = Encoding.ASCII.GetBytes(secretKey);
 
@@ -164,7 +190,8 @@ namespace SchedulingApp.Controllers
             LoginResponseDTO loginResponse = new()
             {
                 Email = userFromDb.Email,
-                Token = tokenHandler.WriteToken(token)
+                Token = jwtToken,
+                RefreshToken = refreshToken 
             };
 
             if(loginResponse.Email == null || string.IsNullOrEmpty(loginResponse.Token))
@@ -361,6 +388,51 @@ namespace SchedulingApp.Controllers
             _response.IsSuccess = true;
             _response.Result = userFromDb;
             return Ok(_response);
+        }
+
+        // Endpoint za osvežavanje tokena
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        {
+            var user = _db.ApplicationUsers.FirstOrDefault(u => u.RefreshToken == refreshToken);
+
+            if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            {
+                return Unauthorized(new { message = "Neispravan ili istekao refresh token." });
+            }
+
+            // Generiši novi JWT token (kao u loginu)
+            var roles = await _userManager.GetRolesAsync(user);
+            JwtSecurityTokenHandler tokenHandler = new();
+            byte[] key = Encoding.ASCII.GetBytes(secretKey);
+
+            SecurityTokenDescriptor tokenDescriptor = new()
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim("name", user.Name),
+                    new Claim("id", user.Id.ToString()),
+                    new Claim(ClaimTypes.Email, user.UserName.ToString()),
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? ""),
+                    new Claim("phoneNumber", user.PhoneNumber ?? "")
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+            string newJwtToken = tokenHandler.WriteToken(token);
+
+            var newRefreshToken = GenerateRefreshToken();
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await _db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                token = newJwtToken,
+                refreshToken = newRefreshToken
+            });
         }
     }
 }

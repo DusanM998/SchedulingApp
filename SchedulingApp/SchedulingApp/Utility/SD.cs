@@ -1,5 +1,8 @@
 ﻿namespace SchedulingApp.Utility
 {
+    // Klasa koja cuva staticke detalje o rezervaciji, rolama, itd
+    // Koristim je jer tako pravim centralizovano mesto za cuvanje konstanti koje se
+    // koriste kroz celu aplikaciju i sve string konstante su mi na jednom mestu
     public class SD
     {
         public const string Role_Admin = "admin";
@@ -15,5 +18,6 @@
         public const string StatusTermina_Zauzet = "Zauzet";
         public const string StatusTermina_Otkazan = "Otkazan";
         public const string StatusTermina_Istekao = "Istekao";
+        public const string StatusTermina_Zavrsen = "Zavrsen";
     }
 }

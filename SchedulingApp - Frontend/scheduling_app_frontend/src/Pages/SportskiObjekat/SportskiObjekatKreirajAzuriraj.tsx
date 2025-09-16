@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { inputHelper, toastNotify } from '../../Helper';
 import { MainLoader } from '../../Components/Page/Common';
 
+// Predefinisane opcije za vrstu sporta
 const VrstaSporta = [
     SD_VrstaSporta.Ostalo,
     SD_VrstaSporta.Fudbal,
@@ -18,6 +19,7 @@ const VrstaSporta = [
     SD_VrstaSporta.Bilijar,
 ];
 
+// Pocetne vr. forme za unos podataka o sportskom objektu
 const sportskiObjekatData = {
   naziv: "",
   lokacija: "",
@@ -36,12 +38,14 @@ function SportskiObjekatKreirajAzuriraj() {
     const [updateSportskiObjekat] = useUpdateSportskiObjekatMutation();
     const { sportskiObjekatId } = useParams();
     const navigate = useNavigate();
-    const { data } = useGetSportskiObjekatByIdQuery(sportskiObjekatId);
-    const [imageToBeStore, setImageToBeStore] = useState<any>();
-    const [imageToBeDisplay, setImageToBeDisplay] = useState<any>();
+    const { data } = useGetSportskiObjekatByIdQuery(sportskiObjekatId); // Ucivam podatke o sportskom objektu za update
+    const [imageToBeStore, setImageToBeStore] = useState<any>(); // Cuva File objekat koji ce biti poslat na backend
+    const [imageToBeDisplay, setImageToBeDisplay] = useState<any>(); //Cuva URL slike koji ce biti prikazan na frontendu
 
     //console.log(data);
   
+    // Automatski popunjavam formu za update
+    // Kada ucitam podatke o sportkom objektu, useEffect ce se okinuti i popunjava formu
     useEffect(() => {
       if (data && data.result) {
         const tempData = {
@@ -79,6 +83,7 @@ function SportskiObjekatKreirajAzuriraj() {
               return e === imgType;
           });
 
+          // Ogranicenje velicine fajla na 5MB
           if (file.size > 5000 * 1024) {
               setImageToBeStore("");
               toastNotify("Veličina fajla mora biti manja od 5MB!", "error");
@@ -90,6 +95,7 @@ function SportskiObjekatKreirajAzuriraj() {
               return;
           }
 
+          // FileReader API - cita fajl i pretvara u URL koji moze da se prikaze na frontendu
           const reader = new FileReader();
           reader.readAsDataURL(file);
           setImageToBeStore(file);
@@ -105,12 +111,14 @@ function SportskiObjekatKreirajAzuriraj() {
 
       setLoading(true);
 
+      // Validacija - slika je obavezna prilikom kreiranja novog sportskog objekta
       if (!imageToBeStore && !sportskiObjekatId) {
         toastNotify("Molimo Vas dodajte sliku!", "error");
         setLoading(false);
         return;
       }
 
+      // FormData objekat - koristim ga da saljem podatke na backend
       const formData = new FormData();
 
       formData.append("Naziv", sportskiObjekatInputs.naziv ?? "");
@@ -120,7 +128,7 @@ function SportskiObjekatKreirajAzuriraj() {
       formData.append("RadnoVreme", sportskiObjekatInputs.radnoVreme ?? "");
       formData.append("CenaPoSatu", sportskiObjekatInputs.cenaPoSatu ?? "");
       formData.append("Kapacitet", sportskiObjekatInputs.kapacitet ?? "");
-      if (imageToBeDisplay) formData.append("File", imageToBeStore);
+      if (imageToBeDisplay) formData.append("File", imageToBeStore); // File se dodaje samo ako postoji nova slika
 
       console.log("Logujem podatke iz forme:", Object.fromEntries(formData.entries()));
 
