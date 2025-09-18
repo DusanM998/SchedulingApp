@@ -9,11 +9,13 @@ import { useInicirajPlacanjeMutation } from '../../apis/placanjeApi';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 function RezervacijaDetalji() {
 
   const [loading, setLoading] = useState(false);
   const [inicirajPlacanje] = useInicirajPlacanjeMutation();
+  const { t } = useTranslation();
 
   const shoppingCartStore: stavkaKorpeModel[] = useSelector(
     (state: RootState) => state.shoppingCartFromStore.stavkaKorpe ?? []
@@ -75,7 +77,7 @@ function RezervacijaDetalji() {
     );
 
     if (!imaTermina) {
-      toast.error("Molimo Vas da odaberete barem jedan termin pre nego što nastavite!", {
+      toast.error(t("rezervacijaDetalji.errors.noTermin"), {
         position: "top-center",
         autoClose: 3000,
       });
@@ -94,35 +96,35 @@ function RezervacijaDetalji() {
 
   return (
     <div className='border rounded pb-5 pt-3'>
-      <h1 style={{ fontWeight: "300", color: "#4da172" }} className="text-center">Podaci o korisniku</h1>
+      <h1 style={{ fontWeight: "300", color: "#4da172" }} className="text-center">{t("rezervacijaDetalji.title")}</h1>
       <hr />
       <form onSubmit={handleSubmit} className='col-10 mx-auto'>
         <div className='form-group mt-3'>
-          Ime
+          {t("rezervacijaDetalji.form.name")}
           <input
             type='text'
             value={userInput.name}
             className='form-control'
-            placeholder='Ime...'
+            placeholder={t("rezervacijaDetalji.form.name...")}
             name='name'
             required
             onChange={handleUserInput}
           />
         </div>
         <div className='form-group mt-3'>
-          E-mail
+          {t("rezervacijaDetalji.form.email")}
           <input
             type='email'
             value={userInput.email}
             className='form-control'
-            placeholder='E-mail'
+            placeholder={t("rezervacijaDetalji.form.email...")}
             name='email'
             required
             onChange={handleUserInput}
           />
         </div>
         <div className='form-group mt-3'>
-          Broj Telefona
+          {t("rezervacijaDetalji.form.phone")}
           <PhoneInput
             inputProps={{
               name:"phoneNumber"
@@ -133,8 +135,8 @@ function RezervacijaDetalji() {
         </div>
         <div className='form-group mt-3'>
           <div className='card p-3' style={{background:"ghostwhite"}}>
-            <h5>Ukupno za plaćanje : {ukupnoCena.toFixed(2)}  RSD</h5>
-            <h5>Broj rezervacija : {ukuponoStavki}</h5>
+            <h5>{t("rezervacijaDetalji.summary.totalPrice")}: {ukupnoCena.toFixed(2)}  RSD</h5>
+            <h5>{t("rezervacijaDetalji.summary.totalReservations")}: {ukuponoStavki}</h5>
           </div>
         </div>
         <button
@@ -142,14 +144,14 @@ function RezervacijaDetalji() {
           className='btn btn-lg form-control mt-3'
           style={{backgroundColor:"#51285f", color: "white"}}
         >
-          {loading ? <MiniLoader /> : "Nastavi na plaćanje"}
+          {loading ? <MiniLoader /> : "" + t("rezervacijaDetalji.buttons.continue")}
         </button>
         <button
           type='button'
           className='btn btn-secondary form-control mt-3'
           onClick={() => navigate("/")}
         >
-          Nazad
+          {t("rezervacijaDetalji.buttons.back")}
         </button>
       </form>
     </div>

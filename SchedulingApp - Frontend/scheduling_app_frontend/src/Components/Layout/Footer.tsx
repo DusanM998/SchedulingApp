@@ -2,8 +2,11 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo2 from "../../Assets/Images/logo2.png"
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 function Footer() {
+
+  const { t } = useTranslation();
 
   const handleReservationClick = () => {
       const sportskiObjektiSection = document.getElementById("containerObjekti");
@@ -29,23 +32,23 @@ function Footer() {
               <span className="fs-5 fw-bold">SchedulingApp</span>
             </div>
             <p className="text-secondary">
-              Proveri dostupnost i rezerviši termin u sportskom objektu.
+              {t("footerText1")}
             </p>
-            <button className="btn btn-light mt-3" onClick={handleReservationClick}>Rezerviši Termin</button>
+            <button className="btn btn-light mt-3" onClick={handleReservationClick}>{t("footerBtn1")}</button>
           </div>
           
           <div className="col-md-4 d-flex justify-content-between">
             <div>
-              <h5 className="text-white">Strane</h5>
+              <h5 className="text-white">{t("footerH5")}</h5>
               <ul className="list-unstyled text-secondary">
-                <li><a href="/sportskiObjektiPage" className="text-decoration-none text-secondary">Objekti</a></li>
-                <li><a href="/aboutApp" className="text-decoration-none text-secondary">Aplikacija</a></li>
+                <li><a href="/sportskiObjektiPage" className="text-decoration-none text-secondary">{t("footerLi1")}</a></li>
+                <li><a href="/aboutApp" className="text-decoration-none text-secondary">{t("footerLi2")}</a></li>
               </ul>
             </div>
             <div>
-              <h5 className="text-white">Informacije</h5>
+              <h5 className="text-white">{t("footerH5_2")}</h5>
               <ul className="list-unstyled text-secondary">
-                <li><a href="/kontakt" className="text-decoration-none text-secondary">Kontakt</a></li>
+                <li><a href="/kontakt" className="text-decoration-none text-secondary">{t("footerLi3")}</a></li>
               </ul>
             </div>
           </div>

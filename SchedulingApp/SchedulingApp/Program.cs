@@ -45,13 +45,13 @@ var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 // JWT konfiguracija
 // Mora biti pre UseAuthorization jer je bitno znati ko je korisnik pre nego sto se provere prava pristupa
 // Konfigurise Autentifikaciju i autorizaciju za celu aplikaciju
-builder.Services.AddAuthentication(u =>
+builder.Services.AddAuthentication(u => // Registruje se autentifikacija u DI context
 {
-    u.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    u.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(u =>
+    u.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // Postavlja se default scheme za autentifikaciju na JWT Bearer
+    u.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // Postavlja se default scheme za izazivanje autentifikacije na JWT Bearer
+}).AddJwtBearer(u => // Dodaje JWT Bearer u middleware pipeline za autentifikaciju
 {
-    u.RequireHttpsMetadata = false;
+    u.RequireHttpsMetadata = false; 
     u.SaveToken = true;
     u.TokenValidationParameters = new TokenValidationParameters
     {

@@ -52,26 +52,58 @@ public class TerminStatusUpdateService : BackgroundService
                     t.Status == "Zauzet")
                 .ToListAsync(); // Cita termine iz baze strogo pre danasnjeg datuma i proverava da li im je status "Slobodan"
 
-            if (termini.Any()) // Ako postoje takvi termini
+            if (!termini.Any())
             {
-                foreach (var termin in termini)
+                Console.WriteLine("Nema termina za azuriranje.");
+                return;
+            }
+
+            int updatedCount = 0;
+
+            foreach (var termin in termini)
+            {
+                try
                 {
-                    if(termin.Status == SD.StatusTermina_Slobodan)
+                    Console.WriteLine($"Obrada termina {termin.TerminId}: Datum={termin.DatumTermina}, Status={termin.Status}, StavkaKorpeId={termin.StavkaKorpeId}");
+
+                    if (termin.Status == SD.StatusTermina_Slobodan)
                     {
-                        termin.Status = SD.StatusTermina_Istekao; //...menja im se status u "Istekao"
+                        termin.Status = SD.StatusTermina_Istekao;
+                        updatedCount++;
                     }
-                    else if(termin.Status == SD.StatusTermina_Zauzet)
+                    else if (termin.Status == SD.StatusTermina_Zauzet)
                     {
-                        termin.Status = SD.StatusTermina_Zavrsen; //...ili zavrsen
+                        // Skip if termin has an active reservation
+                        if (termin.StavkaKorpeId != null)
+                        {
+                            var stavkaKorpe = await dbContext.StavkeKorpe
+                                .FirstOrDefaultAsync(s => s.Id == termin.StavkaKorpeId);
+
+                            if (stavkaKorpe != null)
+                            {
+                                Console.WriteLine($"Preskakanje termina {termin.TerminId}: Zauzet sa aktivnom rezervacijom (StavkaKorpeId={termin.StavkaKorpeId}).");
+                                continue;
+                            }
+                        }
+
+                        termin.Status = SD.StatusTermina_Zavrsen;
+                        updatedCount++;
                     }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Greška prilikom ažuriranja termina {termin.TerminId}: {ex.Message}");
+                }
+            }
 
-                await dbContext.SaveChangesAsync(); //Cuvaju se promene u bazi
-                Console.WriteLine($"{termini.Count} termina azurirano (Slobodni → Istekao, Zauzeti → Zavrsen).");
+            if (updatedCount > 0)
+            {
+                await dbContext.SaveChangesAsync();
+                Console.WriteLine($"{updatedCount} termina ažurirano (Slobodni → Istekao, Zauzeti → Završen).");
             }
             else
             {
-                Console.WriteLine("Nema termina za azuriranje.");
+                Console.WriteLine("Nijedan termin nije ažuriran.");
             }
         }
     }

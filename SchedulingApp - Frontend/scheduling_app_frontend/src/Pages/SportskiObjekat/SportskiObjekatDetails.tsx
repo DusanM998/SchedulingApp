@@ -14,8 +14,10 @@ import { useGetTerminByIdQuery } from "../../apis/terminApi";
 import { useUpdateShoppingCartMutation } from "../../apis/shoppingCartApi";
 import { toastNotify } from "../../Helper";
 import { SD_Status_Termina } from "../../Utility/SD";
+import { useTranslation } from "react-i18next";
 
 function SportskiObjekatDetails() {
+  const { t } = useTranslation();
   const { sportskiObjekatId } = useParams();
   const { data, isLoading } = useGetSportskiObjekatByIdQuery(sportskiObjekatId);
   const { data: terminiData, isLoading: terminiLoading } =
@@ -86,14 +88,14 @@ function SportskiObjekatDetails() {
                 style={{ height: "40px", fontSize: "20px", cursor: "pointer" }}
                 onClick={() => openGoogleMaps(data.result.lokacija)}
               >
-                Lokacija: {data.result.lokacija}
+                {t("sportskiObjektiPage.location")}: {data.result.lokacija}
               </span>
             </span>
             <p style={{ fontSize: "20px" }} className="pt-2">
               {data.result?.opis}
             </p>
             <span className="h3">
-              Cena po satu: {data.result.cenaPoSatu} RSD
+              {t("rezervacijaSummary.pricePerHour")}: {data.result.cenaPoSatu} RSD
             </span>{" "}
             &nbsp;&nbsp;&nbsp;
             <div className="row pt-4">
@@ -102,7 +104,7 @@ function SportskiObjekatDetails() {
                   className="btn btn-success form-control"
                   onClick={handleShowTermini}
                 >
-                  Proveri Dostupnost Termina
+                  {t("sportskiObjektiPage.checkAvailabilityBtn")}
                 </button>
               </div>
               <div className="col-5">
@@ -111,20 +113,20 @@ function SportskiObjekatDetails() {
                   style={{ backgroundColor: "#51285f", color: "white" }}
                   onClick={() => handleAddToCart(data.result.sportskiObjekatId)}
                 >
-                  Odaberi Objekat
+                  {t("sportskiObjektiPage.chooseObjectBtn")}
                 </button>
               </div>
               <div className="col-7 mt-4">
                 <NavLink className="nav-link" aria-current="page" to="/">
                   <button className="btn btn-secondary form-control">
-                    Nazad
+                    {t("sportskiObjektiPage.backBtn")}
                   </button>
                 </NavLink>
               </div>
             </div>
             {showTermini && (
               <div className="mt-3">
-                <h4>Dostupni Termini: </h4>
+                <h4>{t("sportskiObjektiPage.availabilityDates")}</h4>
                 {terminiLoading ? (
                   <MainLoader />
                 ) : (
@@ -177,7 +179,7 @@ function SportskiObjekatDetails() {
                             }}
                           >
                             <h6>
-                              Datum:{" "}
+                              {t("rezervacijaSummary.date")}:{" "}
                               {termin.datumTermina
                                 ? new Date(
                                     termin.datumTermina
@@ -185,7 +187,7 @@ function SportskiObjekatDetails() {
                                 : "Nepoznat datum"}
                             </h6>
                             <h6>
-                              Vreme: {termin.vremePocetka} -{" "}
+                              {t("rezervacijaSummary.time")}: {termin.vremePocetka} -{" "}
                               {termin.vremeZavrsetka}
                             </h6>
                             <p>Status: {termin.status}</p>
@@ -193,7 +195,7 @@ function SportskiObjekatDetails() {
                         );
                       })
                     ) : (
-                      <p>Nema dostupnih Termina</p>
+                      <p>{t("rezervacijaSummary.noTermin")}</p>
                     )}
                   </div>
                 )}

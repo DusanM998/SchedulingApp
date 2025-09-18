@@ -1,16 +1,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { userModel } from "../Interfaces";
+import { apiResponse, userModel } from "../Interfaces";
 
-const authApi = createApi({
-    reducerPath: "authApi",
-    baseQuery: fetchBaseQuery({
+const authApi = createApi({ // createApi - f-ja za kreiranje API slice-a (Rexux komponenta za komunikaciju sa backend-om)
+    reducerPath: "authApi", // jedinstveno ime za API slice
+    baseQuery: fetchBaseQuery({ // fetchBaseQuery - f-ja za kreiranje HTTP requesta
         baseUrl: "https://localhost:7210/api/",
-        credentials: "include"
+        credentials: "include", // salje cookies sa svakim zahtevom
+        prepareHeaders: (headers) => {
+            // Automatski dodaje token u header svakog zahteva ako je korisnik ulogovan
+            const token = localStorage.getItem("token");
+            if (token) {
+                headers.set("Authorization", `Bearer ${token}`);
+            }
+            return headers;
+        },
     }),
     tagTypes: ["AuthApi"],
     endpoints: (builder) => ({
-        registerUser: builder.mutation({
-            query: (userData) => ({
+        registerUser: builder.mutation({ //mutation - operacije koje menjaju podatke (POST, PUT, DELETE, PATCH)
+            query: (userData) => ({ // ovde mi query predstavlja objekat sa svim informacijama o HTTP zahtevu
                 url: "auth/register",
                 method: "POST",
                 body: userData
@@ -39,7 +47,7 @@ const authApi = createApi({
             }),
             providesTags: ["AuthApi"],
         }),
-        getCurrentUser: builder.query<userModel, void>({
+        getCurrentUser: builder.query<apiResponse, void>({
             query: () => ({
                 url: "auth/currentUser",
                 headers: {
@@ -65,7 +73,16 @@ const authApi = createApi({
                 },
                 body: userCredentials,
             }),
-        })
+        }),
+        refreshToken: builder.mutation({
+            query: () => ({
+                url: "auth/refresh-token",
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                },
+            }),
+        }),
     })
 });
 

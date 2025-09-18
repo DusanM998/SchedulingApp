@@ -549,11 +549,13 @@ namespace SchedulingApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchedulingApp.Models.StavkaKorpe", null)
+                    b.HasOne("SchedulingApp.Models.StavkaKorpe", "StavkaKorpe")
                         .WithMany("OdabraniTermini")
                         .HasForeignKey("StavkaKorpeId");
 
                     b.Navigation("SportskiObjekat");
+
+                    b.Navigation("StavkaKorpe");
                 });
 
             modelBuilder.Entity("SchedulingApp.Models.Korpa", b =>

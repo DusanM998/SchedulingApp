@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchedulingApp.DbContexts;
@@ -15,6 +16,7 @@ namespace SchedulingApp.Controllers
     // Rezervacija se sastoji od Header-a i Details-a
     [Route("api/rezervacija")]
     [ApiController]
+    [Authorize]
     public class RezervacijaController : ControllerBase
     {
         private readonly ApplicationDbContexts _db;
@@ -27,6 +29,7 @@ namespace SchedulingApp.Controllers
         }
 
         [HttpGet("SveRezervacije")] // endpoint GET/SveRezervacije
+        [Authorize(Roles = SD.Role_Admin)] // Samo Admin moze videti sve rezervacije
         public async Task<ActionResult<ApiResponse>> GetAllRezervacije()
         {
             try
@@ -58,28 +61,35 @@ namespace SchedulingApp.Controllers
         {
             try
             {
-                // Radi se eager loading da bi se ucitali svi rezervacijaHeader (zaglavlja rezervacije)
+                // Radi se eager loading (odmah povezujem sve entitete) radi ucitavanja rezervacijaHeader (zaglavlja rezervacije)
+                // IQueryable koristim zato sto se query gradi tek kada ga enumeriram (npr. pozivom ToList(); FirstOrDefault(); Skip(); Take() )
                 IQueryable<RezervacijaHeader> rezervacijaHeader = _db.RezervacijaHeader
                     .Include(u => u.RezervacijaDetalji) // zatim se ucitavaju poveani RezervacijaDetalji
                         .ThenInclude(u => u.OdabraniTermini) //...i odabrani termini u okviru rezervacije
                     .OrderByDescending(u => u.RezervacijaHeaderId);
 
+                // Filtrira rezervaciju na osnovu korisnika
                 if(!string.IsNullOrEmpty(userId))
                 {
                     rezervacijaHeader = rezervacijaHeader.Where(u => u.ApplicationUserId == userId);
                 }
-                if(!string.IsNullOrEmpty(searchString))
+                // Filtriranje rezervacije na osnovu searchString-a (broj, email, ime)
+                if (!string.IsNullOrEmpty(searchString))
                 {
+                    // Where filtrira redove na osnovu uslova, pre nego sto se izvrsi agregacija ili grupisanje
+                    // ...za razliku od HAVING koji se koristi za filtriranje nakon grupisanja
                     rezervacijaHeader = rezervacijaHeader.Where(u => 
                     u.BrojKorisnika.Contains(searchString.ToLower())
                     || u.EmailKorisnika.Contains(searchString.ToLower())
                     || u.ImeKorisnika.Contains(searchString.ToLower()));
                 }
-                if(!string.IsNullOrEmpty(status))
+                // Filtriranje rezervacije na osnovu statusa
+                if (!string.IsNullOrEmpty(status))
                 {
                     rezervacijaHeader = rezervacijaHeader.Where(u => u.Status.ToLower() == status.ToLower());
                 }
 
+                // Kreiram novi Pagination objekat (sadrzi tren. str, vel. str i uk. br. zapisa)
                 Pagination pagination = new()
                 {
                     CurrentPage = pageNumber,
@@ -87,9 +97,14 @@ namespace SchedulingApp.Controllers
                     TotalRecords = rezervacijaHeader.Count()
                 };
 
+                // Dodajem pagination informacije u HTTP header odgovora
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
 
-                _response.Result = rezervacijaHeader.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+                // Posto sam rezultat definisao kao IQueryable, tek sada se izvrsava upit u bazi podataka
+                // Izbegavam ucitavanje svih zapisa u memoriju
+                _response.Result = rezervacijaHeader
+                    .Skip((pageNumber - 1) * pageSize) // npr. ako je strana 2 i pageSize = 10, preskacem prvih 10 zapisa
+                    .Take(pageSize); //...uzimam sledecih 10 zapisa (pageSize)
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -173,7 +188,7 @@ namespace SchedulingApp.Controllers
 
                 foreach (var detaljiDTO in rezervacijaHeaderCreateDTO.RezervacijaDetaljiCreateDTO)
                 {
-                    // (Opcionalno) Proveri da li termin postoji
+                    // Proveravam da li termin postoji
                     var termin = await _db.Termini
                                   .Include(t => t.SportskiObjekat)
                                   .FirstOrDefaultAsync(t => t.TerminId == detaljiDTO.TerminId);

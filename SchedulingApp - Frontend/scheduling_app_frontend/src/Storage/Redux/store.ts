@@ -6,13 +6,17 @@ import { shoppingCartReducer } from "./shoppingCartSlice";
 import { terminReducer } from "./terminSlice";
 import {rezervacijaReducer} from './rezervacijaSlice';
 
+// Store - mesto za cuvanje stanja cele aplikacije (kombinacija svih slice-ova)
 const store = configureStore({
-    reducer: {
-        userAuthStore: userAuthReducer,
-        sportskiObjekatStore: sportskiObjekatReducer,
-        shoppingCartFromStore: shoppingCartReducer,
-        terminStore: terminReducer,
-        rezervacijaStore: rezervacijaReducer,
+    reducer: { // reducer - funkcija koja prima trenutno stanje i akciju, i vraca novo stanje
+        userAuthStore: userAuthReducer, // podaci o ulogovanom korisniku
+        sportskiObjekatStore: sportskiObjekatReducer, // lista sportskih objekata
+        shoppingCartFromStore: shoppingCartReducer, // podaci o korpi za kupovinu
+        terminStore: terminReducer, // podaci o terminima
+        rezervacijaStore: rezervacijaReducer, // podaci o rezervacijama
+        // Dodavanje API slice-ova u store
+        // Svaki API slice automatski kreira svoj reducer i middleware
+        // Ovi reducer-i i middleware-i se moraju dodati u store da bi API slice-ovi radili
         [authApi.reducerPath]: authApi.reducer,
         [sportskiObjekatApi.reducerPath]: sportskiObjekatApi.reducer,
         [terminApi.reducerPath]: terminApi.reducer,
@@ -21,6 +25,7 @@ const store = configureStore({
         [rezervacijaApi.reducerPath]: rezervacijaApi.reducer,
         [filterApi.reducerPath]: filterApi.reducer
     },
+    // Middleware - funkcije koje se izvrsavaju izmedju akcije i reducer-a
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
             .concat(authApi.middleware)

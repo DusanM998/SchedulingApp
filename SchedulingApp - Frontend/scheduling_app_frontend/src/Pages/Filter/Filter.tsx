@@ -3,10 +3,11 @@ import { useGetRecordsQuery } from "../../apis/filterApi";
 import { inputHelper } from "../../Helper";
 import { MainLoader } from "../../Components/Page/Common";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function Filter() {
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
   const [searchClicked, setSearchClicked] = useState(false);
   const [filters, setFilters] = useState({
     lokacija: "",
@@ -106,7 +107,7 @@ function Filter() {
   return (
     <div className="container mt-4">
       <h2 className="mb-4 text-center" style={{ color: "#51285f" }}>
-        Pretraga termina
+        {t("filter.searchTerm")}
       </h2>
       <form
         className="row g-3 justify-content-center card shadow p-4 border mx-auto"
@@ -114,29 +115,29 @@ function Filter() {
         onSubmit={handleFilters}
       >
         <div className="col-12 col-md-6 mx-auto">
-          <label className="form-label">Lokacija</label>
+          <label className="form-label">{t("sportskiObjektiPage.location")}</label>
           <input
             type="text"
             className="form-control"
             name="lokacija"
             value={filters.lokacija}
             onChange={handleChange}
-            placeholder="Unesite lokaciju..."
+            placeholder={t("filter.locationPlaceholder")}
           />
         </div>
         <div className="col-12 col-md-6 mx-auto">
-          <label className="form-label">Vrsta Sporta</label>
+          <label className="form-label">{t("filter.typeOfSport")}</label>
           <input
             type="text"
             className="form-control"
             name="vrstaSporta"
             value={filters.vrstaSporta}
             onChange={handleChange}
-            placeholder="Unesite vrstu sporta..."
+            placeholder={t("filter.sportPlaceholder")}
           />
         </div>
         <div className="col-12 col-md-6 mx-auto">
-          <label className="form-label">Datum</label>
+          <label className="form-label">{t("rezervacijaSummary.date")}</label>
           <input
             type="date"
             className="form-control"
@@ -151,7 +152,7 @@ function Filter() {
             className="btn"
             style={{ backgroundColor: "#51285f", color: "white" }}
           >
-            <i className="bi bi-search me-2"></i>Pretraži
+            <i className="bi bi-search me-2"></i>{t("filter.searchBtn")}
           </button>
           <button
             type="button"
@@ -163,7 +164,7 @@ function Filter() {
               setApiFilters({ lokacija: "", vrstaSporta: "", datum: "" });
             }}
           >
-            <i className="bi bi-arrow-left me-2"></i>Nazad
+            <i className="bi bi-arrow-left me-2"></i>{t("sportskiObjektiPage.backBtn")}
           </button>
         </div>
       </form>

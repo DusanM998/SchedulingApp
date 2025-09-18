@@ -8,12 +8,14 @@ import { useUpdateShoppingCartMutation } from "../../apis/shoppingCartApi";
 import { toastNotify } from "../../Helper";
 import { MiniLoader } from "../../Components/Page/Common";
 import "../../index.css";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   sportskiObjekat: sportskiObjekatModel;
 }
 
 function SportskiObjekatCard({ sportskiObjekat }: Props) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const userData: userModel = useSelector(
     (state: RootState) => state.userAuthStore
@@ -109,7 +111,7 @@ function SportskiObjekatCard({ sportskiObjekat }: Props) {
             style={{ backgroundColor: "#51285f", border: "none" }}
             onClick={() => handleAddToCart(sportskiObjekat.sportskiObjekatId)}
           >
-            Izaberi objekat
+            {t("sportskiObjektiPage.chooseObjectBtn")}
           </button>
         )}
       </div>

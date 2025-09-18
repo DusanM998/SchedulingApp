@@ -21,5 +21,9 @@ namespace SchedulingApp.Models
         public string VremeZavrsetka { get; set; }
         public string Status { get; set; }
         public string? UserId { get; set; }
+        public int? StavkaKorpeId { get; set; }
+        [ForeignKey("StavkaKorpeId")]
+        [JsonIgnore]
+        public StavkaKorpe? StavkaKorpe { get; set; }
     }
 }

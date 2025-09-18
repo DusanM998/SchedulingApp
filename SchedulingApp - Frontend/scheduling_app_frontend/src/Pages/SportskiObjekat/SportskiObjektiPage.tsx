@@ -11,6 +11,7 @@ import SportskiObjekatCard from './SportskiObjekatCard';
 import maps from "../../Assets/Images/maps.jpg";
 import { Footer } from '../../Components/Layout';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function SportskiObjektiPage() {
 
@@ -21,6 +22,7 @@ function SportskiObjektiPage() {
     const dispatch = useDispatch();
     const { data, isLoading } = useGetSportskiObjektiQuery(null);
     const navigate = useNavigate();
+    const { t } = useTranslation();
     
     const sortOptions: Array<SD_SortTypes> = [
         SD_SortTypes.Naziv_A_Z,
@@ -127,9 +129,9 @@ function SportskiObjektiPage() {
       <div className='container w-100 mb-5' id='containerObjekti'>
       <div className='container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between p-5'>
         <div className='col-md-6 text-start'>
-          <h1 style={{ color: "#51285f", fontSize: "3rem" }} className="fw-bold">Sportski objekti</h1>
-          <h2 className="text-success fw-bold mt-2">Lista svih dostupnih sportskih objekata</h2>
-          <p className='mt-4 text-secondary fs-5'>Proveri dostupnost sportskih objekata, njihovu lokaciju, kao i slobodne termine.</p>
+          <h1 style={{ color: "#51285f", fontSize: "3rem" }} className="fw-bold">{t("sportskiObjektiPage.title")}</h1>
+          <h2 className="text-success fw-bold mt-2">{t("sportskiObjektiPage.subtitle")}</h2>
+          <p className='mt-4 text-secondary fs-5'>{t("sportskiObjektiPage.description")}</p>
         </div>
       </div>
       <div className="my-3">
@@ -142,7 +144,9 @@ function SportskiObjektiPage() {
                   index === 0 && "active"
                 }`}
                 onClick={() => handleCategoryClick(index)}>
-                  {vrstaSporta}
+                  {vrstaSporta === "Sve"
+                ? t("sportskiObjekatAll")
+                : t(`sports.${vrstaSporta}`)}
               </button>
             </li>
           ))}
@@ -153,13 +157,13 @@ function SportskiObjektiPage() {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-            {vrstaSportaNaziv}  
+            {t(`sort.${vrstaSportaNaziv}`)}  
             </div>
             <ul className='dropdown-menu'>
               {sortOptions.map((sortType, index) => (
                 <li key={index} className='dropdown-item'
                   onClick={()=> handleSortClick(index)}>
-                  {sortType}
+                  {t(`sort.${sortType}`)}
                 </li>
                 ))}
             </ul>
@@ -193,12 +197,12 @@ function SportskiObjektiPage() {
       style={{backgroundColor:"#daefe0"}}
       >
       <div className='col-md-6 text-start'>
-        <h3 style={{fontSize:"3rem", color:"#51285f"}} className='fw-bold m-5'>Lokacije sportsth objekata</h3>
-        <p className='m-5 text-secondary fs-5'>Svi sportski objekti na jednom mestu. Proverite lokaciju i rezervišite termin u Vašoj blizini.</p>
+        <h3 style={{fontSize:"3rem", color:"#51285f"}} className='fw-bold m-5'>{t("sportskiObjektiPage.locationsTitle")}</h3>
+        <p className='m-5 text-secondary fs-5'>{t("sportskiObjektiPage.locationsText")}</p>
         <button className='btn btn-lg m-5' 
           style={{backgroundColor:"#26a172", color:"white"}}
           onClick={() => navigate("/sportskiObjekti/sportskiObjektiWithLocation")}
-          >Pretraži sportske objekte</button>
+          >{t("sportskiObjektiPage.locationsBtn")}</button>
       </div>
         <div className='col-md-6 text-center'>
           <img

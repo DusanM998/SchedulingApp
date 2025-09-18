@@ -1,0 +1,126 @@
+{
+  "home": "Početna",
+  "adminPanel": "Admin Panel",
+  "allReservations": "Sve Rezervacije",
+  "myReservations": "Moje Rezervacije",
+  "manageSportsFacilities": "Upravljanje Sportskim Objektima",
+  "manageAppointments": "Upravljanje Terminima",
+  "reservations": "Rezervacije",
+  "language": "Jezik",
+  "serbian": "Srpski",
+  "english": "Engleski",
+  "welcome": "Dobrodošli, {{name}}",
+  "logout": "Odjavi se",
+  "register": "Registrujte se",
+  "login": "Prijavite se",
+
+  "footerText1": "Proveri dostupnost i rezerviši termin u sportskom objektu.",
+  "footerBtn1": "Rezerviši Termin",
+  "footerH5": "Strane",
+  "footerLi1": "Objekti",
+  "footerLi2": "Aplikacija",
+  "footerH5_2": "Informacije",
+  "footerLi3": "O nama",
+
+  "bannerTitle": "Rezerviši sportske termine online.",
+  "bannerSubtitle": "Besplatno!",
+  "bannerDescription": "Proveri dostupnost i rezerviši salu za fudbal, teren za tenis ili salu za košarku.",
+  "bannerBtn1": "Rezerviši Termin",
+  "bannerBtn2": "Izaberi Objekat",
+  "bannerBtn3": "Pretraga Termina",
+
+  "sportskiObjekatSearchPlaceholder": "Pretraži objekat po nazivu ili lokaciji...",
+  "sportskiObjekatNoResults": "Nema rezultata za datu pretragu",
+  "sportskiObjekatAll": "Sve",
+  "sort": {
+    "Naziv_A_Z": "Naziv A-Z",
+    "Naziv_Z_A": "Naziv Z-A"
+  },
+  "sports": {
+    "Ostalo": "Ostalo",
+    "Fudbal": "Fudbal",
+    "Košarka": "Košarka",
+    "Tenis": "Tenis",
+    "Plivanje": "Plivanje",
+    "Padel": "Padel",
+    "Odbojka": "Odbojka",
+    "Rukomet": "Rukomet",
+    "Vaterpolo": "Vaterpolo",
+    "Bilijar": "Bilijar"
+  },
+
+  "aboutApp": {
+    "section1Title": "O aplikaciji",
+    "section1Text": "Naša aplikacija za <strong>rezervaciju termina</strong> omogućava jednostavno i brzo pronalaženje sportskih objekata širom Srbije. Bilo da želite da rezervišete teren za fudbal, košarku, tenis ili fitnes salu – sve možete da obavite iz par klikova.",
+    "section2Title": "Kako funkcioniše?",
+    "section2Text": "Ulogujte se u aplikaciju, odaberite željeni sportski objekat i datum, i pogledajte dostupne termine. Rezervaciju možete završiti odmah i dobiti potvrdu u realnom vremenu. Takođe možete pratiti svoje ranije i buduće rezervacije.",
+    "section3Title": "Zašto baš naša aplikacija?",
+    "section3Text": "Naša misija je da sport i rekreacija budu dostupni svima. Aplikacija povezuje korisnike i sportske centre, štedi vreme i eliminiše nepotrebne pozive i nesigurnost da li je termin slobodan. Sve informacije imate odmah pri ruci."
+  },
+  "sportskiObjektiPage": {
+    "title": "Sportski objekti",
+    "subtitle": "Lista svih dostupnih sportskih objekata",
+    "description": "Proveri dostupnost sportskih objekata, njihovu lokaciju, kao i slobodne termine.",
+    "locationsTitle": "Lokacije sportskih objekata",
+    "locationsText": "Svi sportski objekti na jednom mestu. Proverite lokaciju i rezervišite termin u Vašoj blizini.",
+    "locationsBtn": "Pretraži sportske objekte",
+    "checkAvailabilityBtn": "Proveri Dostupnost Termina",
+    "chooseObjectBtn": "Odaberi Objekat",
+    "backBtn": "Nazad",
+    "availabilityDates": "Dostupni Termini",
+    "location": "Lokacija"
+  },
+
+  "kontakt": {
+    "title": "Možete kontaktirati putem telefona ili e-maila",
+    "phone": "Broj Telefona",
+    "email": "Email"
+  },
+
+  "rezervacijaSummary": {
+    "title": "Rezime rezervacije",
+    "noReservations": "Još uvek nemate nijednu rezervaciju.",
+    "totalPrice": "Ukupna cena",
+    "pricePerHour": "Cena po satu",
+    "capacity": "Kapacitet",
+    "participants": "Broj učesnika",
+    "remove": "Ukloni",
+    "selectTermin": "Odaberi termin",
+    "hideTermin": "Sakrij termine",
+    "chooseTermin": "Odaberite termin",
+    "loading": "Učitavanje termina...",
+    "error": "Greška prilikom učitavanja termina.",
+    "noTermin": "Još uvek nema dostupnih termina.",
+    "confirm": "Potvrdi Odabir",
+    "date": "Datum",
+    "time": "Vreme"
+  },
+
+  "rezervacijaDetalji": {
+    "title": "Podaci o korisniku",
+    "form": {
+      "name": "Ime",
+      "email": "E-mail",
+      "phone": "Broj Telefona"
+    },
+    "summary": {
+      "totalPrice": "Ukupno za plaćanje",
+      "totalReservations": "Broj rezervacija"
+    },
+    "buttons": {
+      "continue": "Nastavi na plaćanje",
+      "back": "Nazad"
+    },
+    "errors": {
+      "noTermin": "Molimo Vas da odaberete barem jedan termin pre nego što nastavite!"
+    }
+  },
+
+  "filter": {
+    "searchTerm": "Pretraga Termina",
+    "locationPlaceholder": "Unesite lokaciju...",
+    "sportPlaceholder": "Unesite vrstu sporta...",
+    "searchBtn": "Pretraži",
+    "typeOfSport": "Vrsta Sporta"
+  }
+}

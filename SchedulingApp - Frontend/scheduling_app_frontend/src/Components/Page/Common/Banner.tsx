@@ -8,11 +8,13 @@ import "./banner.css";
 
 import background from "../../../Assets/Images/sports-tools.jpg";
 import back1 from "../../../Assets/Images/back1.jpg";
+import { useTranslation } from "react-i18next";
 
 function Banner() {
   const [value, setValue] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const userData = useSelector((state: RootState) => state.userAuthStore);
 
@@ -61,12 +63,11 @@ function Banner() {
           {/* Tekstualni deo */}
           <div className="col-md-6 text-start">
             <h1 className="display-4 fw-bold mb-3">
-              Rezerviši sportske termine online.
+              {t("bannerTitle")}
             </h1>
-            <h2 className="fw-bold mb-4"><strong>Besplatno!</strong></h2>
+            <h2 className="fw-bold mb-4"><strong>{t("bannerSubtitle")}</strong></h2>
             <p className="lead mb-4">
-              Proveri dostupnost i rezerviši salu za fudbal, teren za tenis ili
-              salu za košarku.
+              {t("bannerDescription")}
             </p>
 
             <div className="d-flex flex-column flex-sm-row gap-3">
@@ -74,21 +75,21 @@ function Banner() {
                 className="btn btn-light btn-lg shadow"
                 onClick={handleReservationClick}
               >
-                Rezerviši Termin
+                {t("bannerBtn1")}
               </button>
               <button
                 className="btn btn-lg text-white shadow"
                 style={{ backgroundColor: "#51285f" }}
                 onClick={handleIzaberiObjekat}
               >
-                Izaberi Objekat
+                {t("bannerBtn2")}
               </button>
               <button
                 className="btn btn-lg text-white shadow"
                 style={{ backgroundColor: "#4da172" }}
                 onClick={() => navigate("/filter")}
               >
-                Pretraga Termina
+                {t("bannerBtn3")}
               </button>
             </div>
           </div>

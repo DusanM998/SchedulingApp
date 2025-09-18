@@ -8,6 +8,7 @@ import { SD_SortTypes } from "../../Utility/SD";
 import { RootState } from "../../Storage/Redux/store";
 import SportskiObjekatCard from "./SportskiObjekatCard";
 import { setSportskiObjekat } from "../../Storage/Redux/sportskiObjekatSlice";
+import { useTranslation } from "react-i18next";
 
 function SportskiObjekatList() {
   const [sportskiObjekti, setSportskiObjekti] = useState<
@@ -21,6 +22,7 @@ function SportskiObjekatList() {
   const [localSearch, setLocalSearch] = useState("");
   const dispatch = useDispatch();
   const { data, isLoading } = useGetSportskiObjektiQuery(null);
+  const { t, i18n } = useTranslation();
 
   //console.log(data);
 
@@ -172,7 +174,7 @@ function SportskiObjekatList() {
             <input
               type="text"
               className="form-control ps-5"
-              placeholder="Pretraži objekat po nazivu ili lokaciji..."
+              placeholder={t("sportskiObjekatSearchPlaceholder")}
               value={localSearch}
               onChange={(e) => setLocalSearch(e.target.value)}
               style={{
@@ -215,7 +217,9 @@ function SportskiObjekatList() {
                 }`}
                 onClick={() => handleCategoryClick(index)}
               >
-                {vrstaSporta}
+                {vrstaSporta === "Sve"
+                ? t("sportskiObjekatAll")
+                : t(`sports.${vrstaSporta}`)}
               </button>
             </li>
           ))}
@@ -226,7 +230,7 @@ function SportskiObjekatList() {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              {vrstaSportaNaziv}
+              {t(`sort.${vrstaSportaNaziv}`)}
             </div>
             <ul className="dropdown-menu">
               {sortOptions.map((sortType, index) => (
@@ -235,7 +239,7 @@ function SportskiObjekatList() {
                   className="dropdown-item"
                   onClick={() => handleSortClick(index)}
                 >
-                  {sortType}
+                  {t(`sort.${sortType}`)}
                 </li>
               ))}
             </ul>
@@ -243,7 +247,12 @@ function SportskiObjekatList() {
         </ul>
       </div>
       <div className="container position-relative">
-        <Carousel
+        {sportskiObjekti.length === 0 ? (
+          <div className="text-center my-5">
+            <h4>{t('sportskiObjekatNoResults')}</h4>
+          </div>
+        ) : (
+          <Carousel
           indicators={false}
           interval={null}
           className="w-100"
@@ -279,6 +288,8 @@ function SportskiObjekatList() {
             </Carousel.Item>
           ))}
         </Carousel>
+        )}
+        
       </div>
     </div>
   );

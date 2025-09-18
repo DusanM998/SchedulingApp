@@ -47,6 +47,7 @@ namespace SchedulingApp.Controllers
         // IActionResult koristim kada metoda moze da vrati bilo sta (npr. JSON, file, plain text...)
         public async Task<IActionResult> Register([FromForm] RegisterRequestDTO register)
         {
+            // Proveravam da li je prosledjen fajl (slika) u zahtevu
             if (register.File == null || register.File.Length == 0)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -54,8 +55,17 @@ namespace SchedulingApp.Controllers
                 return BadRequest();
             }
 
+            // Upload slike na Cloudinary i dobijanje URL-a
             string imageUrl = await _cloudinaryService.UploadImageAsync(register.File);
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Neuspešan upload slike!");
+                return BadRequest(_response);
+            }
 
+            // Proveravam da li korisnicko ime vec postoji u bazi
             ApplicationUser userFromDb = _db.ApplicationUsers
                 .FirstOrDefault(u => u.UserName.ToLower() == register.UserName.ToLower());
 
@@ -67,6 +77,7 @@ namespace SchedulingApp.Controllers
                 return BadRequest(_response);
             }
 
+            // Kreiram novog korisnika
             ApplicationUser newUser = new()
             {
                 UserName = register.UserName,
@@ -80,17 +91,20 @@ namespace SchedulingApp.Controllers
 
             try
             {
+                // Kreiram korisnika u bazi koristeci UserManager iz Identity (koji automatski hash-uje sifru)
                 var result = await _userManager.CreateAsync(newUser, register.Password); //Koristim Identity da registrujem hashovanu sifru
 
                 if (result.Succeeded)
                 {
+                    // Proveravam da li role vec postoje, ako ne kreiram ih
                     if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
                     {
                         await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
                         await _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer));
                     }
 
-                    if(register.Role.ToLower() == SD.Role_Admin)
+                    // Dodeljujem rolu korisniku (Admin ili Customer) (na osnovu unosa iz zahteva)
+                    if (register.Role.ToLower() == SD.Role_Admin)
                     {
                         await _userManager.AddToRoleAsync(newUser, SD.Role_Admin);
                     }
@@ -104,16 +118,22 @@ namespace SchedulingApp.Controllers
                     _response.Result = newUser;
                     return Ok(_response);
                 }
+                else
+                {
+                    // Ako kreiranje korisnika nije uspelo, vracam greske
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.AddRange(result.Errors.Select(e => e.Description));
+                    return BadRequest(_response);
+                }
             }
-            catch(Exception) 
+            catch(Exception ex) 
             {
-                
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Došlo je do greške prilikom registracije: " + ex.Message);
+                return StatusCode(500, _response);
             }
-
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.IsSuccess = false;
-            _response.ErrorMessages.Add("Neuspesna registracija!");
-            return BadRequest(_response);
         }
 
         // Dodaj helper za generisanje refresh tokena
@@ -131,81 +151,101 @@ namespace SchedulingApp.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO login)
         {
-            // Provera identiteta korisnika
-            ApplicationUser userFromDb = _db.ApplicationUsers
-                .FirstOrDefault(u => u.UserName.ToLower() == login.UserName.ToLower());
-
-            bool isValid = await _userManager.CheckPasswordAsync(userFromDb, login.Password); //Identity proverava hash sifre
-
-            if (isValid == false)
+            try
             {
-                _response.Result = new LoginResponseDTO();
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Korisnicno ime ili sifra su netacni!");
-                return BadRequest(_response);
-            }
-
-            // Generise refresh token
-            var refreshToken = GenerateRefreshToken();
-            userFromDb.RefreshToken = refreshToken;
-            userFromDb.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1); // npr. 1 dan vazenja
-            await _db.SaveChangesAsync();
-
-            // Autorizacija korisnika (na osnovu role) i generisanje JWT tokena
-            var roles = await _userManager.GetRolesAsync(userFromDb);
-
-            //Ako je password tacan generise se JWT token
-            JwtSecurityTokenHandler tokenHandler = new();
-            byte[] key = Encoding.ASCII.GetBytes(secretKey);
-
-            SecurityTokenDescriptor tokenDescriptor = new()
-            {
-                Subject = new ClaimsIdentity(new Claim[]
+                // Validacija input parametara
+                if (login == null || string.IsNullOrWhiteSpace(login.UserName) || string.IsNullOrWhiteSpace(login.Password))
                 {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Korisničko ime i šifra su obavezni!");
+                    return BadRequest(_response);
+                }
+                // Provera da li korisnik postoji u bazi
+                ApplicationUser userFromDb = _db.ApplicationUsers
+                    .FirstOrDefault(u => u.UserName.ToLower() == login.UserName.ToLower());
+
+                if (userFromDb == null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Korisničko ime ili šifra su netačni!");
+                    return BadRequest(_response);
+                }
+
+                // Provera da li je sifra tacna (koristim UserManager iz Identity)
+                bool isValid = await _userManager.CheckPasswordAsync(userFromDb, login.Password); //Identity proverava hash sifre
+                if (!isValid)
+                {
+                    _response.Result = new LoginResponseDTO();
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Korisničko ime ili sifra su netacni!");
+                    return BadRequest(_response);
+                }
+
+                // Autorizacija korisnika (na osnovu role) i generisanje JWT tokena
+                var roles = await _userManager.GetRolesAsync(userFromDb);
+
+                //Ako je password tacan generise se JWT token
+                JwtSecurityTokenHandler tokenHandler = new(); // Kreira se handler koji sastavlja i serijalizuje JWT
+                byte[] key = Encoding.ASCII.GetBytes(secretKey); // Pretvara secretKey (iz appsetting.json) u bajtove koji se koriste za potpis i verifikaciju
+
+                SecurityTokenDescriptor tokenDescriptor = new()
+                {
+                    // Sastavljam Claims koji ce biti u payloadu tokena
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
                     new Claim("name", userFromDb.Name),
                     new Claim("id", userFromDb.Id.ToString()),
                     new Claim(ClaimTypes.Email, userFromDb.UserName.ToString()),
                     new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
                     new Claim("phoneNumber", userFromDb.PhoneNumber ?? "")
-                }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
+                    }),
+                    Expires = DateTime.UtcNow.AddHours(1),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                        SecurityAlgorithms.HmacSha256Signature)
+                };
 
-            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-            string jwtToken = tokenHandler.WriteToken(token);
+                SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+                string jwtToken = tokenHandler.WriteToken(token); // 
 
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddHours(1)
-            };
+                /*
+                var cookieOptions = new CookieOptions
+                {   Postavljanje JWT tokena u HttpOnly cookie
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddHours(1)
+                };
+                Response.Cookies.Append("jwt", jwtToken, cookieOptions);*/
 
-            Response.Cookies.Append("jwt", jwtToken, cookieOptions);
+                // Generise refresh token
+                var refreshToken = GenerateRefreshToken();
+                userFromDb.RefreshToken = refreshToken;
+                userFromDb.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1); // npr. 1 dan vazenja
+                await _db.SaveChangesAsync();
 
-            LoginResponseDTO loginResponse = new()
-            {
-                Email = userFromDb.Email,
-                Token = jwtToken,
-                RefreshToken = refreshToken 
-            };
+                // Kreiranje odgovora sa email-om i tokenom za korisnika
+                LoginResponseDTO loginResponse = new()
+                {
+                    Email = userFromDb.Email,
+                    Token = jwtToken,
+                    RefreshToken = refreshToken
+                };
 
-            if(loginResponse.Email == null || string.IsNullOrEmpty(loginResponse.Token))
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Korisnicno ime ili sifra su netacni!");
-                return BadRequest(_response);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = loginResponse;
+                return Ok(_response);
             }
-
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.IsSuccess = true;
-            _response.Result = loginResponse;
-            return Ok(_response);
+            catch(Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Došlo je do greške prilikom prijave: " + ex.Message);
+                return StatusCode(500, _response);
+            }
         }
 
         [HttpPost("logout")]
@@ -259,7 +299,7 @@ namespace SchedulingApp.Controllers
         [HttpGet("currentUser")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            string userId = User.FindFirst("Id")?.Value;
+            string userId = User.FindFirst("id")?.Value;
             if(string.IsNullOrEmpty(userId))
             {
                 return Unauthorized(new { message = "Korisnik nije prijavljen!" });

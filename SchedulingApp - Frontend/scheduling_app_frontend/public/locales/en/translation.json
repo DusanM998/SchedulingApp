@@ -1,0 +1,126 @@
+{
+  "home": "Home",
+  "adminPanel": "Admin Panel",
+  "allReservations": "All Reservations",
+  "myReservations": "My Reservations",
+  "manageSportsFacilities": "Manage Sports Facilities",
+  "manageAppointments": "Manage Appointments",
+  "reservations": "Reservations",
+  "language": "Language",
+  "serbian": "Serbian",
+  "english": "English",
+  "welcome": "Welcome, {{name}}",
+  "logout": "Logout",
+  "register": "Register",
+  "login": "Login",
+
+  "footerText1": "Check availability and book a time slot at the sports facility.",
+  "footerBtn1": "Book a Reservation",
+  "footerH5": "Pages",
+  "footerLi1": "Facilities",
+  "footerLi2": "Application",
+  "footerH5_2": "Information",
+  "footerLi3": "About us",
+
+  "bannerTitle": "Book sports appointments online.",
+  "bannerSubtitle": "For Free!",
+  "bannerDescription": "Check availability and reserve a football hall, tennis court, or basketball gym.",
+  "bannerBtn1": "Book Appointment",
+  "bannerBtn2": "Choose Facility",
+  "bannerBtn3": "Search Appointments",
+
+  "sportskiObjekatSearchPlaceholder": "Search facility by name or location...",
+  "sportskiObjekatNoResults": "No results found for this search",
+  "sportskiObjekatAll": "All",
+  "sort": {
+    "Naziv_A_Z": "Name A-Z",
+    "Naziv_Z_A": "Name Z-A"
+  },
+  "sports": {
+    "Ostalo": "Other",
+    "Fudbal": "Football",
+    "Košarka": "Basketball",
+    "Tenis": "Tennis",
+    "Plivanje": "Swimming",
+    "Padel": "Padel",
+    "Odbojka": "Volleyball",
+    "Rukomet": "Handball",
+    "Vaterpolo": "Water Polo",
+    "Bilijar": "Billiards"
+  },
+
+  "aboutApp": {
+    "section1Title": "About the App",
+    "section1Text": "Our <strong>booking app</strong> allows you to easily and quickly find sports facilities across Serbia. Whether you want to book a football, basketball, tennis court, or a fitness hall – you can do it all in just a few clicks.",
+    "section2Title": "How it Works",
+    "section2Text": "Log in to the app, select the desired sports facility and date, and check available slots. You can complete your reservation immediately and receive confirmation in real time. You can also track your past and upcoming bookings.",
+    "section3Title": "Why Choose Our App?",
+    "section3Text": "Our mission is to make sports and recreation accessible to everyone. The app connects users with sports centers, saves time, and eliminates unnecessary calls and uncertainty about availability. All information is at your fingertips."
+  },
+  "sportskiObjektiPage": {
+    "title": "Sports Facilities",
+    "subtitle": "List of All Available Sports Facilities",
+    "description": "Check the availability of sports facilities, their location, and free time slots.",
+    "locationsTitle": "Locations of Sports Facilities",
+    "locationsText": "All sports facilities in one place. Check the location and book a slot near you.",
+    "locationsBtn": "Search Sports Facilities",
+    "checkAvailabilityBtn": "Check Slot Availability",
+    "chooseObjectBtn": "Choose Facility",
+    "backBtn": "Back",
+    "availabilityDates": "Available Dates",
+    "location": "Location" 
+  },
+
+  "kontakt": {
+    "title": "You can contact us by phone or e-mail",
+    "phone": "Phone",
+    "email": "Email"
+  },
+
+  "rezervacijaSummary": {
+    "title": "Reservation Summary",
+    "noReservations": "You don’t have any reservations yet.",
+    "totalPrice": "Total price",
+    "pricePerHour": "Price per hour",
+    "capacity": "Capacity",
+    "participants": "Number of participants",
+    "remove": "Remove",
+    "selectTermin": "Select a time slot",
+    "hideTermin": "Hide time slots",
+    "chooseTermin": "Choose a time slot",
+    "loading": "Loading time slots...",
+    "error": "Error while loading time slots.",
+    "noTermin": "There are no time slots yet.",
+    "confirm": "Confirm Selection",
+    "date": "Date",
+    "time": "Time"
+  },
+
+  "rezervacijaDetalji": {
+    "title": "User Information",
+    "form": {
+      "name": "Name",
+      "email": "E-mail",
+      "phone": "Phone Number"
+    },
+    "summary": {
+      "totalPrice": "Total to pay",
+      "totalReservations": "Number of reservations"
+    },
+    "buttons": {
+      "continue": "Continue to payment",
+      "back": "Back"
+    },
+    "errors": {
+      "noTermin": "Please select at least one appointment before continuing!"
+    }
+  },
+
+  "filter": {
+    "searchTerm": "Search Term",
+    "locationPlaceholder": "Enter location...",
+    "sportPlaceholder": "Enter sport type...",
+    "searchBtn": "Search",
+    "typeOfSport": "Type of Sport"
+  }
+}

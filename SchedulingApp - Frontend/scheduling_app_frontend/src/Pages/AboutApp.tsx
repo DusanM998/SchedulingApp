@@ -3,8 +3,11 @@ import appImg1 from "../Assets/Images/app1.jpg";
 import appImg2 from "../Assets/Images/app2.webp";
 import appImg3 from "../Assets/Images/app3.jpg";
 import { Footer } from "../Components/Layout";
+import { useTranslation } from "react-i18next";
 
 function AboutApp() {
+  const { t } = useTranslation();
+
   return (
     <div>
       {/* Sekcija 1 */}
@@ -12,13 +15,11 @@ function AboutApp() {
         <div className="row align-items-center">
           <div className="col-md-6 p-5">
             <h2 className="fw-bold" style={{ color: "#51285f" }}>
-              O aplikaciji
+              {t("aboutApp.section1Title")}
             </h2>
-            <p className="fs-5 mt-3">
-              Naša aplikacija za <strong>rezervaciju termina</strong> omogućava
-              jednostavno i brzo pronalaženje sportskih objekata širom Srbije.
-              Bilo da želite da rezervišete teren za fudbal, košarku, tenis ili
-              fitnes salu – sve možete da obavite iz par klikova.
+            <p className="fs-5 mt-3"
+              dangerouslySetInnerHTML={{ __html: t("aboutApp.section1Text") }}
+            >
             </p>
           </div>
           <div className="col-md-6 text-center">
@@ -37,13 +38,10 @@ function AboutApp() {
         <div className="row align-items-center flex-md-row-reverse">
           <div className="col-md-6 p-5">
             <h2 className="fw-bold" style={{ color: "#51285f" }}>
-              Kako funkcioniše?
+              {t("aboutApp.section2Title")}
             </h2>
             <p className="fs-5 mt-3">
-              Ulogujte se u aplikaciju, odaberite željeni sportski objekat i
-              datum, i pogledajte dostupne termine. Rezervaciju možete završiti
-              odmah i dobiti potvrdu u realnom vremenu. Takođe možete pratiti
-              svoje ranije i buduće rezervacije.
+              {t("aboutApp.section2Text")}
             </p>
           </div>
           <div className="col-md-6 text-center">
@@ -62,13 +60,10 @@ function AboutApp() {
         <div className="row align-items-center">
           <div className="col-md-6 p-5">
             <h2 className="fw-bold" style={{ color: "#51285f" }}>
-              Zašto baš naša aplikacija?
+              {t("aboutApp.section3Title")}
             </h2>
             <p className="fs-5 mt-3">
-              Naša misija je da sport i rekreacija budu dostupni svima. Aplikacija
-              povezuje korisnike i sportske centre, štedi vreme i eliminiše
-              nepotrebne pozive i nesigurnost da li je termin slobodan. Sve
-              informacije imate odmah pri ruci.
+              {t("aboutApp.section3Text")}
             </p>
           </div>
           <div className="col-md-6 text-center">

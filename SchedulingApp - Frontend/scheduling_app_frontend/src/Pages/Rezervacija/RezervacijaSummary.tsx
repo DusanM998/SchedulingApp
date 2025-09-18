@@ -19,8 +19,10 @@ import {
   setTerminForObjekat,
 } from "../../Storage/Redux/shoppingCartSlice";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 function RezervacijaSummary() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const userData: userModel = useSelector(
     (state: RootState) => state.userAuthStore
@@ -422,11 +424,11 @@ function RezervacijaSummary() {
   return (
     <div className="container p-4 m-2">
       <h4 className="text-center" style={{ color: "#51285f" }}>
-        Rezime rezervacije
+        {t("rezervacijaSummary.title")}
       </h4>
       {shoppingCartStore.length === 0 ? (
         <div className="text-center mt-4">
-          <h5 className="text-muted">Još uvek nemate nijednu rezervaciju.</h5>
+          <h5 className="text-muted">{t("rezervacijaSummary.noReservations")}</h5>
         </div>
       ) : (
         shoppingCartStore.map(
@@ -456,7 +458,7 @@ function RezervacijaSummary() {
                       {stavkaKorpe.sportskiObjekat?.naziv}
                     </h4>
                     <h4 style={{ marginLeft: "8px" }}>
-                      Ukupna cena:{" "}
+                      {t("rezervacijaSummary.totalPrice")}: {" "}
                       {stavkaKorpe.cenaZaObjekat !== undefined
                         ? stavkaKorpe.cenaZaObjekat.toFixed(2)
                         : stavkaKorpe.sportskiObjekat?.cenaPoSatu.toFixed(
@@ -467,10 +469,10 @@ function RezervacijaSummary() {
                   </div>
                   <div className="flex-fill">
                     <h4 className="text-danger">
-                      Cena po Satu: {stavkaKorpe.sportskiObjekat!.cenaPoSatu}{" "}
+                      {t("rezervacijaSummary.pricePerHour")}: {stavkaKorpe.sportskiObjekat!.cenaPoSatu}{" "}
                       RSD
                     </h4>
-                    <h5>Kapacitet: {stavkaKorpe.sportskiObjekat?.kapacitet}</h5>
+                    <h5>{t("rezervacijaSummary.capacity")}: {stavkaKorpe.sportskiObjekat?.kapacitet}</h5>
                   </div>
                   <div className='d-flex align-items-center justify-content-between mt-2"'>
                     <div
@@ -478,7 +480,7 @@ function RezervacijaSummary() {
                       style={{ width: "100px", height: "45px" }}
                     >
                       <span className="me-2">
-                        <p>Broj učesnika</p>
+                        <p>{t("rezervacijaSummary.participants")}</p>
                       </span>
                       <span
                         style={{ color: "rgba(22,22,22,.7)" }}
@@ -506,7 +508,7 @@ function RezervacijaSummary() {
                       className="btn btn-danger mx-1"
                       onClick={() => handleBrojUcesnika(0, stavkaKorpe, true)}
                     >
-                      Ukloni
+                      {t("rezervacijaSummary.remove")}
                     </button>
                   </div>
                   <div className="d-flex align-items-center justify-content-center mt-2">
@@ -521,8 +523,8 @@ function RezervacijaSummary() {
                     >
                       {expandedCard ===
                       stavkaKorpe.sportskiObjekat?.sportskiObjekatId
-                        ? "Sakrij termine"
-                        : "Odaberi termin"}
+                        ? t("rezervacijaSummary.hideTermin")
+                        : t("rezervacijaSummary.chooseTermin")}
                     </button>
                   </div>
                 </div>
@@ -531,11 +533,11 @@ function RezervacijaSummary() {
               {expandedCard ===
                 stavkaKorpe.sportskiObjekat?.sportskiObjekatId && (
                 <div className="termini-container mt-3 text-center">
-                  <h5>Odaberite termin</h5>
+                  <h5>{t("rezervacijaSummary.chooseTermin")}</h5>
                   {isLoading ? (
-                    <p>Učitavanje termina...</p>
+                    <p>{t("rezervacijaSummary.loading")}</p>
                   ) : isError ? (
-                    <p>Greška prilikom učitavanja termina.</p>
+                    <p>{t("rezervacijaSummary.error")}</p>
                   ) : termini && termini.length > 0 ? (
                     <div>
                       <div className="d-flex flex-wrap justify-content-center">
@@ -589,7 +591,7 @@ function RezervacijaSummary() {
                               }}
                             >
                               <h6>
-                                Datum:{" "}
+                                {t("rezervacijaSummary.date")}:{" "}
                                 {termin.datumTermina
                                   ? new Date(
                                       termin.datumTermina
@@ -597,7 +599,7 @@ function RezervacijaSummary() {
                                   : "Nepoznat datum"}
                               </h6>
                               <h6>
-                                Vreme: {termin.vremePocetka} -{" "}
+                                {t("rezervacijaSummary.time")}: {termin.vremePocetka} -{" "}
                                 {termin.vremeZavrsetka}
                               </h6>
                               <p>Status: {statusText}</p>
@@ -614,11 +616,11 @@ function RezervacijaSummary() {
                           )
                         }
                       >
-                        Potvrdi odabir
+                        {t("rezervacijaSummary.confirm")}
                       </button>
                     </div>
                   ) : (
-                    <p>Jos uvek nema termina</p>
+                    <p>{t("rezervacijaSummary.noTermin")}</p>
                   )}
                 </div>
               )}

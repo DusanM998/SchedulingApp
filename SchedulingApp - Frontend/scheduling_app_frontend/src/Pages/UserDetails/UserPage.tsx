@@ -18,6 +18,7 @@ import {
   IconButton,
   InputAdornment,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import PhoneInput from "react-phone-input-2";
@@ -40,27 +41,24 @@ function UserPage() {
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [isPasswordVerified, setIsPasswordVerified] = useState(false);
+  const [isUpdateNavigation, setIsUpdateNavigation] = useState(false);
+  const [showDialogPassword, setShowDialogPassword] = useState(false);
+
+  // Dobijam user ID iz URL parametara
   const { id } = useParams<{ id: string }>();
   const { data } = useGetUserByUserIdQuery(id);
   const [verifyPassword] = useVerifyPasswordMutation();
-
-  console.log(id);
 
   const userData: userModel = useSelector(
     (state: RootState) => state.userAuthStore
   );
 
-  //console.log("Logujem userInput Data:", userData.role);
-
   useEffect(() => {
     if (data && data.result) {
-      //console.log(data.result.password)
-      console.log("ROLE IZ API:", data.result.role);
-      console.log("Ceo res: " , data.result);
       const tempData = {
         userName: data.result.userName,
         name: data.result.name,
-        password: data.result.password,
+        password: "", // Password is not returned from the backend
         phoneNumber: data.result.phoneNumber,
         role: data.result.role,
       };
@@ -79,21 +77,44 @@ function UserPage() {
   };
 
   const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
+    if (!isPasswordVerified) {
+      setIsUpdateNavigation(false);
+      setPasswordDialogOpen(true);
+    } else {
+      setShowPassword(!showPassword);
+    }
+  };
+
+  const toggleShowDialogPassword = () => {
+    setShowDialogPassword(!showDialogPassword);
+  };
+
+  const handleUpdateClick = () => {
+    if (!isPasswordVerified) {
+      setPasswordDialogOpen(true);
+      setIsUpdateNavigation(true);
+    } else {
+      navigate("/userDetails/userDetailsUpdate/" + userData.id);
+    }
   };
 
   const handlePasswordVerification = async () => {
-    console.log({ userId: id, password: passwordInput });
     try {
       let response = await verifyPassword({
         Id: id,
         password: passwordInput,
       }).unwrap();
-      console.log(response);
       if (response.isSuccess) {
-        setUserDetailsInput((prev) => ({ ...prev, Password: passwordInput }));
-        setShowPassword(true);
+        setIsPasswordVerified(true);
         setPasswordDialogOpen(false);
+        setPasswordInput("");
+        if (isUpdateNavigation) {
+          navigate("/userDetails/userDetailsUpdate/" + userData.id);
+        } else {
+          // Store the entered password temporarily for display
+          setUserDetailsInput((prev) => ({ ...prev, password: passwordInput }));
+          setShowPassword(true);
+        }
       } else {
         alert("Neispravna lozinka!");
       }
@@ -105,11 +126,11 @@ function UserPage() {
   const getRoleColor = (role: string) => {
     switch (role?.toLowerCase()) {
       case "admin":
-        return "#e74c3c"; // Crvena za admin
+        return "#e74c3c";
       case "customer":
-        return "#27ae60"; // Zelena za customer
+        return "#27ae60";
       default:
-        return "#7f8c8d"; // Siva za ostalo
+        return "#7f8c8d";
     }
   };
 
@@ -199,7 +220,7 @@ function UserPage() {
             required
             name="password"
             value={userDetailsInput.password}
-            disabled={true}
+            disabled={!isPasswordVerified} // Enable only after verification
             onChange={handleUserInput}
             fullWidth
             InputProps={{
@@ -207,13 +228,7 @@ function UserPage() {
                 <InputAdornment position="end">
                   <IconButton
                     aria-label="toggle password visibility"
-                    onClick={() => {
-                      if (!isPasswordVerified) {
-                        setPasswordDialogOpen(true);
-                      } else {
-                        setShowPassword(!showPassword);
-                      }
-                    }}
+                    onClick={toggleShowPassword}
                     edge="end"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -229,12 +244,10 @@ function UserPage() {
         </div>
         <div className="form-group mt-3">
           <button
-            type="submit"
+            type="button"
             className="btn btn-lg form-control mt-3"
             style={{ backgroundColor: "#4da172", color: "white" }}
-            onClick={() =>
-              navigate("/userDetails/userDetailsUpdate/" + userData.id)
-            }
+            onClick={handleUpdateClick}
           >
             Izmeni Informacije
           </button>
@@ -253,27 +266,87 @@ function UserPage() {
       <Dialog
         open={passwordDialogOpen}
         onClose={() => setPasswordDialogOpen(false)}
+        PaperProps={{
+          style: {
+            borderRadius: "15px",
+            padding: "20px",
+            minWidth: "400px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+          },
+        }}
       >
-        <DialogTitle>Potvrdite Identitet: </DialogTitle>
-        <DialogTitle>Unesite svoju lozinku</DialogTitle>
+        <DialogTitle
+          sx={{ textAlign: "center", fontWeight: "bold", color: "#305985" }}
+        >
+          Potvrda Identiteta
+        </DialogTitle>
         <DialogContent>
+          <Typography variant="body1" sx={{ mb: 2, color: "#555" }}>
+            Molimo unesite vašu lozinku za nastavak
+          </Typography>
           <TextField
-            type="password"
-            className="form-control"
-            required
+            type={showDialogPassword ? "text" : "password"}
             value={passwordInput}
             onChange={(e) => setPasswordInput(e.target.value)}
             fullWidth
+            variant="outlined"
+            placeholder="Unesite lozinku"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                "&:hover fieldset": {
+                  borderColor: "#4da172",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#4da172",
+                },
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle dialog password visibility"
+                    onClick={toggleShowDialogPassword}
+                    edge="end"
+                  >
+                    {showDialogPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ justifyContent: "center", gap: 2, pb: 3 }}>
           <Button
             onClick={() => setPasswordDialogOpen(false)}
-            color="secondary"
+            variant="outlined"
+            sx={{
+              borderColor: "#999393",
+              color: "#999393",
+              borderRadius: "10px",
+              textTransform: "none",
+              "&:hover": {
+                borderColor: "#777",
+                backgroundColor: "#f5f5f5",
+              },
+            }}
           >
             Otkaži
           </Button>
-          <Button onClick={handlePasswordVerification} color="primary">
+          <Button
+            onClick={handlePasswordVerification}
+            variant="contained"
+            sx={{
+              backgroundColor: "#4da172",
+              color: "white",
+              borderRadius: "10px",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "#3d8c5b",
+              },
+            }}
+          >
             Potvrdi
           </Button>
         </DialogActions>
