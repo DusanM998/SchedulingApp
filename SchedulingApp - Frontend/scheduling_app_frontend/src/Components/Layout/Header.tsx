@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { stavkaKorpeModel, userModel } from "../../Interfaces";
@@ -60,19 +66,24 @@ const Header = () => {
     (state: RootState) => state.shoppingCartFromStore.stavkaKorpe ?? []
   );
 
-  let ukupnoStavki = shoppingCartStore.length;
+  const ukupnoStavki = useMemo(
+    () => shoppingCartStore.length,
+    [shoppingCartStore]
+  );
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
-
     dispatch(setLoggedInUser({ ...emptyUserState }));
     navigate("/");
-  };
+  }, [dispatch, navigate]);
 
-  const changeLanguage = (lng: 'sr' | 'en') => {
-    i18n.changeLanguage(lng);
-    setLanguageOpen(false);
-  };
+  const changeLanguage = useCallback(
+    (lng: "sr" | "en") => {
+      i18n.changeLanguage(lng);
+      setLanguageOpen(false);
+    },
+    [i18n]
+  );
 
   return (
     <div>
@@ -96,7 +107,7 @@ const Header = () => {
             <ul className="navbar-nav me-auto mb-2 mb-lg-0 w-100">
               <li className="nav-item">
                 <NavLink className="nav-link" aria-current="page" to="/">
-                  {t('home')}
+                  {t("home")}
                 </NavLink>
               </li>
               {userData.role == SD_Roles.ADMIN ? (
@@ -110,7 +121,7 @@ const Header = () => {
                       setAdminOpen((prev: boolean) => !prev);
                     }}
                   >
-                    {t('adminPanel')}
+                    {t("adminPanel")}
                     <i
                       className={`bi ms-2 ${
                         adminOpen ? "bi-chevron-up" : "bi-chevron-down"
@@ -131,7 +142,7 @@ const Header = () => {
                       }}
                       style={{ cursor: "pointer" }}
                     >
-                      {t('allReservations')}
+                      {t("allReservations")}
                     </li>
                     <li
                       className="dropdown-item"
@@ -141,7 +152,7 @@ const Header = () => {
                       }}
                       style={{ cursor: "pointer" }}
                     >
-                      {t('myReservations')}
+                      {t("myReservations")}
                     </li>
                     <li
                       className="dropdown-item"
@@ -151,7 +162,7 @@ const Header = () => {
                         setAdminOpen(false);
                       }}
                     >
-                      {t('manageSportsFacilities')}
+                      {t("manageSportsFacilities")}
                     </li>
                     <li
                       className="dropdown-item"
@@ -161,7 +172,7 @@ const Header = () => {
                         setAdminOpen(false);
                       }}
                     >
-                      {t('manageAppointments')}
+                      {t("manageAppointments")}
                     </li>
                   </ul>
                 </li>
@@ -172,7 +183,7 @@ const Header = () => {
                     aria-current="page"
                     to="/rezervacija/mojeRezervacije"
                   >
-                    {t('myReservations')}
+                    {t("myReservations")}
                   </NavLink>
                 </li>
               ) : null}
@@ -184,7 +195,7 @@ const Header = () => {
                     to="/rezervacija"
                   >
                     <i className="bi bi-cart4">
-                      &nbsp;{t('reservations')}
+                      &nbsp;{t("reservations")}
                       {ukupnoStavki > 0 && (
                         <span className="badge bg-danger ms-2">
                           {ukupnoStavki}
@@ -204,7 +215,7 @@ const Header = () => {
                     setLanguageOpen((prev: boolean) => !prev);
                   }}
                 >
-                  {t('language')}
+                  {t("language")}
                   <i
                     className={`bi ms-2 ${
                       languageOpen ? "bi-chevron-up" : "bi-chevron-down"
@@ -220,26 +231,26 @@ const Header = () => {
                   <li
                     className="dropdown-item"
                     style={{ cursor: "pointer" }}
-                    onClick={() => changeLanguage('sr')}
+                    onClick={() => changeLanguage("sr")}
                   >
                     <img
                       src={rsFlag}
                       alt="Serbian Flag"
                       style={{ height: "20px", marginRight: "8px" }}
                     />
-                    {t('serbian')}
+                    {t("serbian")}
                   </li>
                   <li
                     className="dropdown-item"
                     style={{ cursor: "pointer" }}
-                    onClick={() => changeLanguage('en')}
+                    onClick={() => changeLanguage("en")}
                   >
                     <img
                       src={usFlag}
                       alt="US Flag"
                       style={{ height: "20px", marginRight: "8px" }}
                     />
-                    {t('english')}
+                    {t("english")}
                   </li>
                 </ul>
               </li>
@@ -256,7 +267,7 @@ const Header = () => {
                         }}
                         onClick={() => navigate("/userPage/" + userData.id)}
                       >
-                        {t('welcome', { name: userData.name })}
+                        {t("welcome", { name: userData.name })}
                       </button>
                     </li>
                     <li className="nav-item">
@@ -270,7 +281,8 @@ const Header = () => {
                         }}
                         onClick={handleLogout}
                       >
-                        <i className="bi bi-box-arrow-in-left"></i> {t('logout')}
+                        <i className="bi bi-box-arrow-in-left"></i>{" "}
+                        {t("logout")}
                       </button>
                     </li>
                   </>
@@ -279,7 +291,7 @@ const Header = () => {
                   <>
                     <li className="nav-item">
                       <NavLink className="nav-link" to="/register">
-                        {t('register')}
+                        {t("register")}
                       </NavLink>
                     </li>
                     <li>
@@ -293,7 +305,8 @@ const Header = () => {
                           backgroundColor: "#4da172",
                         }}
                       >
-                        {t('login')} <i className="bi bi-box-arrow-in-right"></i>
+                        {t("login")}{" "}
+                        <i className="bi bi-box-arrow-in-right"></i>
                       </NavLink>
                     </li>
                   </>

@@ -6,6 +6,7 @@ import { rezervacijaSummaryProps } from '../Rezervacija/rezervacijaSummaryProps'
 import { apiResponse, stavkaKorpeModel } from '../../Interfaces';
 import { SD_Status } from '../../Utility/SD';
 import { toastNotify } from '../../Helper';
+import { t } from 'i18next';
 
 function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
 
@@ -130,7 +131,7 @@ function PlacanjeForma({data, userInput}: rezervacijaSummaryProps) {
     
                 if (result.error) {
                     console.error("Stripe error:", result.error);
-                    toastNotify("Greška: " + result.error.message, "error");
+                    toastNotify(t("toastNotify.stripeError") + result.error.message, "error");
                     setIsProcessing(false);
                     return;
                 }

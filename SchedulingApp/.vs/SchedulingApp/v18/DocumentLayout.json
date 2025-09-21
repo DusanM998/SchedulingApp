@@ -3,20 +3,28 @@
   "WorkspaceRootPath": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\controllers\\korpacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\controllers\\korpacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\controllers\\rezervacijacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\controllers\\rezervacijacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\services\\terminstatusupdateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\services\\terminstatusupdateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\services\\terminstatusupdateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\services\\terminstatusupdateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\dbcontexts\\applicationdbcontexts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\dbcontexts\\applicationdbcontexts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\models\\dto\\termindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -33,10 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\dbcontexts\\applicationdbcontexts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|solutionrelative:schedulingapp\\dbcontexts\\applicationdbcontexts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2573BE46-3CF4-4ABD-BF6B-6FDB94BEB524}|SchedulingApp\\SchedulingApp.csproj|d:\\projects 1\\schedulingapp\\schedulingapp\\schedulingapp\\controllers\\placanjecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -62,7 +66,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -70,7 +74,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 0,
+              "Title": "KorpaController.cs",
+              "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Controllers\\KorpaController.cs",
+              "RelativeDocumentMoniker": "SchedulingApp\\Controllers\\KorpaController.cs",
+              "ToolTip": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Controllers\\KorpaController.cs",
+              "RelativeToolTip": "SchedulingApp\\Controllers\\KorpaController.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAuwCkAAABsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-20T08:46:54.639Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "TerminDTO.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Models\\Dto\\TerminDTO.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Models\\Dto\\TerminDTO.cs",
@@ -78,25 +95,23 @@
               "RelativeToolTip": "SchedulingApp\\Models\\Dto\\TerminDTO.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-18T09:51:29.764Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-18T09:51:29.764Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "TerminStatusUpdateService.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Services\\TerminStatusUpdateService.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Services\\TerminStatusUpdateService.cs",
               "ToolTip": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Services\\TerminStatusUpdateService.cs",
               "RelativeToolTip": "SchedulingApp\\Services\\TerminStatusUpdateService.cs",
-              "ViewState": "AgIAADUAAAAAAAAAAAAAAFEAAAA0AAAAAAAAAA==",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAmwCAAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-18T09:18:52.629Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-18T09:18:52.629Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\appsettings.json",
               "RelativeDocumentMoniker": "SchedulingApp\\appsettings.json",
@@ -114,39 +129,37 @@
               "RelativeDocumentMoniker": "SchedulingApp\\Controllers\\RezervacijaController.cs",
               "ToolTip": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Controllers\\RezervacijaController.cs",
               "RelativeToolTip": "SchedulingApp\\Controllers\\RezervacijaController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAABUAAAAAAAAAA==",
+              "ViewState": "AgIAAG4BAAAAAAAAAAAcwJcBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-16T07:49:09.131Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-16T07:49:09.131Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 5,
               "Title": "ApplicationDbContexts.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\DbContexts\\ApplicationDbContexts.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\DbContexts\\ApplicationDbContexts.cs",
               "ToolTip": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\DbContexts\\ApplicationDbContexts.cs",
               "RelativeToolTip": "SchedulingApp\\DbContexts\\ApplicationDbContexts.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAwEYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-15T17:47:18.192Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Program.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Program.cs",
               "ToolTip": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Program.cs",
               "RelativeToolTip": "SchedulingApp\\Program.cs",
-              "ViewState": "AgIAAGoAAAAAAAAAAAAIwJEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGkAAAAAAAAAAAAAAJEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-15T16:50:50.155Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-15T16:50:50.155Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "TerminController.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Controllers\\TerminController.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Controllers\\TerminController.cs",
@@ -154,25 +167,23 @@
               "RelativeToolTip": "SchedulingApp\\Controllers\\TerminController.cs",
               "ViewState": "AgIAAAIBAAAAAAAAAAAAACkBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-15T16:50:10.507Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-15T16:50:10.507Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Controllers\\AuthController.cs",
               "ToolTip": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Controllers\\AuthController.cs",
               "RelativeToolTip": "SchedulingApp\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAALYAAAAAAAAAAAAAAMMAAABHAAAAAAAAAA==",
+              "ViewState": "AgIAADgAAAAAAAAAAAAAACEAAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-14T11:04:32.524Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-14T11:04:32.524Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "Termin.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Models\\Termin.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Models\\Termin.cs",
@@ -180,12 +191,11 @@
               "RelativeToolTip": "SchedulingApp\\Models\\Termin.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-18T09:51:16.961Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-18T09:51:16.961Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "PlacanjeController.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Controllers\\PlacanjeController.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Controllers\\PlacanjeController.cs",
@@ -197,7 +207,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "ApplicationUser.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Models\\ApplicationUser.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Models\\ApplicationUser.cs",
@@ -209,7 +219,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "ApiResponse.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Models\\ApiResponse.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Models\\ApiResponse.cs",
@@ -221,7 +231,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "LoginResponseDTO.cs",
               "DocumentMoniker": "D:\\Projects 1\\SchedulingApp\\SchedulingApp\\SchedulingApp\\Models\\Dto\\LoginResponseDTO.cs",
               "RelativeDocumentMoniker": "SchedulingApp\\Models\\Dto\\LoginResponseDTO.cs",

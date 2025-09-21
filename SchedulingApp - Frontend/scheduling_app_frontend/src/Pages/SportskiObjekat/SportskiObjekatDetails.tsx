@@ -95,7 +95,8 @@ function SportskiObjekatDetails() {
               {data.result?.opis}
             </p>
             <span className="h3">
-              {t("rezervacijaSummary.pricePerHour")}: {data.result.cenaPoSatu} RSD
+              {t("rezervacijaSummary.pricePerHour")}: {data.result.cenaPoSatu}{" "}
+              RSD
             </span>{" "}
             &nbsp;&nbsp;&nbsp;
             <div className="row pt-4">
@@ -130,74 +131,78 @@ function SportskiObjekatDetails() {
                 {terminiLoading ? (
                   <MainLoader />
                 ) : (
-                  <div className="d-flex flex-wrap">
+                  <>
                     {terminiData.length > 0 ? (
-                      terminiData.map((termin: terminModel) => {
-                        let cardColor = "bg-success";
-                        let statusText = "Slobodan";
-                        let isClickable = true;
+                      <table className="table table-bordered table-striped">
+                        <thead className="table-dark">
+                          <tr>
+                            <th>#</th>
+                            <th>{t("rezervacijaSummary.date")}</th>
+                            <th>{t("rezervacijaSummary.termBegins")}</th>
+                            <th>{t("rezervacijaSummary.termEnds")}</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {terminiData.map(
+                            (termin: terminModel, index: number) => {
+                              let statusClass = "";
+                              let statusText = "";
 
-                        switch (termin.status) {
-                          case SD_Status_Termina.Slobodan:
-                            cardColor = "bg-success"; // zeleno
-                            statusText = "Slobodan";
-                            break;
-                          case SD_Status_Termina.Zauzet:
-                            cardColor = "bg-danger"; // crveno
-                            statusText = "Zauzet";
-                            isClickable = false;
-                            break;
-                          case SD_Status_Termina.Istekao:
-                            cardColor = "bg-warning"; // žuto
-                            statusText = "Istekao";
-                            isClickable = false;
-                            break;
-                          case SD_Status_Termina.Rezervisan:
-                            cardColor = "bg-primary"; // plavo
-                            statusText = "Rezervisan";
-                            isClickable = false;
-                            break;
-                          case SD_Status_Termina.Zavrsen:
-                            cardColor = "#2F4F4F"; // sivo
-                            statusText = "Završen";
-                            isClickable = false;
-                            break;
-                          default:
-                            cardColor = "bg-light text-dark"; // fallback
-                            statusText = "Nepoznat";
-                            isClickable = false;
-                            break;
-                        }
+                              switch (termin.status) {
+                                case SD_Status_Termina.Slobodan:
+                                  statusClass = "badge bg-success";
+                                  statusText = "Slobodan";
+                                  break;
+                                case SD_Status_Termina.Zauzet:
+                                  statusClass = "badge bg-danger";
+                                  statusText = "Zauzet";
+                                  break;
+                                case SD_Status_Termina.Istekao:
+                                  statusClass = "badge bg-warning text-dark";
+                                  statusText = "Istekao";
+                                  break;
+                                case SD_Status_Termina.Rezervisan:
+                                  statusClass = "badge bg-primary";
+                                  statusText = "Rezervisan";
+                                  break;
+                                case SD_Status_Termina.Zavrsen:
+                                  statusClass = "badge bg-secondary";
+                                  statusText = "Završen";
+                                  break;
+                                default:
+                                  statusClass = "badge bg-light text-dark";
+                                  statusText = "Nepoznat";
+                                  break;
+                              }
 
-                        return (
-                          <div
-                            key={termin.terminId}
-                            className={`termin-card m-2 p-3 rounded ${cardColor}`}
-                            style={{
-                              width: "250px",
-                              color: "#fff",
-                            }}
-                          >
-                            <h6>
-                              {t("rezervacijaSummary.date")}:{" "}
-                              {termin.datumTermina
-                                ? new Date(
-                                    termin.datumTermina
-                                  ).toLocaleDateString("sr-RS")
-                                : "Nepoznat datum"}
-                            </h6>
-                            <h6>
-                              {t("rezervacijaSummary.time")}: {termin.vremePocetka} -{" "}
-                              {termin.vremeZavrsetka}
-                            </h6>
-                            <p>Status: {termin.status}</p>
-                          </div>
-                        );
-                      })
+                              return (
+                                <tr key={termin.terminId}>
+                                  <td>{index + 1}</td>
+                                  <td>
+                                    {termin.datumTermina
+                                      ? new Date(
+                                          termin.datumTermina
+                                        ).toLocaleDateString("sr-RS")
+                                      : "Nepoznat datum"}
+                                  </td>
+                                  <td>{termin.vremePocetka}</td>
+                                  <td>{termin.vremeZavrsetka}</td>
+                                  <td>
+                                    <span className={statusClass}>
+                                      {statusText}
+                                    </span>
+                                  </td>
+                                </tr>
+                              );
+                            }
+                          )}
+                        </tbody>
+                      </table>
                     ) : (
                       <p>{t("rezervacijaSummary.noTermin")}</p>
                     )}
-                  </div>
+                  </>
                 )}
               </div>
             )}

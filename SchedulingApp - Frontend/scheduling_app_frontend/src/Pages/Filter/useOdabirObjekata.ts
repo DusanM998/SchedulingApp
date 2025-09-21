@@ -15,6 +15,7 @@ import {
   setTerminForObjekat,
 } from "../../Storage/Redux/shoppingCartSlice";
 import { apiResponse, stavkaKorpeModel, terminModel } from "../../Interfaces";
+import { useTranslation } from "react-i18next";
 
 export const useOdabirObjekata = () => {
   // State
@@ -45,6 +46,8 @@ export const useOdabirObjekata = () => {
   // Mutations
   const [updateKorpa] = useUpdateShoppingCartMutation();
   const [azurirajKorpuSaTerminima] = useUpdateShoppingCartWithTerminiMutation();
+
+  const { t } = useTranslation();
 
   // User Input
   const initialUserData = {
@@ -110,7 +113,7 @@ export const useOdabirObjekata = () => {
 
     if (response.data && response.data.isSuccess) {
       // Note: selectedObjekat needs to be passed from component
-      toastNotify("Odabrali ste sportski objekat");
+      toastNotify(t("toastNotify.sportsObjectSelected"), "info");
     }
 
     setIsAddingToCart(false);

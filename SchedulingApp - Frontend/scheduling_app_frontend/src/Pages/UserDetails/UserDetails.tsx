@@ -16,10 +16,12 @@ import {
   IconButton,
   InputAdornment,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Edit, Visibility, VisibilityOff } from "@mui/icons-material";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { useTranslation } from "react-i18next";
 
 const userDetailsData = {
   userName: "",
@@ -29,6 +31,7 @@ const userDetailsData = {
 };
 
 function UserDetails() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [updateUserDetails] = useUpdateUserDetailsMutation();
@@ -39,6 +42,8 @@ function UserDetails() {
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [imageToBeStore, setImageToBeStore] = useState<any>();
   const [imageToBeDisplayed, setImageToBeDisplayed] = useState<string>();
+  const [showDialogPassword, setShowDialogPassword] = useState(false);
+
   const { id } = useParams<{ id: string }>();
   const { data } = useGetUserByUserIdQuery(id);
   const [verifyPassword] = useVerifyPasswordMutation();
@@ -168,11 +173,15 @@ function UserDetails() {
     }
   };
 
+  const toggleShowDialogPassword = () => {
+    setShowDialogPassword(!showDialogPassword);
+  };
+
   return (
     <div className="container text-center">
       {loading && <MainLoader />}
       <form method="post" onSubmit={handleSubmit}>
-        <h1 className="mt-5">Izmeni Informacije o Korisniku</h1>
+        <h1 className="mt-5">{t("userDetails.title")}</h1>
         <div className="mt-4 d-flex justify-content-center position-relative">
           {imageToBeDisplayed && (
             <img
@@ -201,11 +210,11 @@ function UserDetails() {
 
         <div className="mt-5">
           <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
-            <label>Unesite Novo Korisničko Ime</label>
+            <label>{t("userDetails.username")}</label>
             <input
               type="text"
               className="form-control"
-              placeholder="Unesite Novo Korisničko Ime"
+              placeholder={t("userDetails.username")}
               required
               name="userName"
               value={userDetailsInput.userName}
@@ -213,11 +222,11 @@ function UserDetails() {
             />
           </div>
           <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
-            <label>Unesite Novo Ime</label>
+            <label>{t("userDetails.name")}</label>
             <input
               type="text"
               className="form-control"
-              placeholder="Unesite Novo Ime"
+              placeholder={t("userDetails.name")}
               required
               name="name"
               value={userDetailsInput.name}
@@ -225,11 +234,11 @@ function UserDetails() {
             />
           </div>
           <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
-            <label>Unesite Novu Lozinku</label>
+            <label>{t("userDetails.password")}</label>
             <TextField
               type={showPassword ? "text" : "password"}
               className="form-control"
-              placeholder="Unesite Novu Lozinku"
+              placeholder={t("userDetails.password")}
               required
               name="password"
               value={userDetailsInput.password}
@@ -251,7 +260,7 @@ function UserDetails() {
             />
           </div>
           <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
-            Broj Telefona
+            {t("userDetails.phone")}
             <PhoneInput
               inputProps={{
                 name: "phoneNumber",
@@ -267,7 +276,7 @@ function UserDetails() {
               style={{ width: "200px", backgroundColor: "#4da172" }}
               disabled={loading}
             >
-              Ažuriraj
+              {t("userDetails.update")} 
             </button>
             <button
               className="btn btn-outlined rounded-pill text-white mx-2"
@@ -278,7 +287,7 @@ function UserDetails() {
                 navigate("/");
               }}
             >
-              Otkaži
+              {t("userDetails.cancel")}
             </button>
           </div>
         </div>
@@ -287,28 +296,88 @@ function UserDetails() {
       <Dialog
         open={passwordDialogOpen}
         onClose={() => setPasswordDialogOpen(false)}
+        PaperProps={{
+          style: {
+            borderRadius: "15px",
+            padding: "20px",
+            minWidth: "400px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+          },
+        }}
       >
-        <DialogTitle>Potvrdite Identitet: </DialogTitle>
-        <DialogTitle>Unesite svoju lozinku</DialogTitle>
+        <DialogTitle
+          sx={{ textAlign: "center", fontWeight: "bold", color: "#305985" }}
+        >
+          {t("userPage.verifyIdentity")}
+        </DialogTitle>
         <DialogContent>
+          <Typography variant="body1" sx={{ mb: 2, color: "#555" }}>
+            {t("userPage.verifyInstruction")}
+          </Typography>
           <TextField
-            type="password"
-            className="form-control"
-            required
+            type={showDialogPassword ? "text" : "password"}
             value={passwordInput}
             onChange={(e) => setPasswordInput(e.target.value)}
             fullWidth
+            variant="outlined"
+            placeholder={t("userPage.enterPasssword")}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                "&:hover fieldset": {
+                  borderColor: "#4da172",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#4da172",
+                },
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle dialog password visibility"
+                    onClick={toggleShowDialogPassword}
+                    edge="end"
+                  >
+                    {showDialogPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ justifyContent: "center", gap: 2, pb: 3 }}>
           <Button
             onClick={() => setPasswordDialogOpen(false)}
-            color="secondary"
+            variant="outlined"
+            sx={{
+              borderColor: "#999393",
+              color: "#999393",
+              borderRadius: "10px",
+              textTransform: "none",
+              "&:hover": {
+                borderColor: "#777",
+                backgroundColor: "#f5f5f5",
+              },
+            }}
           >
-            Otkaži
+            {t("userPage.cancel")}
           </Button>
-          <Button onClick={handlePasswordVerification} color="primary">
-            Potvrdi
+          <Button
+            onClick={handlePasswordVerification}
+            variant="contained"
+            sx={{
+              backgroundColor: "#4da172",
+              color: "white",
+              borderRadius: "10px",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "#3d8c5b",
+              },
+            }}
+          >
+            {t("userPage.verifyBtn")}
           </Button>
         </DialogActions>
       </Dialog>

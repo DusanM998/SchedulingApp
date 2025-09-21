@@ -30,6 +30,8 @@ namespace SchedulingApp.Controllers
         // Primer DI(Dependency Injection): tehnike dizajna koja omogucava objektima da dobiju svoje zavisnosti(druge objekte)
         // od spoljnog izvora umesto da ih sami kreiraju. Ovde su zavisnosti definisane kao parametri konstruktora
         // Postoji: Constructor, Property, Method i Interface injection
+        // Ovde koristim constructor injection jer ubrizgavam zavisnosti kroz konstruktor 
+        // Kasnije te zavisnosti koristim za izvrsavanje operacija 
         public AuthController(ApplicationDbContexts db, IConfiguration configuration,
             UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, CloudinaryService cloudinaryService)
         {

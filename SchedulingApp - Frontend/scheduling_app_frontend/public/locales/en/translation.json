@@ -68,7 +68,7 @@
     "chooseObjectBtn": "Choose Facility",
     "backBtn": "Back",
     "availabilityDates": "Available Dates",
-    "location": "Location" 
+    "location": "Location"
   },
 
   "kontakt": {
@@ -93,7 +93,10 @@
     "noTermin": "There are no time slots yet.",
     "confirm": "Confirm Selection",
     "date": "Date",
-    "time": "Time"
+    "time": "Time",
+    "details": "Details",
+    "termBegins": "Start Time",
+    "termEnds": "End Time"
   },
 
   "rezervacijaDetalji": {
@@ -122,5 +125,79 @@
     "sportPlaceholder": "Enter sport type...",
     "searchBtn": "Search",
     "typeOfSport": "Type of Sport"
+  },
+
+  "userDetails": {
+    "title": "Edit User Information",
+    "username": "Enter New Username",
+    "name": "Enter New Name",
+    "password": "Enter New Password",
+    "phone": "Phone Number",
+    "update": "Update",
+    "cancel": "Cancel",
+    "imageErrorSize": "File size must be less than 5MB!",
+    "imageErrorType": "File must be in jpeg, jpg or png format!",
+    "updateSuccess": "User information successfully updated!",
+    "updateError": "An error occurred while updating user information!",
+    "verifyIdentity": "Verify Identity",
+    "enterPassword": "Enter your password",
+    "verifyError": "Incorrect password. Please try again.",
+    "verifyErrorGeneral": "Authentication error. Please try again."
+  },
+
+  "userPage": {
+    "title": "User Information",
+    "username": "Username/E-mail",
+    "name": "Name",
+    "role": "User Status",
+    "password": "Password",
+    "phone": "Phone Number",
+    "update": "Edit Informations",
+    "cancel": "Cancel",
+    "roles": {
+      "admin": "Admin",
+      "customer": "Customer",
+      "unknown": "Unknown"
+    },
+    "verifyIdentity": "Identity Verification",
+    "verifyInstruction": "Please enter your password to continue",
+    "enterPasssword": "Enter Password",
+    "verifyBtn": "Confirm",
+    "cancelBtn": "Cancel",
+    "wrongPassword": "Invalid password!",
+    "authError": "Authentication error."
+  },
+
+  "toastNotify": {
+    "loginSuccess": "Login successful!",
+    "uploadImageError": "Please upload an image!",
+    "registerSuccess": "Registration successful!",
+    "fileSizeError": "File size must be less than 5MB!",
+    "fileTypeError": "File must be in jpeg, jpg or png format!",
+    "sportsObjectSelected": "You have selected a sports facility",
+    "capacityExceeded": "Capacity exceeded! Maximum: {{capacity}} participants",
+    "minParticipantsError": "Minimum number of participants is 1!",
+    "stripeError": "Error: {{message}}",
+    "reservationCancelSuccess": "Reservation cancelled successfully!",
+    "reservationCancelError": "Error while cancelling reservation!",
+    "sportsObjectUpdateSuccess": "Sports facility updated successfully!",
+    "sportsObjectCreateError": "An error occurred while creating!",
+    "sportsObjectCreateSuccess": "Sports facility created successfully!",
+    "sportsObjectSendError": "Error while sending data!",
+    "sportsObjectNotSelected": "You have not selected a sports facility!",
+    "sportsObjectNoWorkHours": "Working hours of the facility are not defined!",
+    "terminTimeMissing": "Please enter start and end time of the appointment!",
+    "terminUnavailable": "The facility is not available at the selected time! Working hours are {{start}} - {{end}}.",
+    "terminInvalidTime": "Start time must be before end time!",
+    "terminUpdateError": "An error occurred while updating!",
+    "terminUpdateSuccess": "Appointment updated successfully!",
+    "terminCreateError": "An error occurred while creating!",
+    "terminCreateSuccess": "Appointment created successfully!",
+    "terminSendError": "Error while sending data!",
+    "userUpdateSuccess": "User information updated successfully!",
+    "userUpdateError": "An error occurred while updating user information!",
+    "wrongPassword": "Wrong password. Please try again.",
+    "authError": "Authentication error. Please try again.",
+    "errorUniform": "An error occurred. Please try again."
   }
 }

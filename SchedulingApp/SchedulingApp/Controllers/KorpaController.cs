@@ -35,10 +35,10 @@ namespace SchedulingApp.Controllers
                 if (!string.IsNullOrEmpty(userId))
                 {
                     korpa = _db.Korpe
-                        .Include(u => u.StavkaKorpe) //Kada ucitava korpu ucitaj i njenu kolekciju StavkaKorpe (eager loading)
-                            .ThenInclude(s => s.SportskiObjekat)  //korak dublje - ucitava za svaku stavku korpe njen SportskiObjekat
-                        .Include(u => u.StavkaKorpe) //Priprema za sledeci ThenInclude
-                            .ThenInclude(s => s.OdabraniTermini) // Ucitavamo termine
+                        .Include(u => u.StavkaKorpe) //Kada ucitava korpu ucitaj i njenu kolekciju StavkaKorpe (eager loading) (LEFT JOIN na StavkaKorpe)
+                            .ThenInclude(s => s.SportskiObjekat)  //korak dublje - ucitava za svaku stavku korpe njen SportskiObjekat (INNER JOIN na SportskiObjekat)
+                        .Include(u => u.StavkaKorpe) //Priprema za sledeci ThenInclude 
+                            .ThenInclude(s => s.OdabraniTermini) // Ucitavamo termine (LEFT JOIN sa Termini)
                         .FirstOrDefault(u => u.UserId == userId) ?? new Korpa(); //Uzima prvu ili jedinu korpu za odr. korisnika
                                                                                  //Ako korisnik nema korpu kreira se nova 
                 }

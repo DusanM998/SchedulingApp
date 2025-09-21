@@ -93,7 +93,10 @@
     "noTermin": "Još uvek nema dostupnih termina.",
     "confirm": "Potvrdi Odabir",
     "date": "Datum",
-    "time": "Vreme"
+    "time": "Vreme",
+    "details": "Detalji",
+    "termBegins": "Vreme početka",
+    "termEnds": "Vreme završetka"
   },
 
   "rezervacijaDetalji": {
@@ -122,5 +125,78 @@
     "sportPlaceholder": "Unesite vrstu sporta...",
     "searchBtn": "Pretraži",
     "typeOfSport": "Vrsta Sporta"
+  },
+
+  "userDetails": {
+    "title": "Izmeni Informacije o Korisniku",
+    "username": "Unesite Novo Korisničko Ime",
+    "name": "Unesite Novo Ime",
+    "password": "Unesite Novu Lozinku",
+    "phone": "Broj Telefona",
+    "update": "Ažuriraj",
+    "cancel": "Otkaži",
+    "imageErrorSize": "Veličina fajla mora biti manja od 5MB!",
+    "imageErrorType": "Fajl mora biti u jpeg, jpg ili png formatu!",
+    "updateSuccess": "Informacije o korisniku su uspešno ažurirane!",
+    "updateError": "Došlo je do greške prilikom ažuriranja korisničkih informacija!",
+    "verifyIdentity": "Potvrdite Identitet",
+    "enterPassword": "Unesite svoju lozinku",
+    "verifyError": "Pogrešna lozinka. Pokušajte ponovo.",
+    "verifyErrorGeneral": "Greška pri autentifikaciji. Pokušajte ponovo."
+  },
+
+  "userPage": {
+    "title": "Podaci o Korisniku",
+    "username": "Korisničko ime/E-mail",
+    "name": "Ime",
+    "role": "Status Korisnika",
+    "password": "Lozinka",
+    "phone": "Broj Telefona",
+    "update": "Izmeni Informacije",
+    "cancel": "Otkaži",
+    "roles": {
+      "admin": "Admin",
+      "customer": "Korisnik",
+      "unknown": "Nepoznato"
+    },
+    "verifyIdentity": "Potvrda Identiteta",
+    "verifyInstruction": "Molimo unesite vašu lozinku za nastavak",
+    "enterPasssword": "Unesite Lozinku",
+    "verifyBtn": "Potvrdi",
+    "cancelBtn": "Otkaži",
+    "wrongPassword": "Neispravna lozinka!",
+    "authError": "Greška pri autentifikaciji."
+  },
+
+  "toastNotify": {
+    "loginSuccess": "Uspešna prijava!",
+    "uploadImageError": "Molimo Vas dodajte sliku!",
+    "registerSuccess": "Uspešna registracija!",
+    "fileSizeError": "Veličina fajla mora biti manja od 5MB!",
+    "fileTypeError": "Fajl mora biti u jpeg, jpg ili png formatu!",
+    "sportsObjectSelected": "Odabrali ste sportski objekat",
+    "capacityExceeded": "Prekoračen kapacitet! Maksimalno: {{capacity}} učesnika",
+    "minParticipantsError": "Minimalni broj učesnika je 1!",
+    "stripeError": "Greška: {{message}}",
+    "reservationCancelSuccess": "Rezervacija uspešno otkazana!",
+    "reservationCancelError": "Greška prilikom otkazivanja rezervacije!",
+    "sportsObjectUpdateSuccess": "Sportski objekat je uspešno ažuriran!",
+    "sportsObjectCreateError": "Došlo je do greške pri kreiranju!",
+    "sportsObjectCreateSuccess": "Sportski objekat je uspešno kreiran!",
+    "sportsObjectSendError": "Greška prilikom slanja podataka!",
+    "sportsObjectNotSelected": "Niste odabrali sportski objekat!",
+    "sportsObjectNoWorkHours": "Radno vreme objekta nije definisano!",
+    "terminTimeMissing": "Molimo Vas unesite vreme početka i završetka termina!",
+    "terminUnavailable": "Objekat nije dostupan u odabranom vremenu! Radno vreme objekta je {{start}} - {{end}}.",
+    "terminInvalidTime": "Vreme početka mora biti pre vremena završetka!",
+    "terminUpdateError": "Došlo je do greške pri ažuriranju!",
+    "terminUpdateSuccess": "Termin je uspešno ažuriran!",
+    "terminCreateError": "Došlo je do greške pri kreiranju!",
+    "terminCreateSuccess": "Termin je uspešno kreiran!",
+    "terminSendError": "Greška prilikom slanja podataka!",
+    "userUpdateSuccess": "Informacije o korisniku su uspešno ažurirane!",
+    "userUpdateError": "Došlo je do greške prilikom ažuriranja korisničkih informacija!",
+    "wrongPassword": "Pogrešna lozinka. Pokušajte ponovo.",
+    "authError": "Greška pri autentifikaciji. Pokušajte ponovo."
   }
 }

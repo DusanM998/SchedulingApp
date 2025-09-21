@@ -23,6 +23,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { useTranslation } from "react-i18next";
 
 const userDetailsData = {
   userName: "",
@@ -48,6 +49,8 @@ function UserPage() {
   const { id } = useParams<{ id: string }>();
   const { data } = useGetUserByUserIdQuery(id);
   const [verifyPassword] = useVerifyPasswordMutation();
+
+  const { t } = useTranslation();
 
   const userData: userModel = useSelector(
     (state: RootState) => state.userAuthStore
@@ -152,7 +155,7 @@ function UserPage() {
         style={{ fontWeight: "300", color: "#305985" }}
         className="text-center"
       >
-        Podaci o Korisniku
+        {t("userPage.title")}
       </h1>
       <hr />
       <div className="mt-4 d-flex justify-content-center position-relative">
@@ -167,7 +170,7 @@ function UserPage() {
       </div>
       <form className="col-10 mx-auto">
         <div className="form-group mt-3">
-          Korisničko ime/E-mail
+          {t("userPage.username")}
           <input
             type="text"
             value={userDetailsInput.userName}
@@ -179,7 +182,7 @@ function UserPage() {
           />
         </div>
         <div className="form-group mt-3">
-          Ime
+          {t("userPage.name")}
           <input
             type="text"
             value={userDetailsInput.name}
@@ -191,7 +194,7 @@ function UserPage() {
           />
         </div>
         <div className="form-group mt-3">
-          Status Korisnika
+          Status
           <div
             className="form-control d-flex align-items-center"
             style={{
@@ -213,7 +216,7 @@ function UserPage() {
           </div>
         </div>
         <div className="form-group mt-3">
-          Lozinka
+          {t("userPage.password")}
           <TextField
             type={showPassword ? "text" : "password"}
             className="form-control"
@@ -239,7 +242,7 @@ function UserPage() {
           />
         </div>
         <div className="form-group mt-3">
-          Broj Telefona
+          {t("userPage.phone")}
           <PhoneInput value={userDetailsInput.phoneNumber} disabled={true} />
         </div>
         <div className="form-group mt-3">
@@ -249,7 +252,7 @@ function UserPage() {
             style={{ backgroundColor: "#4da172", color: "white" }}
             onClick={handleUpdateClick}
           >
-            Izmeni Informacije
+            {t("userPage.update")}
           </button>
           <button
             type="button"
@@ -258,7 +261,7 @@ function UserPage() {
             disabled={loading}
             onClick={() => navigate("/")}
           >
-            Otkaži
+            {t("userPage.cancel")}
           </button>
         </div>
       </form>
@@ -278,11 +281,11 @@ function UserPage() {
         <DialogTitle
           sx={{ textAlign: "center", fontWeight: "bold", color: "#305985" }}
         >
-          Potvrda Identiteta
+          {t("userPage.verifyIdentity")}
         </DialogTitle>
         <DialogContent>
           <Typography variant="body1" sx={{ mb: 2, color: "#555" }}>
-            Molimo unesite vašu lozinku za nastavak
+            {t("userPage.verifyInstruction")}
           </Typography>
           <TextField
             type={showDialogPassword ? "text" : "password"}
@@ -290,7 +293,7 @@ function UserPage() {
             onChange={(e) => setPasswordInput(e.target.value)}
             fullWidth
             variant="outlined"
-            placeholder="Unesite lozinku"
+            placeholder={t("userPage.enterPasssword")}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
@@ -332,7 +335,7 @@ function UserPage() {
               },
             }}
           >
-            Otkaži
+            {t("userPage.cancel")}
           </Button>
           <Button
             onClick={handlePasswordVerification}
@@ -347,7 +350,7 @@ function UserPage() {
               },
             }}
           >
-            Potvrdi
+            {t("userPage.verifyBtn")}
           </Button>
         </DialogActions>
       </Dialog>
